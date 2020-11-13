@@ -1,7 +1,8 @@
-import {body, validationResult} from "express-validator";
-
-export {};
+import {checkSchema, validationResult} from "express-validator";
 import {NextFunction, Request, Response} from "express";
+import {invalid_response} from "../util/functions";
+import {ApiResponse} from "../util/types";
+import {loginSchema, registerSchema} from "../util/schemaValidation/indexSchema";
 
 const express = require("express");
 const router = express.Router();
@@ -14,21 +15,46 @@ router.get("/", async (req: Request, res: Response, _: NextFunction) => {
 	});
 });
 
-router.post("/login", [
-	body('username').isString().isLength({min: 3}),
-	body('password').isLength({min: 10})
-], async (req: Request, res: Response, _: NextFunction) => {
+router.post("/login", checkSchema(loginSchema), async (req: Request, res: Response) => {
 	const errors = validationResult(req);
 
 	if (!errors.isEmpty()) {
-		return res.status(400).json({ errors: errors.array() });
+		const error = errors.array()[0];
+		const {msg, param} = error;
+		return res.status(400).json(invalid_response(msg, param));
 	}
 
 	const loginResult = await userModel.login(req.body.username, req.body.password);
 
-	res
-		.status(loginResult === false ? 400 : 200)
-		.send({loginResult});
+	if (loginResult.error !== undefined) {
+		return res.status(loginResult.error.code).send(invalid_response(loginResult.error.message));
+	}
+
+	res.send({
+		success: true,
+		data: loginResult.data,
+		error: null
+	} as ApiResponse);
+});
+
+router.post("/register", checkSchema(registerSchema), async (req: Request, res: Response) => {
+	const errors = validationResult(req);
+
+	if (!errors.isEmpty()) {
+		const error = errors.array()[0];
+		const {msg, param} = error;
+		return res.status(400).json(invalid_response(msg, param));
+	}
+
+	const registrationStatus = await userModel.register(req.body);
+
+	if (registrationStatus.error) {
+		return res.status(registrationStatus.error.code).send(invalid_response(registrationStatus.error.message));
+	}
+
+	res.send({
+		success: true
+	} as ApiResponse);
 });
 
 module.exports = router;

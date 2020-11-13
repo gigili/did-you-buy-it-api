@@ -1,10 +1,9 @@
-import {MysqlError} from "mysql";
 import {DatabaseArguments, DatabaseResult} from "./types/database";
 
 const mysql = require('mysql2/promise');
 
 export enum TABLES {
-	Users= "users",
+	Users = "users",
 	ForbiddenUsernames = "forbidden_usernames",
 	Languages = "languages",
 	Lists = "lists",
@@ -43,4 +42,24 @@ export async function executeQuery(query: string, params?: any[], args?: Databas
 	}
 
 	return dbResult;
+}
+
+export function addDbRecord(table: string, data: {}) { //: Promise<DatabaseResult<any>> {
+	let query = `INSERT INTO ${table} (`;
+
+	Object.keys(data).forEach(key => {
+		query += `${key},`;
+	});
+
+	query = query.slice(0, -1);
+	query += `) VALUES (`;
+
+	Object.keys(data).forEach(() => {
+		query += `?,`;
+	});
+
+	query = query.slice(0, -1);
+	query += `);`;
+
+	return executeQuery(query, Object.values(data));
 }
