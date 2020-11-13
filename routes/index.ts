@@ -52,8 +52,6 @@ router.post("/register", checkSchema(registerSchema), async (req: Request, res: 
 		return res.status(registerStatus.error.code).send(invalid_response(registerStatus.error.message));
 	}
 
-	//
-
 	res.send({
 		success: true
 	} as ApiResponse);

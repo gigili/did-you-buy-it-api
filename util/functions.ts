@@ -87,6 +87,10 @@ export async function send_email(recipient: string, subject: string, message: st
 	return await transporter.sendMail({
 		to: recipient,
 		subject,
-		html: message
+		html: message,
+		from: {
+			name: "Did you buy it?",
+			address: "support@didyoubuyit.local"
+		}
 	});
 }
