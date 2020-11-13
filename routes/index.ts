@@ -46,11 +46,13 @@ router.post("/register", checkSchema(registerSchema), async (req: Request, res: 
 		return res.status(400).json(invalid_response(msg, param));
 	}
 
-	const registrationStatus = await userModel.register(req.body);
+	const registerStatus = await userModel.register(req.body);
 
-	if (registrationStatus.error) {
-		return res.status(registrationStatus.error.code).send(invalid_response(registrationStatus.error.message));
+	if (registerStatus.error) {
+		return res.status(registerStatus.error.code).send(invalid_response(registerStatus.error.message));
 	}
+
+	//
 
 	res.send({
 		success: true

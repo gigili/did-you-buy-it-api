@@ -5,6 +5,7 @@ import {ApiResponse, TokenData} from "./types";
 const refreshTokenModel = require("../models/refreshTokenModel");
 const jwt = require("jsonwebtoken");
 const privateKey = process.env.JWT_SECRET;
+const nodemailer = require("nodemailer");
 
 export async function generate_token(userData: { id: number, username: string }, generateRefreshToken: Boolean = true): Promise<TokenData> {
 	let refreshToken = null;
@@ -70,4 +71,22 @@ export function invalid_response(msg: string, field?: string, errorCode?: number
 	}
 
 	return response;
+}
+
+export async function send_email(recipient: string, subject: string, message: string, attachments?: string[]) {
+	let transporter = nodemailer.createTransport({
+		host: 'smtp.gmail.com',
+		port: 465,
+		secure: true, // true for 465, false for other ports
+		auth: {
+			user: process.env.EMAIL_USER,
+			pass: process.env.EMAIL_PASSWORD
+		}
+	});
+
+	return await transporter.sendMail({
+		to: recipient,
+		subject,
+		html: message
+	});
 }
