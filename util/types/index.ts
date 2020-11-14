@@ -42,3 +42,8 @@ export enum EnvVars {
 	EMAIL_USER = "EMAIL_USER",
 	EMAIL_PASSWORD = "EMAIL_PASSWORD",
 }
+
+export type TokenUser = {
+	id: number,
+	username: string
+}

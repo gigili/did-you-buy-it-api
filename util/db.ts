@@ -44,7 +44,6 @@ export async function executeQuery(query: string, params?: any[], args?: Databas
 		const [rows] = await db.execute(query, params);
 		dbResult.data = (args && args.singleResult === true && rows.length > 0) ? rows[0] : rows;
 	} catch (e) {
-		console.log("HERE", e.message);
 		dbResult.success = false;
 		dbResult.error = {
 			message: e.message,
@@ -76,7 +75,7 @@ export function addDbRecord(table: string, data: {}): Promise<DatabaseResult<any
 }
 
 export function updateDbRecord(table: string, data: {}, whereCondition: string): Promise<DatabaseResult<any>> {
-	let query = `UPDATE ${table} SET`;
+	let query = `UPDATE ${table} SET `;
 
 	Object.keys(data).forEach(column => {
 		query += `${column} = ?,`
@@ -84,7 +83,7 @@ export function updateDbRecord(table: string, data: {}, whereCondition: string):
 
 	query = query.slice(0, -1);
 	query += ` WHERE ${whereCondition};`;
-
+	console.log(query);
 	return executeQuery(query, Object.values(data));
 }
 

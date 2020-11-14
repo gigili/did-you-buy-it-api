@@ -4,18 +4,19 @@
 
 # Features
   * [x] Login
-  * [x] Register
-  * [ ] User profile 
+  * [x] Register 
   * [ ] Lists
-    * [ ] Create list
-    * [ ] Update list
-    * [ ] Delete list
+    * [x] Create list
+    * [x] Update list
+    * [x] Delete list
+    * [ ] List users that have access to the list
     * [ ] Allow other users access to the list
     * [ ] Remove users from the list
   * [ ] List items
     * [ ] Add list item
     * [ ] Update list item
     * [ ] Delete list item
+  * [ ] User profile
 
 # Local setup
 

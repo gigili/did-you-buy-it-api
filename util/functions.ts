@@ -1,7 +1,10 @@
 import {DatabaseResult} from "./types/database";
 import {RefreshToken} from "../models/refreshTokenModel";
 import {ApiResponse, EnvVars, TokenData} from "./types";
+import {NextFunction, Response} from "express";
+import {Request} from "./types/request";
 
+const {VerifyErrors} = require("jsonwebtoken");
 const refreshTokenModel = require("../models/refreshTokenModel");
 const jwt = require("jsonwebtoken");
 const privateKey = getEnvVar(EnvVars.JWT_SECRET);
@@ -97,4 +100,38 @@ export async function sendEmail(recipient: string, subject: string, message: str
 
 export function getEnvVar(key: string) {
 	return process.env[key]
+}
+
+export function authenticateToken() {
+	return (req: Request, res: Response, next: NextFunction) => {
+		const authHeader = req.headers["authorization"];
+		const token = authHeader && authHeader.split(" ")[1];
+
+		if (token == null) {
+			return res.status(401).send({"success": false, "message": "Invalid token #1"});
+		}
+
+		jwt.verify(token, getEnvVar(EnvVars.JWT_SECRET), (err: typeof VerifyErrors | null, user?: { user: { id: number, username: string } }) => {
+			if (err) {
+				return res.status(401).send({"success": false, "message": "Invalid token #2"});
+			}
+
+			/*if (requiredPower !== null && user) {
+				if (requiredPower > user.power) {
+					return res.status(401).send({
+						"success": false,
+						"message": "Not authorized"
+					});
+				}
+			}*/
+
+			if (typeof user !== "undefined") {
+				Object.assign(req, {user: user.user});
+			} else {
+				return res.status(401).send({"success": false, "message": "Invalid token. #3"});
+			}
+
+			next(); // pass the execution off to whatever request the client intended
+		});
+	}
 }

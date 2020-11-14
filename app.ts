@@ -1,3 +1,5 @@
+const dotenv = require("dotenv").config();
+
 import express from 'express';
 import {getEnvVar} from "./util/functions";
 import {EnvVars} from "./util/types";
