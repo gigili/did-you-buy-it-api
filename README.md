@@ -13,9 +13,11 @@
     * [x] Allow other users access to the list
     * [x] Remove users from the list
   * [ ] List items
-    * [ ] Add list item
-    * [ ] Update list item
-    * [ ] Delete list item
+    * [x] Add list item
+    * [x] Update list item
+        * [ ] Mark item as bought
+    * [x] Delete list item
+    * [ ] Add / edit / removed images
   * [ ] User profile
 
 # Local setup

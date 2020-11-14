@@ -75,13 +75,19 @@ CREATE TABLE `list_items` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `listID` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `image` text NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `userID` int(11) DEFAULT NULL,
   `is_repeating` enum('0','1') NOT NULL DEFAULT '0',
-  `status` enum('0','1') NOT NULL DEFAULT '0',
-  `last_bought` int(11) NOT NULL,
+  `last_bought` int(11) DEFAULT NULL,
   `last_bought_date` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`),
+  KEY `FK_ListItems_Users` (`userID`),
+  KEY `FK_ListItems_Bought_Users` (`last_bought`),
+  KEY `FK_ListItems_Lists` (`listID`),
+  CONSTRAINT `FK_ListItems_Bought_Users` FOREIGN KEY (`last_bought`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `FK_ListItems_Lists` FOREIGN KEY (`listID`) REFERENCES `lists` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_ListItems_Users` FOREIGN KEY (`userID`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,7 +96,7 @@ CREATE TABLE `list_items` (
 
 LOCK TABLES `list_items` WRITE;
 /*!40000 ALTER TABLE `list_items` DISABLE KEYS */;
-INSERT INTO `list_items` VALUES (1,1,'Test 1','femred-homepage25.png','1','0',0,NULL),(7,2,'item #2','','1','0',0,NULL),(31,1,'Test 3','laptopr_baterija4.png','1','0',0,NULL),(45,1,'Test 4','','0','0',0,NULL),(46,1,'Test 5','','1','0',0,NULL),(47,1,'Test 6','lists4.png','0','0',0,NULL),(48,1,'Test 7','','1','0',0,NULL),(49,1,'Test 8','1497895882-1-49.jpg','0','0',0,NULL),(50,1,'Test 9','1497895988-1-50.jpg','1','0',0,NULL),(60,18,'Hljeb','','1','0',0,NULL),(61,19,'cedevita','1517069599-1-61.jpg','0','0',0,NULL),(62,20,'Stavka #1','','0','0',0,NULL),(64,20,'Stavka #3','','0','0',0,NULL),(76,18,'Kisela','','1','0',0,NULL);
+INSERT INTO `list_items` VALUES (1,1,'Test 1','femred-homepage25.png',1,'1',NULL,NULL),(7,2,'item #2','',1,'1',NULL,NULL),(31,1,'Test 3','laptopr_baterija4.png',1,'1',NULL,NULL),(45,1,'Test 4','',1,'0',NULL,NULL),(46,1,'Test 5','',1,'1',NULL,NULL),(47,1,'Test 6','lists4.png',1,'0',NULL,NULL),(48,1,'Test 7','',1,'1',NULL,NULL),(49,1,'Test 8','1497895882-1-49.jpg',1,'0',NULL,NULL),(50,1,'Test 9','1497895988-1-50.jpg',1,'1',NULL,NULL),(60,18,'Hljeb','',1,'1',NULL,NULL),(61,19,'cedevita','1517069599-1-61.jpg',1,'0',NULL,NULL),(62,20,'Stavka #1','',1,'0',NULL,NULL),(64,20,'Stavka #3','',11,'0',NULL,NULL),(76,18,'Kisela','',1,'1',NULL,NULL),(77,1,'Test list item #1','',1,'0',NULL,NULL);
 /*!40000 ALTER TABLE `list_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -290,4 +296,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-11-14 21:45:59
+-- Dump completed on 2020-11-14 23:12:55
