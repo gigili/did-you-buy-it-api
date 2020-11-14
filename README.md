@@ -5,7 +5,7 @@
 # Features
   * [x] Login
   * [x] Register 
-  * [ ] Lists
+  * [x] Lists
     * [x] Create list
     * [x] Update list
     * [x] Delete list
