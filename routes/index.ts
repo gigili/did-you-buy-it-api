@@ -1,6 +1,6 @@
 import {checkSchema, validationResult} from "express-validator";
 import {NextFunction, Request, Response} from "express";
-import {invalid_response} from "../util/functions";
+import {invalidResponse} from "../util/functions";
 import {ApiResponse} from "../util/types";
 import {loginSchema, registerSchema} from "../util/schemaValidation/indexSchema";
 
@@ -21,13 +21,13 @@ router.post("/login", checkSchema(loginSchema), async (req: Request, res: Respon
 	if (!errors.isEmpty()) {
 		const error = errors.array()[0];
 		const {msg, param} = error;
-		return res.status(400).json(invalid_response(msg, param));
+		return res.status(400).json(invalidResponse(msg, param));
 	}
 
 	const loginResult = await userModel.login(req.body.username, req.body.password);
 
 	if (loginResult.error !== undefined) {
-		return res.status(loginResult.error.code).send(invalid_response(loginResult.error.message));
+		return res.status(loginResult.error.code).send(invalidResponse(loginResult.error.message));
 	}
 
 	res.send({
@@ -43,13 +43,13 @@ router.post("/register", checkSchema(registerSchema), async (req: Request, res: 
 	if (!errors.isEmpty()) {
 		const error = errors.array()[0];
 		const {msg, param} = error;
-		return res.status(400).json(invalid_response(msg, param));
+		return res.status(400).json(invalidResponse(msg, param));
 	}
 
 	const registerStatus = await userModel.register(req.body);
 
 	if (registerStatus.error) {
-		return res.status(registerStatus.error.code).send(invalid_response(registerStatus.error.message));
+		return res.status(registerStatus.error.code).send(invalidResponse(registerStatus.error.message));
 	}
 
 	res.send({

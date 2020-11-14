@@ -1,6 +1,6 @@
 import {addDbRecord, executeQuery, TABLES} from "../util/db";
 import {DatabaseResult} from "../util/types/database";
-import {generate_token} from "../util/functions";
+import {generateToken} from "../util/functions";
 import {ModelResponse, TokenData} from "../util/types";
 
 const uuid = require("uuid");
@@ -64,7 +64,7 @@ const userModel = {
 			return response;
 		}
 
-		const tokenData = await generate_token({
+		const tokenData = await generateToken({
 			id: user.id,
 			username: user.username
 		}, true) as TokenData;

@@ -1,4 +1,5 @@
 import {DatabaseArguments, DatabaseResult} from "./types/database";
+import {Connection} from "mysql2";
 
 const mysql = require('mysql2/promise');
 
@@ -15,25 +16,33 @@ export enum TABLES {
 	RefreshToken = "refresh_token"
 }
 
-export async function executeQuery(query: string, params?: any[], args?: DatabaseArguments): Promise<DatabaseResult<any>> {
-	const connection = await mysql.createConnection({
+let connection: Connection;
+
+export async function getConnection(): Promise<Connection> {
+	if (connection !== undefined) return connection;
+	connection = await mysql.createConnection({
 		host: process.env.MYSQL_HOST,
 		port: process.env.MYSQL_PORT,
 		user: process.env.MYSQL_USER,
 		password: process.env.MYSQL_PASSWORD,
 		database: process.env.MYSQL_DATABASE
 	});
+	return connection;
+}
 
+export async function executeQuery(query: string, params?: any[], args?: DatabaseArguments): Promise<DatabaseResult<any>> {
+	const db = await getConnection();
 	const dbResult: DatabaseResult<any> = {
 		success: true,
 		data: []
 	};
 
 	try {
-		const [rows] = await connection.execute(query, params);
-		connection.end();
+		//@ts-ignore
+		const [rows] = await db.execute(query, params);
 		dbResult.data = (args && args.singleResult === true && rows.length > 0) ? rows[0] : rows;
 	} catch (e) {
+		console.log("HERE", e.message);
 		dbResult.success = false;
 		dbResult.error = {
 			message: e.message,
@@ -66,8 +75,8 @@ export function addDbRecord(table: string, data: {}) : Promise<DatabaseResult<an
 
 export function updateDbRecord(table: string, data: {}, whereCondition : string): Promise<DatabaseResult<any>>{
   let query = `UPDATE ${table} SET`;
-  
-  Object.keys(data).forEach(column => {
+
+	Object.keys(data).forEach(column => {
     query += `${column} = ?,`
   });
 

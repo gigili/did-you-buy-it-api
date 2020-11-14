@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const privateKey = process.env.JWT_SECRET;
 const nodemailer = require("nodemailer");
 
-export async function generate_token(userData: { id: number, username: string }, generateRefreshToken: Boolean = true): Promise<TokenData> {
+export async function generateToken(userData: { id: number, username: string }, shouldGenerateRefreshToken: Boolean = true): Promise<TokenData> {
 	let refreshToken = null;
 	let currentDate = new Date();
 	const expiresAt = (currentDate.setHours(currentDate.getHours() + 2));
@@ -18,12 +18,12 @@ export async function generate_token(userData: { id: number, username: string },
 		user: userData
 	};
 
-	if (generateRefreshToken) {
+	if (shouldGenerateRefreshToken) {
 		const refreshTokenResult = await refreshTokenModel.getRefreshToken(userData.id) as DatabaseResult<RefreshToken>;
 		refreshToken = (refreshTokenResult.data as RefreshToken).token;
 
 		if (!refreshTokenResult.success || !refreshToken) {
-			refreshToken = await generate_refresh_token(tokenData, userData.id);
+			refreshToken = await generateRefreshToken(tokenData, userData.id);
 		}
 	}
 
@@ -46,14 +46,14 @@ export async function generate_token(userData: { id: number, username: string },
 	};
 }
 
-export async function generate_refresh_token(tokenData: object, userID: number): Promise<string | null> {
+export async function generateRefreshToken(tokenData: object, userID: number): Promise<string | null> {
 	const refreshToken = jwt.sign(tokenData, privateKey);
 	const result = await refreshTokenModel.addRefreshToken(userID, refreshToken);
 	console.log(result);
 	return result.success ? refreshToken : null;
 }
 
-export function invalid_response(msg: string, field?: string, errorCode?: number): ApiResponse {
+export function invalidResponse(msg: string, field?: string, errorCode?: number): ApiResponse {
 	const response: ApiResponse = {
 		success: false,
 		data: {},
@@ -73,7 +73,7 @@ export function invalid_response(msg: string, field?: string, errorCode?: number
 	return response;
 }
 
-export async function send_email(recipient: string, subject: string, message: string, attachments?: string[]) {
+export async function sendEmail(recipient: string, subject: string, message: string, attachments?: string[]) {
 	let transporter = nodemailer.createTransport({
 		host: 'smtp.gmail.com',
 		port: 465,
