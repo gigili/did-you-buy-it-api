@@ -27,14 +27,14 @@ To get started on developing this project firs you need to do
   cd did-you-buy-it
 ```
 
-Than you need to import the database from `assets/dybi.sql` file.
+Then you need to import the database from `assets/dybi.sql` file.
 
 Example of import via CLI
 ```sh
   mysql -u {mysql_user} -p {db_name} < assets/dybi.sql
 ```
 
-Than rename `.env.example` into `.env` file and fill in all the values
+Then rename `.env.example` into `.env` file and fill in all the values
 
 After that you can run:
 
@@ -43,4 +43,4 @@ After that you can run:
   npm run dev
 ```
 
-If you do not specife a `PORT` value in the `.env` file the app will be available at `http://localohst:3030`
+If you do not specify a `PORT` value in the `.env` file the app will be available at `http://localohst:3030`
