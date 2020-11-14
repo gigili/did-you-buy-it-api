@@ -107,13 +107,13 @@ export function authenticateToken() {
 		const authHeader = req.headers["authorization"];
 		const token = authHeader && authHeader.split(" ")[1];
 
-		if (token == null) {
-			return res.status(401).send({"success": false, "message": "Invalid token #1"});
+		if (!token) {
+			return res.status(401).send({"success": false, "message": "Token is missing."});
 		}
 
 		jwt.verify(token, getEnvVar(EnvVars.JWT_SECRET), (err: typeof VerifyErrors | null, user?: { user: { id: number, username: string } }) => {
 			if (err) {
-				return res.status(401).send({"success": false, "message": "Invalid token #2"});
+				return res.status(401).send({"success": false, "message": "Unable to verify token"});
 			}
 
 			/*if (requiredPower !== null && user) {
@@ -128,7 +128,7 @@ export function authenticateToken() {
 			if (typeof user !== "undefined") {
 				Object.assign(req, {user: user.user});
 			} else {
-				return res.status(401).send({"success": false, "message": "Invalid token. #3"});
+				return res.status(401).send({"success": false, "message": "Invalid token."});
 			}
 
 			next(); // pass the execution off to whatever request the client intended

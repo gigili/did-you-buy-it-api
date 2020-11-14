@@ -9,9 +9,9 @@
     * [x] Create list
     * [x] Update list
     * [x] Delete list
-    * [ ] List users that have access to the list
-    * [ ] Allow other users access to the list
-    * [ ] Remove users from the list
+    * [x] List users that have access to the list
+    * [x] Allow other users access to the list
+    * [x] Remove users from the list
   * [ ] List items
     * [ ] Add list item
     * [ ] Update list item
