@@ -83,7 +83,7 @@ export function updateDbRecord(table: string, data: {}, whereCondition: string):
 
 	query = query.slice(0, -1);
 	query += ` WHERE ${whereCondition};`;
-	console.log(query);
+
 	return executeQuery(query, Object.values(data));
 }
 

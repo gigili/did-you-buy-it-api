@@ -97,6 +97,18 @@ const listModel = {
 		}
 
 		return deleteDbRecord(TABLES.ListUsers, ` listID = ${listID} AND userID = ${userID}`);
+	},
+
+	hasAccessToList(listID: number, userID: number) {
+		//accessLevel 1 = Owner of the list
+		//accessLevel 2 = Guest user on the list
+		const query = `
+			SELECT l.id, IF(lu.userID = ${userID}, '2', '1') as accessLevel FROM ${TABLES.Lists} AS l 
+			LEFT JOIN ${TABLES.ListUsers} AS lu ON lu.listID = l.id
+			WHERE l.id = ? AND (l.userID = ? OR lu.userID = ?);
+		`;
+
+		return executeQuery(query, [listID, userID, userID], {singleResult: true});
 	}
 }
 
