@@ -44,7 +44,7 @@ export async function executeQuery(query: string, params?: any[], args?: Databas
 	return dbResult;
 }
 
-export function addDbRecord(table: string, data: {}) { //: Promise<DatabaseResult<any>> {
+export function addDbRecord(table: string, data: {}) : Promise<DatabaseResult<any>> {
 	let query = `INSERT INTO ${table} (`;
 
 	Object.keys(data).forEach(key => {
@@ -62,4 +62,22 @@ export function addDbRecord(table: string, data: {}) { //: Promise<DatabaseResul
 	query += `);`;
 
 	return executeQuery(query, Object.values(data));
+}
+
+export function updateDbRecord(table: string, data: {}, whereCondition : string): Promise<DatabaseResult<any>>{
+  let query = `UPDATE ${table} SET`;
+  
+  Object.keys(data).forEach(column => {
+    query += `${column} = ?,`
+  });
+
+  query = query.slice(0, -1);
+  query += ` WHERE ${whereCondition};`;
+
+  return executeQuery(query, Object.values(data));
+}
+
+export function deleteDbRecord(table : string, whereCondition: string){
+  const query = `DELETE FROM ${table} WHERE ${whereCondition};`;
+  return executeQuery(query);
 }
