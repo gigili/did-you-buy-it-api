@@ -8,7 +8,6 @@ const app = express();
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const cors = require('cors')
-require('dotenv').config();
 
 app.use(cors({
 	"origin": "*",
