@@ -19,15 +19,6 @@ export type UserModel = {
 	date_registered: number
 }
 
-type LoginResponse = {
-	user: UserModel | null,
-	token: TokenData | null,
-	error?: {
-		message?: string,
-		code?: number
-	}
-}
-
 type RegistrationParameters = {
 	name: string,
 	email: string,
@@ -86,7 +77,7 @@ const userModel = {
 		const response: ModelResponse = {data: {}};
 
 		const result = await executeQuery(
-			`SELECT id, username, email  FROM ${TABLES.Users} WHERE username = ? OR email = ?`,
+			`SELECT id, username, email FROM ${TABLES.Users} WHERE username = ? OR email = ?`,
 			[username, email],
 			{singleResult: true}
 		) as DatabaseResult<UserModel>;

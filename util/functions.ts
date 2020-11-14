@@ -1,10 +1,10 @@
 import {DatabaseResult} from "./types/database";
 import {RefreshToken} from "../models/refreshTokenModel";
-import {ApiResponse, TokenData} from "./types";
+import {ApiResponse, EnvVars, TokenData} from "./types";
 
 const refreshTokenModel = require("../models/refreshTokenModel");
 const jwt = require("jsonwebtoken");
-const privateKey = process.env.JWT_SECRET;
+const privateKey = getEnvVar(EnvVars.JWT_SECRET);
 const nodemailer = require("nodemailer");
 
 export async function generateToken(userData: { id: number, username: string }, shouldGenerateRefreshToken: Boolean = true): Promise<TokenData> {
@@ -79,8 +79,8 @@ export async function sendEmail(recipient: string, subject: string, message: str
 		port: 465,
 		secure: true, // true for 465, false for other ports
 		auth: {
-			user: process.env.EMAIL_USER,
-			pass: process.env.EMAIL_PASSWORD
+			user: getEnvVar(EnvVars.EMAIL_USER),
+			pass: getEnvVar(EnvVars.EMAIL_PASSWORD)
 		}
 	});
 
@@ -93,4 +93,8 @@ export async function sendEmail(recipient: string, subject: string, message: str
 			address: "support@didyoubuyit.local"
 		}
 	});
+}
+
+export function getEnvVar(key: string) {
+	return process.env[key]
 }

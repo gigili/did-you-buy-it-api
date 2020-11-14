@@ -1,5 +1,7 @@
 import {DatabaseArguments, DatabaseResult} from "./types/database";
 import {Connection} from "mysql2";
+import {getEnvVar} from "./functions";
+import {EnvVars} from "./types";
 
 const mysql = require('mysql2/promise');
 
@@ -21,11 +23,11 @@ let connection: Connection;
 export async function getConnection(): Promise<Connection> {
 	if (connection !== undefined) return connection;
 	connection = await mysql.createConnection({
-		host: process.env.MYSQL_HOST,
-		port: process.env.MYSQL_PORT,
-		user: process.env.MYSQL_USER,
-		password: process.env.MYSQL_PASSWORD,
-		database: process.env.MYSQL_DATABASE
+		host: getEnvVar(EnvVars.MYSQL_HOST),
+		port: getEnvVar(EnvVars.MYSQL_PORT),
+		user: getEnvVar(EnvVars.MYSQL_USER),
+		password: getEnvVar(EnvVars.MYSQL_PASSWORD),
+		database: getEnvVar(EnvVars.MYSQL_DATABASE)
 	});
 	return connection;
 }
@@ -53,7 +55,7 @@ export async function executeQuery(query: string, params?: any[], args?: Databas
 	return dbResult;
 }
 
-export function addDbRecord(table: string, data: {}) : Promise<DatabaseResult<any>> {
+export function addDbRecord(table: string, data: {}): Promise<DatabaseResult<any>> {
 	let query = `INSERT INTO ${table} (`;
 
 	Object.keys(data).forEach(key => {
@@ -73,20 +75,20 @@ export function addDbRecord(table: string, data: {}) : Promise<DatabaseResult<an
 	return executeQuery(query, Object.values(data));
 }
 
-export function updateDbRecord(table: string, data: {}, whereCondition : string): Promise<DatabaseResult<any>>{
-  let query = `UPDATE ${table} SET`;
+export function updateDbRecord(table: string, data: {}, whereCondition: string): Promise<DatabaseResult<any>> {
+	let query = `UPDATE ${table} SET`;
 
 	Object.keys(data).forEach(column => {
-    query += `${column} = ?,`
-  });
+		query += `${column} = ?,`
+	});
 
-  query = query.slice(0, -1);
-  query += ` WHERE ${whereCondition};`;
+	query = query.slice(0, -1);
+	query += ` WHERE ${whereCondition};`;
 
-  return executeQuery(query, Object.values(data));
+	return executeQuery(query, Object.values(data));
 }
 
-export function deleteDbRecord(table : string, whereCondition: string){
-  const query = `DELETE FROM ${table} WHERE ${whereCondition};`;
-  return executeQuery(query);
+export function deleteDbRecord(table: string, whereCondition: string) {
+	const query = `DELETE FROM ${table} WHERE ${whereCondition};`;
+	return executeQuery(query);
 }
