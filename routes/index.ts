@@ -59,20 +59,20 @@ router.post("/register", checkSchema(registerSchema), async (req: Request, res: 
 
 router.get("/test", async (req: Request, res: Response) => {
 	const status = await sendEmail(
-		"mr.gigiliIII@gmail.com",
-		"Test HTML email",
+		"github@igorilic.net",
+		"Confirm your email address | Did You Buy It?",
 		{
-			file: "default",
+			file: "confirm_email",
 			data: {
 				emailTitle: "Confirm your email address",
 				emailPreview: "Click the link in the message to confirm your email address and active your account",
-				emailBody: `Here is the link to confirm your email address: <a href='#'>Google.com</a>`
+				userFullName: "Igor Ilic",
+				activationCode: "super-random-secure-activation-code"
 			}
 		});
 
 	res.send({
-		success: true,
-		status
+		success: status,
 	});
 });
 

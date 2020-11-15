@@ -76,7 +76,7 @@ export function invalidResponse(msg: string, field?: string, errorCode?: number)
 	return response;
 }
 
-export async function sendEmail(recipient: string, subject: string, template: { file: string, data: any }, attachments?: string[]) {
+export async function sendEmail(recipient: string, subject: string, template: { file: string, data: {} }, attachments?: string[]) {
 	const Email = require("email-templates");
 
 	const transporter = nodemailer.createTransport({
@@ -87,7 +87,6 @@ export async function sendEmail(recipient: string, subject: string, template: { 
 			user: getEnvVar(EnvVars.EMAIL_USER),
 			pass: getEnvVar(EnvVars.EMAIL_PASSWORD)
 		}
-
 	});
 
 	try {
@@ -118,7 +117,6 @@ export async function sendEmail(recipient: string, subject: string, template: { 
 			});
 		return true;
 	} catch (e) {
-		console.error(e);
 		return false;
 	}
 }

@@ -838,8 +838,31 @@
                                                 <td valign="top" class="mcnTextContent"
                                                     style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-                                                    <%- emailBody %>
-                                                    &nbsp;
+                                                    Dear <%= userFullName %>,<br/><br/>
+
+                                                    thank you for creating an account for the <a
+                                                            href="https://didyoubuyit.com/"
+                                                            title="Did you buy it website link">Did You Buy It?</a> app.<br/><br/>
+
+                                                    To active your account and confirm your email address so that you
+                                                    can begin using our app we need you to confirm your email
+                                                    address.<br/><br/>
+
+                                                    To confirm your email address please click on the button below or
+                                                    copy and paste the link below the button if the button is not
+                                                    working<br/><br/>
+
+                                                    <center>
+                                                        <a class="mcnButton"
+                                                           href="https://didyoubuyit.com/api/activate/<%= activationCode %>">Confirm
+                                                            your emaill</a><br/>
+                                                        <p>
+                                                            https://didyoubuyit.com/api/activate/<%= activationCode %></p>
+                                                    </center>
+                                                    <br/>
+
+                                                    Best regards,<br/>
+                                                    Did You Buy It? team
                                                 </td>
                                             </tr>
                                             </tbody>
