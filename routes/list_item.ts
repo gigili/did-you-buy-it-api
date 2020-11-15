@@ -16,8 +16,8 @@ router.get("/:listID", authenticateToken(), async (req: Request, res: Response) 
 
 	const itemResult = await listItemModel.getListItems(parseInt(req.params.listID));
 
-	if (!itemResult.success) {
-		return res.status(400).send(invalidResponse("Unable to get list items."));
+	if (!itemResult.error) {
+		return res.status(400).send(invalidResponse(itemResult.error.message));
 	}
 
 	res.send({
@@ -43,7 +43,7 @@ router.post("/:listID", checkSchema(newListItemSchema), authenticateToken(), asy
 
 	const newItemResult = await listItemModel.addListItem(parseInt(req.params.listID), name, is_repeating, req.user.id);
 
-	if (!newItemResult.success) {
+	if (newItemResult.error) {
 		return res.status(newItemResult.error.code || 400).send(invalidResponse(newItemResult.error.message));
 	}
 
@@ -75,7 +75,7 @@ router.patch("/:listID/:itemID", checkSchema(editListItemSchema), authenticateTo
 		parseInt(req.params.itemID)
 	);
 
-	if (!editItemResult.success || editItemResult.error) {
+	if (editItemResult.error) {
 		return res.status(editItemResult.error.code || 400).send(invalidResponse(editItemResult.error.message));
 	}
 
@@ -103,7 +103,7 @@ router.delete("/:listID/:itemID", checkSchema(deleteListItemSchema), authenticat
 		req.user.id
 	);
 
-	if (!deleteItemResult.success || deleteItemResult.error) {
+	if (deleteItemResult.error) {
 		return res.status(deleteItemResult.error.code || 400).send(invalidResponse(deleteItemResult.error.message));
 	}
 

@@ -1,6 +1,6 @@
 import {DatabaseResult} from "./types/database";
 import {RefreshToken} from "../models/refreshTokenModel";
-import {ApiResponse, EnvVars, TokenData} from "./types";
+import {ApiResponse, EnvVars, ModelResponse, TokenData} from "./types";
 import {NextFunction, Response} from "express";
 import {Request} from "./types/request";
 
@@ -134,4 +134,24 @@ export function authenticateToken() {
 			next(); // pass the execution off to whatever request the client intended
 		});
 	};
+}
+
+export function returnModelResponse(response: ModelResponse<any>, result?: DatabaseResult<any>): ModelResponse<any> {
+	if (response.error) return response;
+
+	if (result) {
+		if (result.success) {
+			response.data = result.data;
+			if (response.error) delete response.error;
+		} else {
+			response.error = {
+				message: result.error?.message,
+				code: result.error?.code
+			};
+		}
+	}
+
+	if (response.data) delete response.data;
+
+	return response;
 }

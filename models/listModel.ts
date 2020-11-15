@@ -1,7 +1,8 @@
 import "../util/db";
 import {addDbRecord, deleteDbRecord, executeQuery, TABLES, updateDbRecord} from "../util/db";
-import {DatabaseResult} from "../util/types/database";
+import {DatabaseResult, DefaultDatabaseResult} from "../util/types/database";
 import {ModelResponse} from "../util/types";
+import {returnModelResponse} from "../util/functions";
 
 export type List = {
 	id: number,
@@ -9,38 +10,56 @@ export type List = {
 	name: string,
 	date_created: number
 }
+
 export type ListUser = {
 	userID: number,
 	userFullName: string,
 	status: string
 }
 
+export type ListAccess = {
+	id: number,
+	access: string
+}
+
 const listModel = {
-	getList(listID: number, ownerID: number): Promise<DatabaseResult<List>> {
-		return executeQuery(
+	async getList(listID: number, ownerID: number): Promise<ModelResponse<List>> {
+		const response: ModelResponse<List> = {data: {id: 0, userID: 0, name: "", date_created: 0}};
+		const result = await executeQuery(
 			`SELECT * FROM ${TABLES.Lists} WHERE id = ? AND userID = ?`,
 			[listID, ownerID],
 			{singleResult: true}
 		);
+
+		return returnModelResponse(response, result);
 	},
 
-	getListsForUser(userID: number): Promise<DatabaseResult<List>> {
-		return executeQuery(`SELECT * FROM ${TABLES.Lists} WHERE userID = ?`, [userID]);
+	async getListsForUser(userID: number): Promise<ModelResponse<List[]>> {
+		const response: ModelResponse<List[]> = {data: []};
+		const result = await executeQuery(`SELECT * FROM ${TABLES.Lists} WHERE userID = ?`, [userID]);
+		return returnModelResponse(response, result);
 	},
 
-	createList(name: string, userID: number): Promise<DatabaseResult<any>> {
-		return addDbRecord(TABLES.Lists, {name, userID});
+	async createList(name: string, userID: number): Promise<ModelResponse<DefaultDatabaseResult>> {
+		const response: ModelResponse<DefaultDatabaseResult> = {data: {}};
+		const result = await addDbRecord(TABLES.Lists, {name, userID});
+		return returnModelResponse(response, result);
 	},
 
-	updateList(listID: number, name: string, userID: number): Promise<DatabaseResult<any>> {
-		return updateDbRecord(TABLES.Lists, {name}, `id = ${listID} AND userID = ${userID}`);
+	async updateList(listID: number, name: string, userID: number): Promise<ModelResponse<DefaultDatabaseResult>> {
+		const response: ModelResponse<DefaultDatabaseResult> = {data: {}};
+		const result = await updateDbRecord(TABLES.Lists, {name}, `id = ${listID} AND userID = ${userID}`);
+		return returnModelResponse(response, result);
 	},
 
-	deleteList(listID: number, userID: number): Promise<DatabaseResult<any>> {
-		return deleteDbRecord(TABLES.Lists, `id = ${listID} AND userID = ${userID}`);
+	async deleteList(listID: number, userID: number): Promise<ModelResponse<DefaultDatabaseResult>> {
+		const response: ModelResponse<DefaultDatabaseResult> = {data: {}};
+		const result = await deleteDbRecord(TABLES.Lists, `id = ${listID} AND userID = ${userID}`);
+		return returnModelResponse(response, result);
 	},
 
-	getListUsers(listID: number, userID: number): Promise<DatabaseResult<ListUser>> {
+	async getListUsers(listID: number, userID: number): Promise<ModelResponse<ListUser>> {
+		const response: ModelResponse<ListUser> = {data: {userID: 0, status: "0", userFullName: ""}};
 		const query = `
 			SELECT u.id as userID, u.name as userFullName, lu.status FROM ${TABLES.Lists} AS l 
 			LEFT JOIN ${TABLES.ListUsers} AS lu ON lu.listID = l.id
@@ -48,58 +67,56 @@ const listModel = {
 			WHERE l.id = ? AND l.userID = ?;
 		`;
 
-		return executeQuery(query, [listID, userID]);
+		const result = await executeQuery(query, [listID, userID]);
+		return returnModelResponse(response, result);
 	},
 
-	async addListUser(listID: number, ownerID: number, userID: number): Promise<DatabaseResult<any> | ModelResponse> {
+	async addListUser(listID: number, ownerID: number, userID: number): Promise<DatabaseResult<any> | ModelResponse<DefaultDatabaseResult>> {
+		const response: ModelResponse<DefaultDatabaseResult> = {data: {}};
 		const listResponse = await this.getList(listID, ownerID);
 
-		if (!listResponse.success || !listResponse.data.hasOwnProperty("id") || (listResponse.data as List).userID !== ownerID) {
-			return {
-				error: {
-					message: "You can't add a user to the specified list.",
-					code: 401
-				}
-			} as ModelResponse;
+		if (listResponse.error || !listResponse.data.id || listResponse.data.userID !== ownerID) {
+			response.error = {
+				message: "You can't add a user to the specified list.",
+				code: 401
+			};
+		} else if (ownerID === userID) {
+			response.error = {
+				message: "You can't add your self to the list.",
+				code: 401
+			};
 		}
 
-		if (ownerID === userID) {
-			return {
-				error: {
-					message: "You can't add your self to the list.",
-					code: 401
-				}
-			} as ModelResponse;
-		}
+		if (response.error) return response;
 
-		return addDbRecord(TABLES.ListUsers, {listID, userID, status: "1"});
+		const result = await addDbRecord(TABLES.ListUsers, {listID, userID, status: "1"});
+		return returnModelResponse(response, result);
 	},
 
-	async deleteListUser(listID: number, ownerID: number, userID: number): Promise<DatabaseResult<any> | ModelResponse> {
+	async deleteListUser(listID: number, ownerID: number, userID: number): Promise<ModelResponse<DefaultDatabaseResult>> {
+		const response: ModelResponse<DefaultDatabaseResult> = {data: {}};
 		const listResponse = await this.getList(listID, ownerID);
 
-		if (!listResponse.success || !listResponse.data.hasOwnProperty("id") || (listResponse.data as List).userID !== ownerID) {
-			return {
-				error: {
-					message: "You can't remove a user from the specified list.",
-					code: 401
-				}
-			} as ModelResponse;
+		if (listResponse.error || !listResponse.data.id || listResponse.data.userID !== ownerID) {
+			response.error = {
+				message: "You can't remove a user from the specified list.",
+				code: 401
+			};
+		} else if (ownerID === userID) {
+			response.error = {
+				message: "You can't remove your self from the list.",
+				code: 401
+			};
 		}
 
-		if (ownerID === userID) {
-			return {
-				error: {
-					message: "You can't remove your self from the list.",
-					code: 401
-				}
-			} as ModelResponse;
-		}
+		if (response.error) return response;
 
-		return deleteDbRecord(TABLES.ListUsers, ` listID = ${listID} AND userID = ${userID}`);
+		const result = await deleteDbRecord(TABLES.ListUsers, ` listID = ${listID} AND userID = ${userID}`);
+		return returnModelResponse(response, result);
 	},
 
-	hasAccessToList(listID: number, userID: number) {
+	async hasAccessToList(listID: number, userID: number): Promise<ModelResponse<ListAccess>> {
+		const response: ModelResponse<ListAccess> = {data: {id: 0, access: "-1"}};
 		//accessLevel 1 = Owner of the list
 		//accessLevel 2 = Guest user on the list
 		const query = `
@@ -108,7 +125,8 @@ const listModel = {
 			WHERE l.id = ? AND (l.userID = ? OR lu.userID = ?);
 		`;
 
-		return executeQuery(query, [listID, userID, userID], {singleResult: true});
+		const result = await executeQuery(query, [listID, userID, userID], {singleResult: true});
+		return returnModelResponse(response, result);
 	}
 };
 

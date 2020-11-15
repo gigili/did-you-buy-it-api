@@ -1,6 +1,7 @@
 import {addDbRecord, deleteDbRecord, executeQuery, TABLES, updateDbRecord} from "../util/db";
-import {DatabaseResult} from "../util/types/database";
 import {ModelResponse} from "../util/types";
+import {returnModelResponse} from "../util/functions";
+import {DatabaseResult, DefaultDatabaseResult} from "../util/types/database";
 
 export type ListItem = {
 	id: number,
@@ -19,105 +20,104 @@ export type ListItem = {
 const listModel = require("./listModel");
 
 const listItemModel = {
-	getListItem(itemID: number): Promise<DatabaseResult<any>> {
-		return executeQuery(`SELECT * FROM ${TABLES.ListItems} WHERE id = ?`, [itemID], {singleResult: true});
+	async getListItem(itemID: number): Promise<ModelResponse<ListItem>> {
+		const result = await executeQuery(`SELECT * FROM ${TABLES.ListItems} WHERE id = ?`, [itemID], {singleResult: true});
+
+		return {
+			data: result.data,
+			error: result.error
+		} as ModelResponse<ListItem>;
 	},
 
-	getListItems(listID: number): Promise<DatabaseResult<ListItem>> {
-		return executeQuery(`SELECT * FROM ${TABLES.ListItems} WHERE listID = ?`, [listID]);
+	async getListItems(listID: number): Promise<ModelResponse<ListItem[]>> {
+		const result = await executeQuery(`SELECT * FROM ${TABLES.ListItems} WHERE listID = ?`, [listID]) as DatabaseResult<ListItem[]>;
+
+		return {
+			data: result.data,
+			error: result.error
+		} as ModelResponse<ListItem[]>;
 	},
 
-	async addListItem(listID: number, name: string, is_repeating: string, userID: number): Promise<DatabaseResult<any> | ModelResponse> {
+	async addListItem(listID: number, name: string, is_repeating: string, userID: number): Promise<ModelResponse<DefaultDatabaseResult>> {
+		const response: ModelResponse<DefaultDatabaseResult> = {data: {affectedRows: 0}};
 		const listResult = await listModel.hasAccessToList(listID, userID);
 
 		if (!listResult.success || !listResult.data.id) {
-			return {
-				error: {
-					message: "Can't add a new item to the specified list.",
-					code: 401
-				}
-			} as ModelResponse;
+			response.error = {
+				message: "Can't add a new item to the specified list.",
+				code: 401
+			};
+			return response;
 		}
 
-		return addDbRecord(TABLES.ListItems, {
+		const result = await addDbRecord(TABLES.ListItems, {
 			listID,
 			name,
 			is_repeating,
 			userID
 		});
+		return returnModelResponse(response, result);
 	},
 
-	async editListItem(listID: number, name: string, is_repeating: string, userID: number, itemID: number): Promise<DatabaseResult<any> | ModelResponse> {
+	async editListItem(listID: number, name: string, is_repeating: string, userID: number, itemID: number): Promise<ModelResponse<DefaultDatabaseResult>> {
+		const response: ModelResponse<DefaultDatabaseResult> = {data: {}};
 		const listResult = await listModel.hasAccessToList(listID, userID);
 		const itemResult = await this.getListItem(itemID);
 
 		if (!listResult.success || !listResult.data.id) {
-			return {
-				error: {
-					message: "Can't edit the selected item.",
-					code: 401
-				}
-			} as ModelResponse;
+			response.error = {
+				message: "Can't edit the selected item.",
+				code: 401
+			};
+		} else if (!itemResult.data || !itemResult.data.id) {
+			response.error = {
+				message: "Unable to find the selected item",
+				code: 400
+			};
+		} else if (listResult.data.access !== "1" && itemResult.data.userID !== userID) {
+			response.error = {
+				message: "You can only edit your own items",
+				code: 401
+			};
 		}
 
-		if (!itemResult.success || !itemResult.data.id) {
-			return {
-				error: {
-					message: "Unable to find the selected item",
-					code: 400
-				}
-			} as ModelResponse;
-		}
+		if (response.error) return response;
 
-		if (listResult.data.access !== "1" && itemResult.data.userID !== userID) {
-			return {
-				error: {
-					message: "You can only edit your own items",
-					code: 401
-				}
-			} as ModelResponse;
-		}
-
-		return updateDbRecord(TABLES.ListItems, {
+		const result = await updateDbRecord(TABLES.ListItems, {
 			listID,
 			name,
 			is_repeating,
 			userID
 		}, ` id = ${itemID} AND listID = ${listID}`);
+		return returnModelResponse(response, result);
 	},
 
-	async deleteListItem(listID: number, itemID: number, userID: number): Promise<DatabaseResult<any> | ModelResponse> {
+	async deleteListItem(listID: number, itemID: number, userID: number): Promise<ModelResponse<DefaultDatabaseResult>> {
+		const response: ModelResponse<DefaultDatabaseResult> = {data: {affectedRows: 0}};
 		const listResult = await listModel.hasAccessToList(listID, userID);
 		const itemResult = await this.getListItem(itemID);
 
 		if (!listResult.success || !listResult.data.id) {
-			return {
-				error: {
-					message: "Can't delete the selected item.",
-					code: 401
-				}
-			} as ModelResponse;
+			response.error = {
+				message: "Can't delete the selected item.",
+				code: 401
+			};
+		} else if (!itemResult.data || !itemResult.data.id) {
+			response.error = {
+				message: "Unable to find the selected item",
+				code: 400
+			};
+		} else if (listResult.data.access !== "1" && itemResult.data.userID !== userID) {
+			response.error = {
+				message: "You can only delete your own item",
+				code: 401
+			};
 		}
 
-		if (!itemResult.success || !itemResult.data.id) {
-			return {
-				error: {
-					message: "Unable to find the selected item",
-					code: 400
-				}
-			} as ModelResponse;
-		}
+		if (response.error) return response;
 
-		if (listResult.data.access !== "1" && itemResult.data.userID !== userID) {
-			return {
-				error: {
-					message: "You can only delete your own item",
-					code: 401
-				}
-			} as ModelResponse;
-		}
-
-		return deleteDbRecord(TABLES.ListItems, `listID = ${listID} AND id = ${itemID}`);
+		const result = await deleteDbRecord(TABLES.ListItems, `listID = ${listID} AND id = ${itemID}`);
+		return returnModelResponse(response, result);
 	}
 };
 

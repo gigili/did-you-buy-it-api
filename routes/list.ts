@@ -42,7 +42,7 @@ router.post("/", checkSchema(listSchema), authenticateToken(), async (req: Reque
 
 	const result = await listModel.createList(req.body.name, req.user.id);
 
-	if (!result.success) {
+	if (result.error) {
 		return res.status(400).send(invalidResponse(result.error?.message));
 	}
 
@@ -66,7 +66,7 @@ router.patch("/:listID", checkSchema(listUpdateSchema), authenticateToken(), asy
 
 	const result = await listModel.updateList(parseInt(req.params.listID), req.body.name, req.user.id);
 
-	if (!result.success) {
+	if (result.error) {
 		return res.status(400).send(invalidResponse(result.error?.message));
 	}
 
@@ -90,7 +90,7 @@ router.delete("/:listID", checkSchema(listDeleteSchema), authenticateToken(), as
 
 	const result = await listModel.deleteList(parseInt(req.params.listID), req.user.id);
 
-	if (!result.success) {
+	if (result.error) {
 		return res.status(400).send(invalidResponse(result.error?.message));
 	}
 
@@ -109,7 +109,7 @@ router.get("/:listID/users", authenticateToken(), async (req: Request, res: Resp
 
 	const result = await listModel.getListUsers(parseInt(req.params.listID), req.user.id);
 
-	if (!result.success) {
+	if (result.error) {
 		return res.status(500).send(invalidResponse("Unable to get list users."));
 	}
 
@@ -134,8 +134,8 @@ router.post("/:listID/users", checkSchema(newListUserSchema), authenticateToken(
 
 	const result = await listModel.addListUser(parseInt(req.params.listID), req.user.id, req.body.userID);
 
-	if (!result.success || result.error) {
-		return res.status(400).send(invalidResponse("Unable to add a user to the list."));
+	if (result.error) {
+		return res.status(400).send(invalidResponse(result.error.message));
 	}
 
 	res.status(201).send({
@@ -158,7 +158,7 @@ router.delete("/:listID/users", checkSchema(newListUserSchema), authenticateToke
 
 	const result = await listModel.deleteListUser(parseInt(req.params.listID), req.user.id, req.body.userID);
 
-	if (!result.success || result.error) {
+	if (result.error) {
 		return res.status(400).send(invalidResponse("Unable to removed a user from the list."));
 	}
 

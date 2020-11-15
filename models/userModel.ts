@@ -28,8 +28,8 @@ type RegistrationParameters = {
 
 
 const userModel = {
-	async login(username: string, password: string): Promise<ModelResponse> {
-		const response: ModelResponse = {data: {user: null, token: null}};
+	async login(username: string, password: string): Promise<ModelResponse<any>> {
+		const response: ModelResponse<any> = {data: {user: null, token: null}};
 
 		const result = await executeQuery(
 			`SELECT id, name, username, email, status  FROM ${TABLES.Users} WHERE username = ? AND password = ?`,
@@ -79,8 +79,8 @@ const userModel = {
 		return response;
 	},
 
-	async register({name, email, username, password}: RegistrationParameters): Promise<ModelResponse> {
-		const response: ModelResponse = {data: {}};
+	async register({name, email, username, password}: RegistrationParameters): Promise<ModelResponse<any>> {
+		const response: ModelResponse<any> = {data: {}};
 
 		const result = await executeQuery(
 			`SELECT id, username, email FROM ${TABLES.Users} WHERE username = ? OR email = ?`,
