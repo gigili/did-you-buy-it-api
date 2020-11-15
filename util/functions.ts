@@ -76,8 +76,10 @@ export function invalidResponse(msg: string, field?: string, errorCode?: number)
 	return response;
 }
 
-export async function sendEmail(recipient: string, subject: string, message: string, attachments?: string[]) {
-	let transporter = nodemailer.createTransport({
+export async function sendEmail(recipient: string, subject: string, template: { file: string, data: any }, attachments?: string[]) {
+	const Email = require("email-templates");
+
+	const transporter = nodemailer.createTransport({
 		host: "smtp.gmail.com",
 		port: 465,
 		secure: true, // true for 465, false for other ports
@@ -85,17 +87,40 @@ export async function sendEmail(recipient: string, subject: string, message: str
 			user: getEnvVar(EnvVars.EMAIL_USER),
 			pass: getEnvVar(EnvVars.EMAIL_PASSWORD)
 		}
+
 	});
 
-	return await transporter.sendMail({
-		to: recipient,
-		subject,
-		html: message,
-		from: {
-			name: "Did you buy it?",
-			address: "support@didyoubuyit.local"
-		}
-	});
+	try {
+		const email = new Email({
+			transport: transporter,
+			template: template.file,
+			locals: template.data,
+			send: true,
+			views: {
+				options: {
+					extension: "ejs"
+				}
+			}
+		});
+		await email
+			.send({
+				template: template.file,
+				locals: template.data,
+				message: {
+					subject: subject,
+					to: recipient,
+					from: {
+						name: "Did you buy it?",
+						address: "support@didyoubuyit.local"
+					}
+				},
+
+			});
+		return true;
+	} catch (e) {
+		console.error(e);
+		return false;
+	}
 }
 
 export function getEnvVar(key: string) {

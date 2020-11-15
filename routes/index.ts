@@ -1,6 +1,6 @@
 import {checkSchema, validationResult} from "express-validator";
 import {NextFunction, Request, Response} from "express";
-import {invalidResponse} from "../util/functions";
+import {invalidResponse, sendEmail} from "../util/functions";
 import {ApiResponse} from "../util/types";
 import {loginSchema, registerSchema} from "../util/schemaValidation/indexSchema";
 
@@ -55,6 +55,25 @@ router.post("/register", checkSchema(registerSchema), async (req: Request, res: 
 	res.send({
 		success: true
 	} as ApiResponse);
+});
+
+router.get("/test", async (req: Request, res: Response) => {
+	const status = await sendEmail(
+		"mr.gigiliIII@gmail.com",
+		"Test HTML email",
+		{
+			file: "default",
+			data: {
+				emailTitle: "Confirm your email address",
+				emailPreview: "Click the link in the message to confirm your email address and active your account",
+				emailBody: `Here is the link to confirm your email address: <a href='#'>Google.com</a>`
+			}
+		});
+
+	res.send({
+		success: true,
+		status
+	});
 });
 
 module.exports = router;

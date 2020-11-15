@@ -37,10 +37,8 @@ const userModel = {
 			{singleResult: true}
 		) as DatabaseResult<UserModel>;
 
-		if (!result.success || !result.data.hasOwnProperty("id")) {
-			if (response.error === undefined) {
-				response.error = {};
-			}
+		if (!result.success || !result.data.id) {
+			if (response.error === undefined) response.error = {};
 			response.error.message = "Account doesn't exist.";
 			response.error.code = 400;
 
@@ -50,9 +48,7 @@ const userModel = {
 		const user = result.data as UserModel;
 
 		if (user.status !== "1") {
-			if (response.error === undefined) {
-				response.error = {};
-			}
+			if (response.error === undefined) response.error = {};
 			response.error.message = "Account is not active.";
 			response.error.code = 400;
 
@@ -65,9 +61,7 @@ const userModel = {
 		}, true) as TokenData;
 
 		if (tokenData.error) {
-			if (response.error === undefined) {
-				response.error = {};
-			}
+			if (response.error === undefined) response.error = {};
 			response.error.message = "Login failed";
 			response.error.code = 400;
 			return response;
