@@ -66,7 +66,7 @@ const listItemModel = {
 					message: "Unable to find the selected item",
 					code: 400
 				}
-			} as ModelResponse
+			} as ModelResponse;
 		}
 
 		if (listResult.data.access !== "1" && itemResult.data.userID !== userID) {
@@ -75,7 +75,7 @@ const listItemModel = {
 					message: "You can only edit your own items",
 					code: 401
 				}
-			} as ModelResponse
+			} as ModelResponse;
 		}
 
 		return updateDbRecord(TABLES.ListItems, {
@@ -105,7 +105,7 @@ const listItemModel = {
 					message: "Unable to find the selected item",
 					code: 400
 				}
-			} as ModelResponse
+			} as ModelResponse;
 		}
 
 		if (listResult.data.access !== "1" && itemResult.data.userID !== userID) {
@@ -114,11 +114,11 @@ const listItemModel = {
 					message: "You can only delete your own item",
 					code: 401
 				}
-			} as ModelResponse
+			} as ModelResponse;
 		}
 
-		return deleteDbRecord(TABLES.ListItems, `listID = ${listID} AND id = ${itemID}`)
+		return deleteDbRecord(TABLES.ListItems, `listID = ${listID} AND id = ${itemID}`);
 	}
-}
+};
 
 module.exports = listItemModel;

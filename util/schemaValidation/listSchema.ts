@@ -8,7 +8,7 @@ export const listSchema: SchemaValidator = {
 			errorMessage: "List name can't be empty."
 		}
 	} as ValidatorsSchema
-}
+};
 
 export const listUpdateSchema: SchemaValidator = {
 	...listSchema,
@@ -17,7 +17,7 @@ export const listUpdateSchema: SchemaValidator = {
 		isInt: true,
 		toInt: true
 	} as ValidatorsSchema
-}
+};
 
 
 export const listDeleteSchema: SchemaValidator = {
@@ -26,7 +26,7 @@ export const listDeleteSchema: SchemaValidator = {
 		isInt: true,
 		toInt: true
 	} as ValidatorsSchema
-}
+};
 
 export const newListUserSchema: SchemaValidator = {
 	userID: {
@@ -42,4 +42,4 @@ export const newListUserSchema: SchemaValidator = {
 		isInt: true,
 		toInt: true
 	} as ValidatorsSchema
-}
+};

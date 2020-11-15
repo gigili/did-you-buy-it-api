@@ -3,7 +3,7 @@ import {Connection} from "mysql2";
 import {getEnvVar} from "./functions";
 import {EnvVars} from "./types";
 
-const mysql = require('mysql2/promise');
+const mysql = require("mysql2/promise");
 
 export enum TABLES {
 	Users = "users",
@@ -21,7 +21,9 @@ export enum TABLES {
 let connection: Connection;
 
 export async function getConnection(): Promise<Connection> {
-	if (connection !== undefined) return connection;
+	if (connection !== undefined) {
+		return connection;
+	}
 	connection = await mysql.createConnection({
 		host: getEnvVar(EnvVars.MYSQL_HOST),
 		port: getEnvVar(EnvVars.MYSQL_PORT),
@@ -78,7 +80,7 @@ export function updateDbRecord(table: string, data: {}, whereCondition: string):
 	let query = `UPDATE ${table} SET `;
 
 	Object.keys(data).forEach(column => {
-		query += `${column} = ?,`
+		query += `${column} = ?,`;
 	});
 
 	query = query.slice(0, -1);

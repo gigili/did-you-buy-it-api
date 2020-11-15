@@ -29,6 +29,6 @@ const RefreshTokenModel = {
 			[userID]
 		);
 	}
-}
+};
 
 module.exports = RefreshTokenModel;

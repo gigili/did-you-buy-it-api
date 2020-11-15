@@ -1,7 +1,7 @@
 export type DatabaseResult<T> = {
 	success: boolean,
 	data: T | T[],
-	error? : {
+	error?: {
 		message: string,
 		code: number
 	}

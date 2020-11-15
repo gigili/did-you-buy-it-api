@@ -38,9 +38,11 @@ const userModel = {
 		) as DatabaseResult<UserModel>;
 
 		if (!result.success || !result.data.hasOwnProperty("id")) {
-			if (response.error === undefined) response.error = {};
+			if (response.error === undefined) {
+				response.error = {};
+			}
 			response.error.message = "Account doesn't exist.";
-			response.error.code = 400
+			response.error.code = 400;
 
 			return response;
 		}
@@ -48,9 +50,11 @@ const userModel = {
 		const user = result.data as UserModel;
 
 		if (user.status !== "1") {
-			if (response.error === undefined) response.error = {};
+			if (response.error === undefined) {
+				response.error = {};
+			}
 			response.error.message = "Account is not active.";
-			response.error.code = 400
+			response.error.code = 400;
 
 			return response;
 		}
@@ -61,9 +65,11 @@ const userModel = {
 		}, true) as TokenData;
 
 		if (tokenData.error) {
-			if (response.error === undefined) response.error = {};
+			if (response.error === undefined) {
+				response.error = {};
+			}
 			response.error.message = "Login failed";
-			response.error.code = 400
+			response.error.code = 400;
 			return response;
 		}
 
@@ -84,7 +90,9 @@ const userModel = {
 
 		if (result.success) {
 			if (result.data.hasOwnProperty("id")) {
-				if (response.error === undefined) response.error = {};
+				if (response.error === undefined) {
+					response.error = {};
+				}
 
 				response.error.code = 400;
 
@@ -94,7 +102,9 @@ const userModel = {
 					response.error.message = "Email already taken.";
 				}
 
-				if (response.error.message) return response;
+				if (response.error.message) {
+					return response;
+				}
 			}
 		}
 
@@ -107,7 +117,9 @@ const userModel = {
 		});
 
 		if (!status.success || status.data.affectedRows === 0) {
-			if (response.error === undefined) response.error = {};
+			if (response.error === undefined) {
+				response.error = {};
+			}
 			response.error.message = "Registration failed.";
 			response.error.code = 500;
 		}

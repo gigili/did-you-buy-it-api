@@ -10,7 +10,9 @@ const router = express.Router();
 const listItemModel = require("../models/listItemModel");
 
 router.get("/:listID", authenticateToken(), async (req: Request, res: Response) => {
-	if (!req.params.listID) return res.status(400).send(invalidResponse("Missing list ID."));
+	if (!req.params.listID) {
+		return res.status(400).send(invalidResponse("Missing list ID."));
+	}
 
 	const itemResult = await listItemModel.getListItems(parseInt(req.params.listID));
 
@@ -21,7 +23,7 @@ router.get("/:listID", authenticateToken(), async (req: Request, res: Response) 
 	res.send({
 		success: true,
 		data: itemResult.data
-	} as ApiResponse)
+	} as ApiResponse);
 });
 
 router.post("/:listID", checkSchema(newListItemSchema), authenticateToken(), async (req: Request, res: Response) => {
@@ -33,7 +35,9 @@ router.post("/:listID", checkSchema(newListItemSchema), authenticateToken(), asy
 		return res.status(400).json(invalidResponse(msg, param));
 	}
 
-	if (!req.user) return res.status(400).send(invalidResponse("Missing token."));
+	if (!req.user) {
+		return res.status(400).send(invalidResponse("Missing token."));
+	}
 
 	const {name, is_repeating} = req.body;
 
@@ -45,7 +49,7 @@ router.post("/:listID", checkSchema(newListItemSchema), authenticateToken(), asy
 
 	res.status(201).send({
 		success: true
-	} as ApiResponse)
+	} as ApiResponse);
 });
 
 router.patch("/:listID/:itemID", checkSchema(editListItemSchema), authenticateToken(), async (req: Request, res: Response) => {
@@ -57,7 +61,9 @@ router.patch("/:listID/:itemID", checkSchema(editListItemSchema), authenticateTo
 		return res.status(400).json(invalidResponse(msg, param));
 	}
 
-	if (!req.user) return res.status(400).send(invalidResponse("Missing token."));
+	if (!req.user) {
+		return res.status(400).send(invalidResponse("Missing token."));
+	}
 
 	const {name, is_repeating} = req.body;
 
@@ -75,7 +81,7 @@ router.patch("/:listID/:itemID", checkSchema(editListItemSchema), authenticateTo
 
 	res.send({
 		success: true
-	} as ApiResponse)
+	} as ApiResponse);
 });
 
 router.delete("/:listID/:itemID", checkSchema(deleteListItemSchema), authenticateToken(), async (req: Request, res: Response) => {
@@ -87,7 +93,9 @@ router.delete("/:listID/:itemID", checkSchema(deleteListItemSchema), authenticat
 		return res.status(400).json(invalidResponse(msg, param));
 	}
 
-	if (!req.user) return res.status(400).send(invalidResponse("Missing token."));
+	if (!req.user) {
+		return res.status(400).send(invalidResponse("Missing token."));
+	}
 
 	const deleteItemResult = await listItemModel.deleteListItem(
 		parseInt(req.params.listID),
@@ -101,7 +109,7 @@ router.delete("/:listID/:itemID", checkSchema(deleteListItemSchema), authenticat
 
 	res.send({
 		success: true
-	} as ApiResponse)
+	} as ApiResponse);
 });
 
 module.exports = router;

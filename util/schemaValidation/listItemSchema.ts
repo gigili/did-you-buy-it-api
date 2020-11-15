@@ -28,7 +28,7 @@ export const editListItemSchema: SchemaValidator = {
 		isInt: true,
 		toInt: true,
 	} as ValidatorsSchema
-}
+};
 
 export const deleteListItemSchema = {
 	listID: {

@@ -36,7 +36,7 @@ export async function generateToken(userData: { id: number, username: string }, 
 			refresh_token: null,
 			expires: null,
 			error: "Unable to generate refresh token for the user!"
-		}
+		};
 	}
 
 	Object.assign(tokenData, {expiresIn: expiresAt});
@@ -78,7 +78,7 @@ export function invalidResponse(msg: string, field?: string, errorCode?: number)
 
 export async function sendEmail(recipient: string, subject: string, message: string, attachments?: string[]) {
 	let transporter = nodemailer.createTransport({
-		host: 'smtp.gmail.com',
+		host: "smtp.gmail.com",
 		port: 465,
 		secure: true, // true for 465, false for other ports
 		auth: {
@@ -99,7 +99,7 @@ export async function sendEmail(recipient: string, subject: string, message: str
 }
 
 export function getEnvVar(key: string) {
-	return process.env[key]
+	return process.env[key];
 }
 
 export function authenticateToken() {
@@ -133,5 +133,5 @@ export function authenticateToken() {
 
 			next(); // pass the execution off to whatever request the client intended
 		});
-	}
+	};
 }

@@ -3,7 +3,7 @@ import {SchemaValidator} from "../types";
 
 export const loginSchema: SchemaValidator = {
 	username: {
-		in: ['body'],
+		in: ["body"],
 		errorMessage: "Invalid username",
 		notEmpty: {
 			errorMessage: "Username can't be empty"
@@ -23,12 +23,12 @@ export const loginSchema: SchemaValidator = {
 		},
 		isString: true
 	} as ValidatorsSchema
-}
+};
 
 export const registerSchema: SchemaValidator = {
 	...loginSchema,
 	name: {
-		in: ['body'],
+		in: ["body"],
 		errorMessage: "Invalid name value",
 		notEmpty: {
 			errorMessage: "Name can't be empty"
@@ -47,4 +47,4 @@ export const registerSchema: SchemaValidator = {
 		},
 		isEmail: true
 	} as ValidatorsSchema
-}
+};

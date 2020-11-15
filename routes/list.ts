@@ -14,7 +14,7 @@ router.get("/", authenticateToken(), (req: Request, res: Response, _: NextFuncti
 	console.log(req.params);
 
 	res.status(200).send({
-		message: 'test'
+		message: "test"
 	});
 });
 
@@ -23,7 +23,7 @@ router.get("/:user", authenticateToken(), (req: Request, res: Response, _: NextF
 	console.log(req.params);
 
 	res.status(200).send({
-		message: 'test'
+		message: "test"
 	});
 });
 
@@ -100,8 +100,12 @@ router.delete("/:listID", checkSchema(listDeleteSchema), authenticateToken(), as
 });
 
 router.get("/:listID/users", authenticateToken(), async (req: Request, res: Response) => {
-	if (!req.params.listID) return res.status(400).send(invalidResponse("Missing list ID."));
-	if (!req.user) return res.status(400).send(invalidResponse("Invalid token."));
+	if (!req.params.listID) {
+		return res.status(400).send(invalidResponse("Missing list ID."));
+	}
+	if (!req.user) {
+		return res.status(400).send(invalidResponse("Invalid token."));
+	}
 
 	const result = await listModel.getListUsers(parseInt(req.params.listID), req.user.id);
 
@@ -124,7 +128,9 @@ router.post("/:listID/users", checkSchema(newListUserSchema), authenticateToken(
 		return res.status(400).json(invalidResponse(msg, param));
 	}
 
-	if (!req.user) return res.status(400).send(invalidResponse("Invalid token."));
+	if (!req.user) {
+		return res.status(400).send(invalidResponse("Invalid token."));
+	}
 
 	const result = await listModel.addListUser(parseInt(req.params.listID), req.user.id, req.body.userID);
 
@@ -146,7 +152,9 @@ router.delete("/:listID/users", checkSchema(newListUserSchema), authenticateToke
 		return res.status(400).json(invalidResponse(msg, param));
 	}
 
-	if (!req.user) return res.status(400).send(invalidResponse("Invalid token."));
+	if (!req.user) {
+		return res.status(400).send(invalidResponse("Invalid token."));
+	}
 
 	const result = await listModel.deleteListUser(parseInt(req.params.listID), req.user.id, req.body.userID);
 

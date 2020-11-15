@@ -60,7 +60,7 @@ const listModel = {
 					message: "You can't add a user to the specified list.",
 					code: 401
 				}
-			} as ModelResponse
+			} as ModelResponse;
 		}
 
 		if (ownerID === userID) {
@@ -69,10 +69,10 @@ const listModel = {
 					message: "You can't add your self to the list.",
 					code: 401
 				}
-			} as ModelResponse
+			} as ModelResponse;
 		}
 
-		return addDbRecord(TABLES.ListUsers, {listID, userID, status: '1'});
+		return addDbRecord(TABLES.ListUsers, {listID, userID, status: "1"});
 	},
 
 	async deleteListUser(listID: number, ownerID: number, userID: number): Promise<DatabaseResult<any> | ModelResponse> {
@@ -84,7 +84,7 @@ const listModel = {
 					message: "You can't remove a user from the specified list.",
 					code: 401
 				}
-			} as ModelResponse
+			} as ModelResponse;
 		}
 
 		if (ownerID === userID) {
@@ -93,7 +93,7 @@ const listModel = {
 					message: "You can't remove your self from the list.",
 					code: 401
 				}
-			} as ModelResponse
+			} as ModelResponse;
 		}
 
 		return deleteDbRecord(TABLES.ListUsers, ` listID = ${listID} AND userID = ${userID}`);
@@ -110,6 +110,6 @@ const listModel = {
 
 		return executeQuery(query, [listID, userID, userID], {singleResult: true});
 	}
-}
+};
 
 module.exports = listModel;
