@@ -87,7 +87,7 @@ CREATE TABLE `list_items` (
   CONSTRAINT `FK_ListItems_Bought_Users` FOREIGN KEY (`last_bought`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `FK_ListItems_Lists` FOREIGN KEY (`listID`) REFERENCES `lists` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_ListItems_Users` FOREIGN KEY (`userID`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,7 +96,7 @@ CREATE TABLE `list_items` (
 
 LOCK TABLES `list_items` WRITE;
 /*!40000 ALTER TABLE `list_items` DISABLE KEYS */;
-INSERT INTO `list_items` VALUES (1,1,'Test 1','femred-homepage25.png',1,'1',NULL,NULL),(7,2,'item #2','',1,'1',NULL,NULL),(31,1,'Test 3','laptopr_baterija4.png',1,'1',NULL,NULL),(45,1,'Test 4','',1,'0',NULL,NULL),(46,1,'Test 5','',1,'1',NULL,NULL),(47,1,'Test 6','lists4.png',1,'0',NULL,NULL),(48,1,'Test 7','',1,'1',NULL,NULL),(49,1,'Test 8','1497895882-1-49.jpg',1,'0',NULL,NULL),(50,1,'Test 9','1497895988-1-50.jpg',1,'1',NULL,NULL),(60,18,'Hljeb','',1,'1',NULL,NULL),(61,19,'cedevita','1517069599-1-61.jpg',1,'0',NULL,NULL),(62,20,'Stavka #1','',1,'0',NULL,NULL),(64,20,'Stavka #3','',11,'0',NULL,NULL),(76,18,'Kisela','',1,'1',NULL,NULL),(77,1,'Test list item #1','',1,'0',NULL,NULL);
+INSERT INTO `list_items` VALUES (1,1,'Test list item #3 - Edited',NULL,1,'1',NULL,NULL),(7,2,'item #2',NULL,1,'1',NULL,NULL),(31,1,'Test 3',NULL,1,'1',NULL,NULL),(45,1,'Test 4',NULL,1,'0',NULL,NULL),(46,1,'Test 5',NULL,1,'1',NULL,NULL),(47,1,'Test 6',NULL,1,'0',NULL,NULL),(48,1,'Test 7',NULL,1,'1',NULL,NULL),(49,1,'Test 8',NULL,1,'0',NULL,NULL),(50,1,'Test 9',NULL,1,'1',NULL,NULL),(60,18,'Hljeb',NULL,1,'1',NULL,NULL),(61,19,'cedevita',NULL,1,'0',NULL,NULL),(62,20,'Stavka #1',NULL,1,'0',NULL,NULL),(64,20,'Stavka #3',NULL,1,'0',NULL,NULL),(76,18,'Kisela',NULL,1,'1',NULL,NULL),(77,1,'Test list item #1',NULL,1,'0',NULL,NULL),(79,1,'Test list item #2',NULL,1,'1',NULL,NULL),(80,1,'Test list item #2',NULL,1,'1',NULL,NULL);
 /*!40000 ALTER TABLE `list_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -124,7 +124,6 @@ CREATE TABLE `list_users` (
 
 LOCK TABLES `list_users` WRITE;
 /*!40000 ALTER TABLE `list_users` DISABLE KEYS */;
-INSERT INTO `list_users` VALUES (1,13,'1');
 /*!40000 ALTER TABLE `list_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -264,7 +263,7 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `username` varchar(20) NOT NULL,
+  `username` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
   `image` varchar(255) NOT NULL DEFAULT 'default.png',
@@ -274,7 +273,7 @@ CREATE TABLE `users` (
   `status` enum('0','1') NOT NULL DEFAULT '0',
   `date_registered` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -283,7 +282,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Igor Ilic','gac','mr.gigiliIII@gmail.com','ec4136f96f2fa9dd52def83fe3a2097dd0cd657c37aa8096a4033e1a77a57a32','4204vQJD.jpeg',3,'english','f3b7a947f2','1','2017-04-17 13:43:18'),(5,'Test Tester','testUser','test@test.com','2a6e38a36408ccfde8dc8e17ce2b14d758dd13b5617dff9e5f54c9fb44576d59','default.png',0,'english','0b8e4ab7f4','1','2017-04-17 15:10:38'),(6,'Test Testing','test','test2@test.com','2a6e38a36408ccfde8dc8e17ce2b14d758dd13b5617dff9e5f54c9fb44576d59','default.png',0,'english','0n7e4b2tf4','1','2017-04-22 16:53:42'),(9,'Igor Test','test12','igorilicbl@gmail.com','85777f270ad7cf2a790981bbae3c4e484a1dc55e24a77390d692fbf1cffa12fa','default.png',0,'english','2566e74ece','1','2020-04-08 16:57:30'),(11,'Igor Ilic','test123456','test1234@test.com','e29785f6d4c556251ce8311016b0021479155ad6e6c451fc63d9104bff049fc0','default.png',0,'english','087cfa0a-7f27-','0','2020-11-13 20:36:32'),(12,'Igor Ilic','test1234','test123422@test.com','e29785f6d4c556251ce8311016b0021479155ad6e6c451fc63d9104bff049fc0','default.png',0,'english','45eefea7-2fbc-','0','2020-11-13 20:37:48'),(13,'Igor Ilic','test123aa4','test1234aa22@test.com','e29785f6d4c556251ce8311016b0021479155ad6e6c451fc63d9104bff049fc0','default.png',0,'english','a30e1088-c282-','0','2020-11-13 20:39:05');
+INSERT INTO `users` VALUES (1,'Igor Ilic','gac','mr.gigiliIII@gmail.com','ec4136f96f2fa9dd52def83fe3a2097dd0cd657c37aa8096a4033e1a77a57a32','4204vQJD.jpeg',3,'english','f3b7a947f2','1','2017-04-17 13:43:18'),(2,'Test Tester','testUser','test@test.com','2a6e38a36408ccfde8dc8e17ce2b14d758dd13b5617dff9e5f54c9fb44576d59','default.png',0,'english','0b8e4ab7f4','1','2017-04-17 15:10:38');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -296,4 +295,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-11-14 23:12:55
+-- Dump completed on 2020-11-18 21:54:18
