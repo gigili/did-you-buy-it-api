@@ -23,6 +23,9 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+
 const logger = require("morgan");
 app.use(logger("dev"));
 

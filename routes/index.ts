@@ -1,6 +1,6 @@
 import {checkSchema, validationResult} from "express-validator";
 import {NextFunction, Request, Response} from "express";
-import {invalidResponse, sendEmail} from "../util/functions";
+import {invalidResponse} from "../util/functions";
 import {ApiResponse} from "../util/types";
 import {loginSchema, registerSchema} from "../util/schemaValidation/indexSchema";
 
@@ -57,22 +57,26 @@ router.post("/register", checkSchema(registerSchema), async (req: Request, res: 
 	} as ApiResponse);
 });
 
-router.get("/test", async (req: Request, res: Response) => {
-	const status = await sendEmail(
-		"github@igorilic.net",
-		"Confirm your email address | Did You Buy It?",
-		{
-			file: "confirm_email",
-			data: {
-				emailTitle: "Confirm your email address",
-				emailPreview: "Click the link in the message to confirm your email address and active your account",
-				userFullName: "Igor Ilic",
-				activationCode: "super-random-secure-activation-code"
-			}
+router.get("/activate/:email/:activationKey", async (req: Request, res: Response) => {
+	if (!req.params.activationKey) {
+		return res.render("activate", {
+			message: "Invalid activation key",
+			type: "error"
 		});
+	}
 
-	res.send({
-		success: status,
+	const result = await userModel.activate(req.params.email, req.params.activationKey);
+
+	if (result.error) {
+		return res.render("activate", {
+			message: result.error.message,
+			type: "error"
+		});
+	}
+
+	return res.render("activate", {
+		message: "Account activated. You can login now.",
+		type: "success"
 	});
 });
 

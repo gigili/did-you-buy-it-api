@@ -9,8 +9,8 @@ export const loginSchema: SchemaValidator = {
 			errorMessage: "Username can't be empty"
 		},
 		isLength: {
-			errorMessage: "Username must be at least 3 characters",
-			options: {min: 3}
+			errorMessage: "Username must be between 3 and 50 characters",
+			options: {min: 3, max: 50}
 		},
 		isString: true
 	} as ValidatorsSchema,

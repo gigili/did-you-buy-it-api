@@ -41,6 +41,7 @@ export enum EnvVars {
 	JWT_SECRET = "JWT_SECRET",
 	EMAIL_USER = "EMAIL_USER",
 	EMAIL_PASSWORD = "EMAIL_PASSWORD",
+	BASE_URL = "BASE_URL"
 }
 
 export type TokenUser = {

@@ -1,7 +1,7 @@
-import {addDbRecord, executeQuery, TABLES} from "../util/db";
-import {DatabaseResult} from "../util/types/database";
-import {generateToken} from "../util/functions";
-import {ModelResponse, TokenData} from "../util/types";
+import {addDbRecord, executeQuery, TABLES, updateDbRecord} from "../util/db";
+import {DatabaseResult, DefaultDatabaseResult} from "../util/types/database";
+import {generateToken, getEnvVar, returnModelResponse, sendEmail} from "../util/functions";
+import {EnvVars, ModelResponse, TokenData} from "../util/types";
 
 const uuid = require("uuid");
 
@@ -102,12 +102,13 @@ const userModel = {
 			}
 		}
 
+		const activationKey = uuid.v4().slice(0, 14);
 		const status = await addDbRecord(TABLES.Users, {
 			name,
 			email,
 			username,
 			password,
-			activation_key: uuid.v4().slice(0, 14)
+			activation_key: activationKey
 		});
 
 		if (!status.success || status.data.affectedRows === 0) {
@@ -118,8 +119,61 @@ const userModel = {
 			response.error.code = 500;
 		}
 
+		if (!response.error) {
+			//Send an activation email
+			const emailSent = await sendEmail(
+				email,
+				"Confirm your email address | Did You Buy It?",
+				{
+					file: "confirm_email",
+					data: {
+						emailTitle: "Confirm your email address",
+						emailPreview: "Click the link in the message to confirm your email address and active your account.",
+						userFullName: name,
+						activationCode: activationKey,
+						email: email,
+						baseUrl: getEnvVar(EnvVars.BASE_URL)
+					}
+				});
+
+			if (!emailSent) {
+				if (response.error === undefined) response.error = {};
+
+				response.error.message = "Unable to send the activation email. Please use the contact form on the website.";
+				response.error.code = 500;
+			}
+		}
+
 		return response;
+	},
+
+	async activate(email: string, activationKey: string): Promise<ModelResponse<DefaultDatabaseResult>> {
+		const response: ModelResponse<DefaultDatabaseResult> = {data: {}};
+
+		const query = `SELECT id, username, status FROM ${TABLES.Users} WHERE email = ? AND activation_key = ?`;
+		const data = await executeQuery(query, [email, activationKey], {singleResult: true});
+
+		if (data.error) {
+			if (response.error === undefined) response.error = {};
+			response.error.message = "Unable to find the user account.";
+			response.error.code = 400;
+		} else if (data.success) {
+			if (!data.data.id) {
+				if (response.error === undefined) response.error = {};
+				response.error.message = "User account doesn't exist.";
+				response.error.code = 400;
+			} else if (data.data.status === "1") {
+				if (response.error === undefined) response.error = {};
+				response.error.message = "User account is already activated.";
+				response.error.code = 400;
+			}
+		}
+
+		if (response.error) return response;
+
+		const result = await updateDbRecord(TABLES.Users, {"status": "1"}, ` id = ${data.data.id}`);
+		return returnModelResponse(response, result);
 	}
-}
+};
 
 module.exports = userModel;
