@@ -38,11 +38,11 @@ const listItemModel = {
 		} as ModelResponse<ListItem[]>;
 	},
 
-	async addListItem(listID: number, name: string, is_repeating: string, userID: number): Promise<ModelResponse<DefaultDatabaseResult>> {
+	async addListItem(listID: number, name: string, is_repeating: string, userID: number, newImageName?: string): Promise<ModelResponse<DefaultDatabaseResult>> {
 		const response: ModelResponse<DefaultDatabaseResult> = {data: {affectedRows: 0}};
 		const listResult = await listModel.hasAccessToList(listID, userID);
 
-		if (!listResult.success || !listResult.data.id) {
+		if (listResult.error || !listResult.data.id) {
 			response.error = {
 				message: "Can't add a new item to the specified list.",
 				code: 401
@@ -50,12 +50,18 @@ const listItemModel = {
 			return response;
 		}
 
-		const result = await addDbRecord(TABLES.ListItems, {
+		const newListItemData = {
 			listID,
 			name,
 			is_repeating,
 			userID
-		});
+		};
+
+		if (newImageName && newImageName.length > 0) {
+			Object.assign(newListItemData, {image: newImageName});
+		}
+
+		const result = await addDbRecord(TABLES.ListItems, newListItemData);
 		return returnModelResponse(response, result);
 	},
 
@@ -64,7 +70,7 @@ const listItemModel = {
 		const listResult = await listModel.hasAccessToList(listID, userID);
 		const itemResult = await this.getListItem(itemID);
 
-		if (!listResult.success || !listResult.data.id) {
+		if (listResult.error || !listResult.data.id) {
 			response.error = {
 				message: "Can't edit the selected item.",
 				code: 401
@@ -97,7 +103,7 @@ const listItemModel = {
 		const listResult = await listModel.hasAccessToList(listID, userID);
 		const itemResult = await this.getListItem(itemID);
 
-		if (!listResult.success || !listResult.data.id) {
+		if (listResult.error || !listResult.data.id) {
 			response.error = {
 				message: "Can't delete the selected item.",
 				code: 401
@@ -117,6 +123,42 @@ const listItemModel = {
 		if (response.error) return response;
 
 		const result = await deleteDbRecord(TABLES.ListItems, `listID = ${listID} AND id = ${itemID}`);
+		return returnModelResponse(response, result);
+	},
+
+	async getImage(listID: number, itemID: number, userID: number): Promise<ModelResponse<ListItem>> {
+		const response: ModelResponse<ListItem> = {
+			data: {
+				id: 0,
+				image: "",
+				is_repeating: "0",
+				last_bought: 0,
+				last_bought_date: "",
+				listID: 0,
+				name: "",
+				status: "0",
+				userAddedFullName: "",
+				userBoughtFullName: "",
+				userID: 0
+			}
+		};
+		const listResult = await listModel.hasAccessToList(listID, userID);
+
+		if (listResult.error || !listResult.data.id) {
+			response.error = {
+				message: "Can't find the selected item.",
+				code: 401
+			};
+		}
+
+		if (response.error) return response;
+
+		const result = await executeQuery(
+			`SELECT image FROM ${TABLES.ListItems} WHERE id = ?`,
+			[itemID],
+			{singleResult: true}
+		);
+
 		return returnModelResponse(response, result);
 	}
 };

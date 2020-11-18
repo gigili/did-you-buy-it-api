@@ -7,6 +7,7 @@ import {EnvVars} from "./util/types";
 const PORT = getEnvVar(EnvVars.PORT) || 3030;
 const app = express();
 
+const fileUpload = require("express-fileupload");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -22,6 +23,15 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
+app.use(fileUpload({
+	limits: {fileSize: 50 * 1024 * 1024}, //5MB
+	useTempFiles: true,
+	tempFileDir: "/tmp/",
+	safeFileNames: true,
+	preserveExtension: true,
+	abortOnLimit: true,
+	responseOnLimit: "File size can't be bigger than 5MB."
+}));
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");

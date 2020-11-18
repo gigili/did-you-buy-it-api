@@ -3,5 +3,5 @@ import {TokenUser} from "./index";
 
 export interface Request extends core.Request {
 	user?: TokenUser;
-	lang?: string
+	lang?: string,
 }

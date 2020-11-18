@@ -5,7 +5,8 @@
 # Features
   * [x] Login
   * [x] Register 
-    * [ ] Send an activation email
+    * [x] Send an activation email
+    * [x] Activate user account
   * [x] Lists
     * [x] Create list
     * [x] Update list
@@ -15,11 +16,11 @@
     * [x] Remove users from the list
   * [ ] List items
     * [x] Add list item
-        * [ ] Add images
+        * [x] Add images
     * [x] Update list item
         * [ ] Mark item as bought
     * [x] Delete list item
-    * [ ] Add / remove images
+    * [x] Add / remove images
   * [ ] User profile
     * [ ] Edit profile
     * [ ] Delete profile

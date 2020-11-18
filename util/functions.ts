@@ -171,10 +171,10 @@ export function returnModelResponse(response: ModelResponse<any>, result?: Datab
 				message: result.error?.message,
 				code: result.error?.code
 			};
+
+			if (response.data) delete response.data;
 		}
 	}
-
-	if (response.data) delete response.data;
 
 	return response;
 }
