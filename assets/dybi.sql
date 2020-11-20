@@ -281,7 +281,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Igor Ilic','gac','mr.gigiliIII@gmail.com','ec4136f96f2fa9dd52def83fe3a2097dd0cd657c37aa8096a4033e1a77a57a32','4204vQJD.jpeg',3,'english','f3b7a947f2','1','2017-04-17 13:43:18'),(2,'Test Tester','testUser','test@test.com','2a6e38a36408ccfde8dc8e17ce2b14d758dd13b5617dff9e5f54c9fb44576d59','default.png',0,'english','0b8e4ab7f4','1','2017-04-17 15:10:38');
+INSERT INTO `users` VALUES (1,'Igor Ilic','gac','github@igorilic.net','ec4136f96f2fa9dd52def83fe3a2097dd0cd657c37aa8096a4033e1a77a57a32','4204vQJD.jpeg',3,'english','f3b7a947f2','1','2017-04-17 13:43:18'),(2,'Test Tester','testUser','test@test.com','2a6e38a36408ccfde8dc8e17ce2b14d758dd13b5617dff9e5f54c9fb44576d59','default.png',0,'english','0b8e4ab7f4','1','2017-04-17 15:10:38');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -294,4 +294,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-11-20 21:21:11
+-- Dump completed on 2020-11-20 21:21:53
