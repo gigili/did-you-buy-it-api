@@ -19,12 +19,12 @@
     * [x] Add list item
         * [x] Add images
     * [x] Update list item
-        * [ ] Mark item as bought
+        * [x] Mark item as bought
             * [ ] Send notification to other users of the list
     * [x] Delete list item
     * [x] Add / remove images
   * [ ] User profile
-    * [ ] Edit profile
+    * [x] Edit profile
     * [ ] Delete profile
 
 # Local setup

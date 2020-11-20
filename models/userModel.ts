@@ -1,9 +1,10 @@
-import {addDbRecord, executeQuery, TABLES, updateDbRecord} from "../util/db";
+import {addDbRecord, deleteDbRecord, executeQuery, TABLES, updateDbRecord} from "../util/db";
 import {DatabaseResult, DefaultDatabaseResult} from "../util/types/database";
 import {generateToken, getEnvVar, returnModelResponse, sendEmail} from "../util/functions";
 import {EnvVars, ModelResponse, TokenData} from "../util/types";
 
 const uuid = require("uuid");
+const fs = require("fs");
 
 export type UserModel = {
 	id: number,
@@ -13,10 +14,10 @@ export type UserModel = {
 	password?: string,
 	image?: string,
 	level?: number,
-	lang: string,
+	lang?: string,
 	activation_key?: string,
-	status: string,
-	date_registered: number
+	status?: string,
+	date_registered?: number
 }
 
 type RegistrationParameters = {
@@ -172,6 +173,59 @@ const userModel = {
 		if (response.error) return response;
 
 		const result = await updateDbRecord(TABLES.Users, {"status": "1"}, ` id = ${data.data.id}`);
+		return returnModelResponse(response, result);
+	},
+
+	async getUser(userID: number): Promise<ModelResponse<UserModel>> {
+		const response: ModelResponse<UserModel> = {data: {id: 0, name: "", username: "", email: ""}};
+
+		const query = `SELECT id, name, username, email, status, image FROM ${TABLES.Users} WHERE id = ?`;
+		const result = await executeQuery(query, [userID], {singleResult: true});
+		return returnModelResponse(response, result);
+	},
+
+	async update(name: string, email: string, userID: number, newImageName?: string): Promise<ModelResponse<DefaultDatabaseResult>> {
+		const response: ModelResponse<DefaultDatabaseResult> = {data: {}};
+
+		const userData = {
+			name, email
+		};
+
+		let oldUser;
+		if (newImageName) {
+			Object.assign(userData, {image: newImageName});
+
+			const oldUserResult = await this.getUser(userID);
+			if (!oldUserResult.error && oldUserResult.data.id) {
+				oldUser = oldUserResult.data;
+			}
+		}
+
+		const result = await updateDbRecord(TABLES.Users, userData, `id = ${userID}`);
+
+		if (!result.error && oldUser) {
+			const imagePath = `./public/images/user/${oldUser.image}`;
+			if (fs.existsSync(imagePath)) {
+				fs.rmSync(imagePath);
+			}
+		}
+
+		return returnModelResponse(response, result);
+	},
+
+	async closeAccount(userID: number): Promise<ModelResponse<DefaultDatabaseResult>> {
+		const response: ModelResponse<DefaultDatabaseResult> = {data: {}};
+		const oldUser = await this.getUser(userID);
+		const result = await deleteDbRecord(TABLES.Users, `id = ${userID}`);
+
+		if (!result.error && !oldUser.error) {
+			const image = oldUser.data.image;
+			const imagePath = `./public/images/user/${image}`;
+			if (fs.existsSync(imagePath)) {
+				fs.rmSync(imagePath);
+			}
+		}
+
 		return returnModelResponse(response, result);
 	}
 };

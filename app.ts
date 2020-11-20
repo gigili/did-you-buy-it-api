@@ -46,8 +46,10 @@ app.listen(PORT, () => {
 const indexRouter = require("./routes/index");
 const listRouter = require("./routes/list");
 const listItemRouter = require("./routes/list_item");
+const userRouter = require("./routes/user");
 
 app.use("/", indexRouter);
 app.use("/list", listRouter);
 app.use("/list/item", listItemRouter);
+app.use("/user", userRouter);
 
