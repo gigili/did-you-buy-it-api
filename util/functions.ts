@@ -12,8 +12,8 @@ const nodemailer = require("nodemailer");
 
 export async function generateToken(userData: { id: number, username: string }, shouldGenerateRefreshToken: Boolean = true): Promise<TokenData> {
 	let refreshToken = null;
-	let currentDate = new Date();
-	const expiresAt = (currentDate.setHours(currentDate.getHours() + 2));
+	let currentDate = Math.floor(Date.now() / 1000);
+	const expiresAt = currentDate + (2 * 3600); //2h
 	const tokenData = {
 		algorithm: "HS256",
 		issuer: "did-you-buy-it",
@@ -39,7 +39,7 @@ export async function generateToken(userData: { id: number, username: string }, 
 		};
 	}
 
-	Object.assign(tokenData, {expiresIn: expiresAt});
+	Object.assign(tokenData, {expiresIn: expiresAt, exp: expiresAt});
 	const accessToken = jwt.sign(tokenData, privateKey);
 
 	return {
@@ -125,7 +125,7 @@ export function getEnvVar(key: string) {
 	return process.env[key];
 }
 
-export function authenticateToken() {
+export function authenticateToken(requiredPower: number | null = null) {
 	return (req: Request, res: Response, next: NextFunction) => {
 		const authHeader = req.headers["authorization"];
 		const token = authHeader && authHeader.split(" ")[1];
@@ -134,24 +134,21 @@ export function authenticateToken() {
 			return res.status(401).send({"success": false, "message": "Token is missing."});
 		}
 
-		jwt.verify(token, getEnvVar(EnvVars.JWT_SECRET), (err: typeof VerifyErrors | null, user?: { user: { id: number, username: string } }) => {
+		jwt.verify(token, getEnvVar(EnvVars.JWT_SECRET), (err: typeof VerifyErrors | null, user?: { exp: number, user: { id: number, username: string, power?: number } }) => {
 			if (err) {
-				return res.status(401).send({"success": false, "message": "Unable to verify token"});
+				return res.status(401).send(invalidResponse("Unable to verify token"));
 			}
 
-			/*if (requiredPower !== null && user) {
-				if (requiredPower > user.power) {
-					return res.status(401).send({
-						"success": false,
-						"message": "Not authorized"
-					});
+			if (requiredPower !== null && user) {
+				if (requiredPower > (user.user.power || 0)) {
+					return res.status(401).send(invalidResponse("Not authorized"));
 				}
-			}*/
+			}
 
 			if (typeof user !== "undefined") {
 				Object.assign(req, {user: user.user});
 			} else {
-				return res.status(401).send({"success": false, "message": "Invalid token."});
+				return res.status(401).send(invalidResponse("Invalid token."));
 			}
 
 			next(); // pass the execution off to whatever request the client intended
@@ -164,7 +161,8 @@ export function returnModelResponse(response: ModelResponse<any>, result?: Datab
 
 	if (result) {
 		if (result.success) {
-			response.data = result.data;
+			console.log(response.data);
+			response.data = result.data ? response.data : [];
 			if (response.error) delete response.error;
 		} else {
 			response.error = {
