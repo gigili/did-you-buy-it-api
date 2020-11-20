@@ -52,7 +52,6 @@ export async function generateToken(userData: { id: number, username: string }, 
 export async function generateRefreshToken(tokenData: object, userID: number): Promise<string | null> {
 	const refreshToken = jwt.sign(tokenData, privateKey);
 	const result = await refreshTokenModel.addRefreshToken(userID, refreshToken);
-	console.log(result);
 	return result.success ? refreshToken : null;
 }
 
@@ -161,8 +160,7 @@ export function returnModelResponse(response: ModelResponse<any>, result?: Datab
 
 	if (result) {
 		if (result.success) {
-			console.log(response.data);
-			response.data = result.data ? response.data : [];
+			response.data = result.data ? result.data : [];
 			if (response.error) delete response.error;
 		} else {
 			response.error = {
@@ -175,4 +173,7 @@ export function returnModelResponse(response: ModelResponse<any>, result?: Datab
 	}
 
 	return response;
+}
+
+export function sendNotification(title: string, message: string, recipients: string[]) {
 }

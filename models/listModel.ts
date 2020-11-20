@@ -58,16 +58,20 @@ const listModel = {
 		return returnModelResponse(response, result);
 	},
 
-	async getListUsers(listID: number, userID: number): Promise<ModelResponse<ListUser>> {
-		const response: ModelResponse<ListUser> = {data: {userID: 0, status: "0", userFullName: ""}};
+	async getListUsers(listID: number, userID: number): Promise<ModelResponse<ListUser[]>> {
+		const response: ModelResponse<ListUser[]> = {data: []};
 		const query = `
-			SELECT u.id as userID, u.name as userFullName, lu.status FROM ${TABLES.Lists} AS l 
-			LEFT JOIN ${TABLES.ListUsers} AS lu ON lu.listID = l.id
+			SELECT u.id as userID, u.name as userFullName, lu.status FROM ${TABLES.ListUsers} AS lu 
+			LEFT JOIN ${TABLES.Lists} AS l ON lu.listID = l.id
 			LEFT JOIN ${TABLES.Users} AS u ON u.id = lu.userID
-			WHERE l.id = ? AND l.userID = ?;
+			WHERE l.id = ?
+			UNION ALL 
+			SELECT u.id, u.name, u.status FROM users AS u
+			LEFT JOIN lists AS l ON l.userID = u.id
+			WHERE l.id = ?;
 		`;
 
-		const result = await executeQuery(query, [listID, userID]);
+		const result = await executeQuery(query, [listID, listID]);
 		return returnModelResponse(response, result);
 	},
 

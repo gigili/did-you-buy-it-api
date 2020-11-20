@@ -11,8 +11,6 @@ const listModel = require("../models/listModel");
 
 //TODO: Create this
 router.get("/", authenticateToken(), (req: Request, res: Response, _: NextFunction) => {
-	console.log(req.params);
-
 	res.status(200).send({
 		message: "test"
 	});
@@ -20,8 +18,6 @@ router.get("/", authenticateToken(), (req: Request, res: Response, _: NextFuncti
 
 //TODO: Create this
 router.get("/:user", authenticateToken(), (req: Request, res: Response, _: NextFunction) => {
-	console.log(req.params);
-
 	res.status(200).send({
 		message: "test"
 	});

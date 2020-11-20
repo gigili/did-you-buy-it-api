@@ -14,11 +14,13 @@
     * [x] List users that have access to the list
     * [x] Allow other users access to the list
     * [x] Remove users from the list
+    * [ ] Autocomplete endpoint for when adding users ? 
   * [ ] List items
     * [x] Add list item
         * [x] Add images
     * [x] Update list item
         * [ ] Mark item as bought
+            * [ ] Send notification to other users of the list
     * [x] Delete list item
     * [x] Add / remove images
   * [ ] User profile

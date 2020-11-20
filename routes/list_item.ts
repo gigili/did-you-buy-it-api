@@ -105,6 +105,24 @@ router.patch("/:listID/:itemID", checkSchema(editListItemSchema), authenticateTo
 	} as ApiResponse);
 });
 
+router.patch("/:listID/:itemID/bought", authenticateToken(), async (req: Request, res: Response) => {
+	if (!req.user) {
+		return res.status(400).send(invalidResponse("Missing token."));
+	}
+
+	const result = await listItemModel.setItemBoughtStatus(parseInt(req.params.listID), parseInt(req.params.itemID), req.user.id);
+
+	if (result.error) {
+		return res.status(result.error.code).send(invalidResponse(result.error.message));
+	}
+
+	await listItemModel.sendBoughtNotification(parseInt(req.params.listID), parseInt(req.params.itemID), req.user.id, "android");
+
+	res.send({
+		success: true
+	} as ApiResponse);
+});
+
 router.delete("/:listID/:itemID", checkSchema(deleteListItemSchema), authenticateToken(), async (req: Request, res: Response) => {
 	const errors = validationResult(req);
 
