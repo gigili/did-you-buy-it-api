@@ -1,8 +1,8 @@
--- MariaDB dump 10.17  Distrib 10.5.6-MariaDB, for Linux (x86_64)
+-- MariaDB dump 10.18  Distrib 10.5.8-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: dybi
 -- ------------------------------------------------------
--- Server version	10.5.6-MariaDB
+-- Server version	10.5.8-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -124,6 +124,7 @@ CREATE TABLE `list_users` (
 
 LOCK TABLES `list_users` WRITE;
 /*!40000 ALTER TABLE `list_users` DISABLE KEYS */;
+INSERT INTO `list_users` VALUES (1,2,'1');
 /*!40000 ALTER TABLE `list_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -235,12 +236,10 @@ DROP TABLE IF EXISTS `user_token`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_token` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
   `userID` int(11) DEFAULT NULL,
   `token` varchar(255) NOT NULL,
-  `system` varchar(50) NOT NULL DEFAULT 'android',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
+  `system` varchar(50) NOT NULL DEFAULT 'android'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -249,7 +248,7 @@ CREATE TABLE `user_token` (
 
 LOCK TABLES `user_token` WRITE;
 /*!40000 ALTER TABLE `user_token` DISABLE KEYS */;
-INSERT INTO `user_token` VALUES (6,8,'fPfidoRRD4Q:APA91bHzi1oZtqwOjU_6xaxQHOgEf-r04R8XyWdWW_i0weassF-8jiU0OBWG0h_tUzHqf4tVqTXrN-ASKNwd_Rk8CQ8d2O8roc4lAVmn34w05h4yytzzBwvo-x1nTzMxe7AZxTs4ZyjI','android'),(10,6,'dXptKZO-O5E:APA91bH07a2UXiyjeP5dlA6U8Dl9OpeHXMtZnitC_MmZy07VFtTogZkt_WbsWSJvt9ytcj2ilXANlOzFMq8aAtexd19mEj0ZeXoAHs3vAP4HImyLfE__KGLxLcl7VGn-ClRAOWdic5js','android'),(16,9,'dyMldql9RNu_FG2L3zUaol:APA91bFvvS1K-4ULg-Jn658GiD3GfZYoo3Ab-DqqSZRWn6s9xD3pzoDCx9oLwX_5wIZmfAZIGWPR2eO4oEDfFsMum2lmywwgZKwFj0GsdBL7uS2T_fWnSkLpsDeqh2pJR0NijX6dfM4T','android'),(17,1,'dqZJq6n_RLOOwrjBPqT7_2:APA91bEPhvyOOk5blx_kzZY2sGIxzsu1gYyX67MLvTJ7H1gCL5t6L0c5qx41rw9BBHaC36JsJcoMoDY30uwCgS4E87caGQyy5fjPqlDKh_D25TyeWEJFs7z2xceaadmLwJyw0yR794ru','android');
+INSERT INTO `user_token` VALUES (1,'fPfidoRRD4Q:APA91bHzi1oZtqwOjU_6xaxQHOgEf-r04R8XyWdWW_i0weassF-8jiU0OBWG0h_tUzHqf4tVqTXrN-ASKNwd_Rk8CQ8d2O8roc4lAVmn34w05h4yytzzBwvo-x1nTzMxe7AZxTs4ZyjI','android'),(2,'dXptKZO-O5E:APA91bH07a2UXiyjeP5dlA6U8Dl9OpeHXMtZnitC_MmZy07VFtTogZkt_WbsWSJvt9ytcj2ilXANlOzFMq8aAtexd19mEj0ZeXoAHs3vAP4HImyLfE__KGLxLcl7VGn-ClRAOWdic5js','android'),(3,'dyMldql9RNu_FG2L3zUaol:APA91bFvvS1K-4ULg-Jn658GiD3GfZYoo3Ab-DqqSZRWn6s9xD3pzoDCx9oLwX_5wIZmfAZIGWPR2eO4oEDfFsMum2lmywwgZKwFj0GsdBL7uS2T_fWnSkLpsDeqh2pJR0NijX6dfM4T','android'),(4,'dqZJq6n_RLOOwrjBPqT7_2:APA91bEPhvyOOk5blx_kzZY2sGIxzsu1gYyX67MLvTJ7H1gCL5t6L0c5qx41rw9BBHaC36JsJcoMoDY30uwCgS4E87caGQyy5fjPqlDKh_D25TyeWEJFs7z2xceaadmLwJyw0yR794ru','android');
 /*!40000 ALTER TABLE `user_token` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -295,4 +294,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-11-18 21:54:18
+-- Dump completed on 2020-11-20 21:21:11
