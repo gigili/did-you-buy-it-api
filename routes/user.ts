@@ -4,21 +4,19 @@ import {Request} from "../util/types/request";
 import {ApiResponse} from "../util/types";
 import {checkSchema, validationResult} from "express-validator";
 import {updateUserProfileSchema} from "../util/schemaValidation/userSchema";
-import {connection} from "../app";
-import {User} from "../entity/User";
 
 const express = require("express");
 const router = express.Router();
+const userModel = require("../models/UserModel");
 const uploadHelper = require("../util/uploadHelper");
 const fs = require("fs");
-const userModel = connection.getRepository(User);
 
 router.get("/", authenticateToken(), async (req: Request, res: Response) => {
 	if (!req.user) {
 		return res.status(401).send(invalidResponse("Missing token."));
 	}
 
-	let user = await userModel.findOne({id: req.user.id});
+	const user = await userModel.getUser(req.user.id);
 
 	res.send({
 		success: true,
@@ -55,22 +53,13 @@ router.patch("/", authenticateToken(), checkSchema(updateUserProfileSchema), asy
 	}
 
 	const {name, email} = req.body;
-	const user = await userModel.findOne({id: req.user.id});
+	const result = userModel.update(name, email, req.user.id, newImageName);
 
-	if (user) {
-		user.name = name;
-		user.email = email;
+	if (result.error) {
 		if (newImageName) {
-			user.image = newImageName;
+			fs.rmSync(`./public/images/user/${newImageName}`);
 		}
-
-		const status = await userModel.save(user);
-		if (status !== user) {
-			if (newImageName) {
-				fs.rmSync(`./public/images/user/${newImageName}`);
-			}
-			return res.status(500).send(invalidResponse("Unable to update user profile"));
-		}
+		return res.status(result.error.code || 400).send(invalidResponse(result.error.message));
 	}
 
 	res.send({
@@ -83,19 +72,10 @@ router.delete("/", authenticateToken(), async (req: Request, res: Response) => {
 		return res.status(401).send(invalidResponse("Missing token."));
 	}
 
-	const user = await userModel.findOne({id: req.user.id});
-	if (user) {
-		const image = user.image;
-		const imagePath = `./public/images/user/${image}`;
-		if (fs.existsSync(imagePath)) {
-			fs.rmSync(imagePath);
-		}
-
-		const status = await userModel.remove(user);
-		if (status !== user) {
-			return res.status(500).send(invalidResponse("Unable to close user account"));
-		}
-	}
+	/*const result = await userModel.closeAccount(req.user.id);
+	if (result.error) {
+		return res.status(result.error.code).send(invalidResponse(result.error.message));
+	}*/
 
 	res.send({
 		success: true

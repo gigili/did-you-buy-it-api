@@ -1,24 +1,10 @@
-import {addDbRecord, deleteDbRecord, executeQuery, TABLES, updateDbRecord} from "../util/db";
-import {DatabaseResult, DefaultDatabaseResult} from "../util/types/database";
-import {generateToken, getEnvVar, returnModelResponse, sendEmail} from "../util/functions";
-import {EnvVars, ModelResponse, TokenData} from "../util/types";
+import {generateToken} from "../util/functions";
+import {TokenData} from "../util/types";
+import {connection} from "../app";
+import {UserEntity} from "../entity/UserEntity";
 
 const uuid = require("uuid");
 const fs = require("fs");
-
-export type UserModel = {
-	id: number,
-	name: string,
-	username: string,
-	email: string,
-	password?: string,
-	image?: string,
-	level?: number,
-	lang?: string,
-	activation_key?: string,
-	status?: string,
-	date_registered?: number
-}
 
 type RegistrationParameters = {
 	name: string,
@@ -27,33 +13,28 @@ type RegistrationParameters = {
 	password: string
 }
 
+const userEntity = connection.getRepository(UserEntity);
 
 const userModel = {
-	async login(username: string, password: string): Promise<ModelResponse<any>> {
-		const response: ModelResponse<any> = {data: {user: null, token: null}};
+	async login(username: string, password: string) {
+		const user = await userEntity.findOne({username: username, password: password});
 
-		const result = await executeQuery(
-			`SELECT id, name, username, email, status  FROM ${TABLES.Users} WHERE username = ? AND password = ?`,
-			[username, password],
-			{singleResult: true}
-		) as DatabaseResult<UserModel>;
-
-		if (!result.success || !result.data.id) {
-			if (response.error === undefined) response.error = {};
-			response.error.message = "Account doesn't exist.";
-			response.error.code = 400;
-
-			return response;
+		if (!user) {
+			return {
+				error: {
+					message: "Account doesn't exist",
+					code: 400
+				}
+			};
 		}
 
-		const user = result.data as UserModel;
-
 		if (user.status !== "1") {
-			if (response.error === undefined) response.error = {};
-			response.error.message = "Account is not active.";
-			response.error.code = 400;
-
-			return response;
+			return {
+				error: {
+					message: "Account is not active.",
+					code: 400
+				}
+			};
 		}
 
 		const tokenData = await generateToken({
@@ -62,18 +43,23 @@ const userModel = {
 		}, true) as TokenData;
 
 		if (tokenData.error) {
-			if (response.error === undefined) response.error = {};
-			response.error.message = "Login failed";
-			response.error.code = 400;
-			return response;
+			return {
+				error: {
+					message: "Login failed",
+					code: 500
+				}
+			};
 		}
 
-		response.data.user = user;
-		response.data.token = tokenData;
-
-		return response;
+		return {
+			data: {
+				user,
+				token: tokenData
+			}
+		};
 	},
 
+	/*
 	async register({name, email, username, password}: RegistrationParameters): Promise<ModelResponse<any>> {
 		const response: ModelResponse<any> = {data: {}};
 
@@ -228,6 +214,7 @@ const userModel = {
 
 		return returnModelResponse(response, result);
 	}
+	*/
 };
 
 module.exports = userModel;
