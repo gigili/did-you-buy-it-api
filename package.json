@@ -4,7 +4,8 @@
 	"description": "",
 	"main": "app.ts",
 	"scripts": {
-		"dev": "nodemon"
+		"dev": "nodemon",
+		"schema:sync": "ts-node node_modules/typeorm/cli.js schema:sync"
 	},
 	"keywords": [],
 	"author": "",
@@ -22,6 +23,8 @@
 		"mysql2": "^2.2.5",
 		"nodemailer": "^6.4.16",
 		"path": "^0.12.7",
+		"reflect-metadata": "^0.1.13",
+		"typeorm": "^0.2.29",
 		"uuid": "^8.3.1"
 	},
 	"devDependencies": {
