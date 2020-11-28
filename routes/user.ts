@@ -72,10 +72,10 @@ router.delete("/", authenticateToken(), async (req: Request, res: Response) => {
 		return res.status(401).send(invalidResponse("Missing token."));
 	}
 
-	/*const result = await userModel.closeAccount(req.user.id);
+	const result = await userModel.closeAccount(req.user.id);
 	if (result.error) {
 		return res.status(result.error.code).send(invalidResponse(result.error.message));
-	}*/
+	}
 
 	res.send({
 		success: true

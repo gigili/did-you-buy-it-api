@@ -155,7 +155,7 @@ export function authenticateToken(requiredPower: number | null = null) {
 	};
 }
 
-export function returnModelResponse(response: ModelResponse<any>, result?: DatabaseResult<any>): ModelResponse<any> {
+export function returnModelResponse(response: ModelResponse, result?: DatabaseResult<any>): ModelResponse {
 	if (response.error) return response;
 
 	if (result) {

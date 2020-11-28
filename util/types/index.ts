@@ -22,8 +22,8 @@ export type SchemaValidator = {
 	[key: string]: ValidatorsSchema
 }
 
-export type ModelResponse<T> = {
-	data: T,
+export type ModelResponse = {
+	data: any,
 	error?: {
 		message?: string,
 		code?: number

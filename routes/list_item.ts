@@ -10,7 +10,7 @@ const fs = require("fs");
 const uploadHelper = require("../util/uploadHelper");
 const express = require("express");
 const router = express.Router();
-const listItemModel = require("../models/listItemModel");
+const listItemModel = require("../models/ListItemModel");
 
 router.get("/:listID", authenticateToken(), async (req: Request, res: Response) => {
 	if (!req.params.listID) {
