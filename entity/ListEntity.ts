@@ -1,5 +1,6 @@
-import {Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn} from "typeorm";
 import {UserEntity} from "./UserEntity";
+import {ListItemEntity} from "./ListItemEntity";
 
 @Entity({
 	name: "list"
@@ -29,4 +30,7 @@ export class ListEntity {
 		name: "list_user"
 	})
 	users!: UserEntity[];
+
+	@OneToMany(() => ListItemEntity, items => items.list)
+	items!: ListItemEntity[];
 }

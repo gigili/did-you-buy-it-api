@@ -9,18 +9,14 @@ const express = require("express");
 const router = express.Router();
 const listModel = require("../models/ListModel");
 
-//TODO: Create this
-router.get("/", authenticateToken(), (req: Request, res: Response, _: NextFunction) => {
-	res.status(200).send({
-		message: "test"
-	});
-});
 
-//TODO: Create this
-router.get("/:user", authenticateToken(), (req: Request, res: Response, _: NextFunction) => {
-	res.status(200).send({
-		message: "test"
-	});
+router.get("/:listID", authenticateToken(), async (req: Request, res: Response, _: NextFunction) => {
+	if (!req.user) return res.status(401).send(invalidResponse("Missing token."));
+	const list = await listModel.getList(parseInt(req.params.listID), req.user.id);
+
+	if (list.error) return res.status(list.error.code).send(invalidResponse(list.error.message));
+
+	res.status(200).send(list);
 });
 
 router.post("/", checkSchema(listSchema), authenticateToken(), async (req: Request, res: Response) => {

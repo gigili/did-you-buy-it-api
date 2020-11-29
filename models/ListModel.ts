@@ -10,15 +10,23 @@ import {UserEntity} from "../entity/UserEntity";
 const listEntity = connection.getRepository(ListEntity);
 const userEntity = connection.getRepository(UserEntity);
 
+export type HasAccessType = {
+	hasAccess: boolean,
+	isOwner: boolean,
+	isGuest: boolean
+}
+
 const ListModel = {
 	async getList(listID: number, ownerID: number): Promise<ModelResponse> {
 		const response: ModelResponse = {data: {}};
 
-		const user = await userEntity.findOne({id: ownerID});
-		response.data = await listEntity.findOne({
-			id: listID,
-			user: user
-		});
+		response.data = await connection.getRepository(ListEntity)
+			.createQueryBuilder("l")
+			.leftJoinAndSelect("l.users", "users")
+			.leftJoinAndSelect("l.user", "owner")
+			.leftJoinAndSelect("l.items", "items")
+			.where("l.id = :listID AND l.userID = :ownerID", {listID, ownerID})
+			.getOne();
 
 		return response;
 	},
@@ -265,18 +273,25 @@ const ListModel = {
 		return response;
 	},
 
-	async hasAccessToList(listID: number, userID: number): Promise<ModelResponse> {
-		const response: ModelResponse = {data: {id: 0, access: "-1"}};
-		//accessLevel 1 = Owner of the list
-		//accessLevel 2 = Guest user on the list
-		const query = `
-			SELECT l.id, IF(lu.userID = ${userID}, '2', '1') as accessLevel FROM ${TABLES.Lists} AS l 
-			LEFT JOIN ${TABLES.ListUsers} AS lu ON lu.listID = l.id
-			WHERE l.id = ? AND (l.userID = ? OR lu.userID = ?);
-		`;
+	async hasAccessToList(listID: number, userID: number) {
+		const response: ModelResponse = {data: {}};
+		const list = await this.getList(listID, userID);
 
-		const result = await executeQuery(query, [listID, userID, userID], {singleResult: true});
-		return returnModelResponse(response, result);
+		if (list.error) {
+			response.error = list.error;
+			return response;
+		}
+
+		const isListOwner = list.data.user.id === userID;
+		const isListGuest = list.data.users.some((usr: UserEntity) => usr.id === userID);
+
+		response.data = {
+			hasAccess: (isListOwner || isListGuest),
+			isOwner: isListOwner,
+			isGuest: isListGuest,
+		} as HasAccessType;
+
+		return response;
 	}
 };
 

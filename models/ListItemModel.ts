@@ -1,211 +1,184 @@
-import {addDbRecord, deleteDbRecord, executeQuery, TABLES, updateDbRecord} from "../util/db";
 import {ModelResponse} from "../util/types";
-import {returnModelResponse, sendNotification} from "../util/functions";
-import {DatabaseResult} from "../util/types/database";
+import {connection} from "../app";
+import {ListItemEntity} from "../entity/ListItemEntity";
+import {ListEntity} from "../entity/ListEntity";
+import {UserEntity} from "../entity/UserEntity";
+import {HasAccessType} from "./ListModel";
 
-export type UserToken = {
-	userID: number,
-	token: string,
-	system: string
-}
-
+const listItemEntity = connection.getRepository(ListItemEntity);
+const listEntity = connection.getRepository(ListEntity);
 const listModel = require("./ListModel");
+const fs = require("fs");
 
 const ListItemModel = {
-	async getListItem(itemID: number): Promise<ModelResponse> {
-		const result = await executeQuery(`SELECT * FROM ${TABLES.ListItems} WHERE id = ?`, [itemID], {singleResult: true});
+	async getListItem(itemID: number) {
+		const response: ModelResponse = {data: {}};
+		const item = await listItemEntity.findOne({id: itemID});
 
-		return {
-			data: result.data,
-			error: result.error
-		} as ModelResponse;
+		if (!item) {
+			response.error = {
+				message: "Unable to find selected item.",
+				code: 404
+			};
+			return response;
+		}
+
+		response.data = item;
+		return response;
 	},
 
 	async getListItems(listID: number): Promise<ModelResponse> {
-		const result = await executeQuery(`SELECT * FROM ${TABLES.ListItems} WHERE listID = ?`, [listID]) as DatabaseResult<any>;
+		const response: ModelResponse = {data: {}};
 
-		return {
-			data: result.data,
-			error: result.error
-		} as ModelResponse;
+		const list = await listEntity.findOne({id: listID});
+		if (!list) {
+			response.error = {
+				message: "Unable to find the selected list.",
+				code: 404
+			};
+			return response;
+		}
+
+		response.data = await listItemEntity.find({list: list});
+		return response;
 	},
 
 	async addListItem(listID: number, name: string, is_repeating: string, userID: number, newImageName?: string): Promise<ModelResponse> {
-		const response: ModelResponse = {data: {affectedRows: 0}};
-		const listResult = await listModel.hasAccessToList(listID, userID);
+		const response: ModelResponse = {data: {}};
+		const list = await listModel.getList(listID, userID);
+		const user = await connection.getRepository(UserEntity).findOne({id: userID});
 
-		if (listResult.error || !listResult.data.id) {
+		if (list.error) return list;
+
+		if (!user) {
 			response.error = {
-				message: "Can't add a new item to the specified list.",
+				message: "Invalid user.",
 				code: 401
 			};
 			return response;
 		}
 
-		const newListItemData = {
-			listID,
-			name,
-			is_repeating,
-			userID
-		};
+		const hasListAccess = await listModel.hasAccessToList(listID, userID);
+		if (hasListAccess.error) return hasListAccess.error;
 
-		if (newImageName && newImageName.length > 0) {
-			Object.assign(newListItemData, {image: newImageName});
-		}
-
-		const result = await addDbRecord(TABLES.ListItems, newListItemData);
-		return returnModelResponse(response, result);
-	},
-
-	async editListItem(listID: number, name: string, is_repeating: string, userID: number, itemID: number): Promise<ModelResponse> {
-		const response: ModelResponse = {data: {}};
-		const listResult = await listModel.hasAccessToList(listID, userID);
-		const itemResult = await this.getListItem(itemID);
-
-		if (listResult.error || !listResult.data.id) {
+		const listAccess = hasListAccess.data as HasAccessType;
+		if (!listAccess.hasAccess) {
 			response.error = {
-				message: "Can't edit the selected item.",
+				message: "You can't add new items to this list.",
 				code: 401
 			};
-		} else if (!itemResult.data || !itemResult.data.id) {
+			return response;
+		}
+
+		try {
+			const newListItem = new ListItemEntity();
+			newListItem.list = list.data;
+			newListItem.name = name;
+			newListItem.is_repeating = is_repeating;
+			newListItem.userID = user;
+			if (newImageName !== undefined) {
+				newListItem.image = newImageName;
+			}
+
+			await listItemEntity.save(newListItem);
+		} catch (e) {
 			response.error = {
-				message: "Unable to find the selected item",
-				code: 400
+				message: "Unable to add new list item.",
+				code: 500
 			};
-		} else if (listResult.data.access !== "1" && itemResult.data.userID !== userID) {
+			return response;
+		}
+
+		return response;
+	},
+
+	async editListItem(listID: number, name: string, is_repeating: string, newImageName: string | null, userID: number, itemID: number): Promise<ModelResponse> {
+		const response: ModelResponse = {data: {}};
+		const listAccessResult = await listModel.hasAccessToList(listID, userID);
+		const itemResult = await this.getListItem(itemID);
+
+		if (listAccessResult.error) return listAccessResult;
+		if (itemResult.error) return itemResult;
+
+		const listAccess = listAccessResult.data as HasAccessType;
+
+		if (!listAccess.isOwner && itemResult.data.userID !== userID) {
 			response.error = {
 				message: "You can only edit your own items",
 				code: 401
 			};
+
+			return response;
 		}
 
-		if (response.error) return response;
-
-		const result = await updateDbRecord(TABLES.ListItems, {
-			listID,
-			name,
-			is_repeating,
-			userID
-		}, ` id = ${itemID} AND listID = ${listID}`);
-		return returnModelResponse(response, result);
-	},
-
-	async deleteListItem(listID: number, itemID: number, userID: number): Promise<ModelResponse> {
-		const response: ModelResponse = {data: {affectedRows: 0}};
-		const listResult = await listModel.hasAccessToList(listID, userID);
-		const itemResult = await this.getListItem(itemID);
-
-		if (listResult.error || !listResult.data.id) {
-			response.error = {
-				message: "Can't delete the selected item.",
-				code: 401
-			};
-		} else if (!itemResult.data || !itemResult.data.id) {
-			response.error = {
-				message: "Unable to find the selected item",
-				code: 400
-			};
-		} else if (listResult.data.access !== "1" && itemResult.data.userID !== userID) {
-			response.error = {
-				message: "You can only delete your own item",
-				code: 401
-			};
-		}
-
-		if (response.error) return response;
-
-		const result = await deleteDbRecord(TABLES.ListItems, `listID = ${listID} AND id = ${itemID}`);
-		return returnModelResponse(response, result);
-	},
-
-	async getImage(listID: number, itemID: number, userID: number): Promise<ModelResponse> {
-		const response: ModelResponse = {
-			data: {
-				id: 0,
-				image: "",
-				is_repeating: "0",
-				last_bought: 0,
-				last_bought_date: "",
-				listID: 0,
-				name: "",
-				status: "0",
-				userAddedFullName: "",
-				userBoughtFullName: "",
-				userID: 0
+		const listItem = itemResult.data as ListItemEntity;
+		listItem.name = name;
+		listItem.is_repeating = is_repeating;
+		if (newImageName !== null) {
+			if (listItem.image) {
+				const image = listItem.image;
+				if (fs.existsSync(`./public/images/listItem/${image}`)) {
+					fs.rmSync(`./public/images/listItem/${image}`);
+				}
 			}
-		};
-		const listResult = await listModel.hasAccessToList(listID, userID);
 
-		if (listResult.error || !listResult.data.id) {
-			response.error = {
-				message: "Can't find the selected item.",
-				code: 401
-			};
+			listItem.image = newImageName;
 		}
+		await listItemEntity.save(listItem);
 
-		if (response.error) return response;
-
-		const result = await executeQuery(
-			`SELECT image FROM ${TABLES.ListItems} WHERE id = ?`,
-			[itemID],
-			{singleResult: true}
-		);
-
-		return returnModelResponse(response, result);
+		return response;
 	},
 
 	async setItemBoughtStatus(listID: number, itemID: number, userID: number): Promise<ModelResponse> {
 		const response: ModelResponse = {data: {}};
 		const listResult = await listModel.hasAccessToList(listID, userID);
 		const itemResult = await this.getListItem(itemID);
+		const user = await connection.getRepository(UserEntity).findOne({id: userID});
 
-		if (listResult.error || !listResult.data.id) {
+		if (listResult.error) return listResult;
+
+		if (itemResult.error) return itemResult;
+
+		if (!user) {
 			response.error = {
-				message: "Can't update the selected item.",
-				code: 401
+				message: "Invalid user.",
+				code: 400
 			};
-		} else if (itemResult.error || !itemResult.data.id) {
-			response.error = {
-				message: "Selected item doesn't exist.",
-				code: 404
-			};
+			return response;
 		}
 
-		if (response.error) return response;
+		const item = itemResult.data as ListItemEntity;
 
-		const item = itemResult.data;
+		item.purchasedUserID = user;
+		item.purchase_date = new Date().toISOString();
 
-		if (item.last_bought === null && item.last_bought_date === null) {
-			const result = await updateDbRecord(TABLES.ListItems, {
-				last_bought: userID,
-				last_bought_date: Date.now()
-			}, `id = ${itemID}`);
-			return returnModelResponse(response, result);
+		try {
+			await listItemEntity.save(item);
+		} catch (e) {
+			response.error = {
+				message: "Unable to mark item as bought.",
+				code: 500
+			};
+			return response;
+		} finally {
+			await this.sendBoughtNotification(listID, itemID, userID, "all");
 		}
 
 		return response;
 	},
 
+	//TODO: Implement sending notifications
 	async sendBoughtNotification(listID: number, itemID: number, userID: number, system: string) {
 		const response: ModelResponse = {data: {}};
 		const listItem = await this.getListItem(itemID);
 		const listUsers = await listModel.getListUsers(listID, userID);
 
-		if (listItem.error || !listItem.data.id) {
-			response.error = {
-				message: "Invalid list item selected.",
-				code: 401
-			};
-		} else if (listUsers.error || listUsers.data.length === 0) {
-			response.error = {
-				message: "List not found.",
-				code: 404
-			};
-		}
+		if (listItem.error) return listItem;
+		if (listUsers.error) return listUsers;
 
 		if (response.error) return response;
 
-		const users = listUsers.data.filter((user: any) => user.userID != userID && user.status === "1");
+		/*const users = listUsers.data.filter((user: any) => user.userID != userID && user.status === "1");
 
 		const userIDs = users.map((user: any) => user.userID);
 
@@ -220,10 +193,88 @@ const ListItemModel = {
 		const currentUser = listUsers.filter((user: any) => user.userID === userID)[0];
 		const item = listItem.data;
 
-		sendNotification(`${item.name} was just bought`, `${currentUser.userFullName} bought ${item.name}`, tokens);
+		sendNotification(`${item.name} was just bought`, `${currentUser.userFullName} bought ${item.name}`, tokens);*/
+
+		return response;
+	},
+
+	async deleteListItem(listID: number, itemID: number, userID: number): Promise<ModelResponse> {
+		const response: ModelResponse = {data: {affectedRows: 0}};
+		const listResult = await listModel.hasAccessToList(listID, userID);
+		const itemResult = await this.getListItem(itemID);
+
+		if (listResult.error) return listResult;
+		if (itemResult.error) return itemResult;
+
+		const listAccess = listResult.data as HasAccessType;
+		if (!listAccess.isOwner && itemResult.data.userID !== userID) {
+			response.error = {
+				message: "You can only delete your own item",
+				code: 401
+			};
+			return response;
+		}
+
+		try {
+			const item = itemResult.data as ListItemEntity;
+			await listItemEntity.remove(item);
+		} catch (e) {
+			response.error = {
+				message: "There was an error deleting the item.",
+				code: 500
+			};
+			return response;
+		} finally {
+			if (itemResult.data.image) {
+				const image = itemResult.data.image;
+				if (fs.existsSync(`./public/images/listItem/${image}`)) {
+					fs.rmSync(`./public/images/listItem/${image}`);
+				}
+			}
+		}
+
+		return response;
+	},
+
+	async deleteItemImage(listID: number, itemID: number, userID: number) {
+		const response: ModelResponse = {data: {affectedRows: 0}};
+		const listResult = await listModel.hasAccessToList(listID, userID);
+		const itemResult = await this.getListItem(itemID);
+
+		if (listResult.error) return listResult;
+		if (itemResult.error) return itemResult;
+
+		const listAccess = listResult.data as HasAccessType;
+		if (!listAccess.isOwner && itemResult.data.userID !== userID) {
+			response.error = {
+				message: "You can only delete your own item",
+				code: 401
+			};
+			return response;
+		}
+
+		try {
+			const item = itemResult.data as ListItemEntity;
+			if (item.image) {
+				const image = item.image;
+				if (fs.existsSync(`./public/images/listItem/${image}`)) {
+					fs.rmSync(`./public/images/listItem/${image}`);
+
+					item.image = null;
+					await listItemEntity.save(item);
+				}
+			}
+		} catch (e) {
+			response.error = {
+				message: "There was an error deleting the item image.",
+				code: 500
+			};
+			return response;
+		}
 
 		return response;
 	}
+
 };
 
 module.exports = ListItemModel;

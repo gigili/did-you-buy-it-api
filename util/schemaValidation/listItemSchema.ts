@@ -15,7 +15,7 @@ export const newListItemSchema: SchemaValidator = {
 	} as ValidatorsSchema,
 	is_repeating: {
 		notEmpty: {
-			errorMessage: "Item "
+			errorMessage: "Property must have a value of 0 or 1"
 		},
 		isString: true,
 	} as ValidatorsSchema

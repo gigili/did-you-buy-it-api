@@ -1,4 +1,4 @@
-import {Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {UserEntity} from "./UserEntity";
 import {ListEntity} from "./ListEntity";
 
@@ -9,11 +9,11 @@ export class ListItemEntity {
 	@PrimaryGeneratedColumn()
 	id!: number;
 
-	@OneToOne(() => ListEntity, list => list.id, {cascade: true, nullable: false})
+	@ManyToOne(() => ListEntity, list => list.id, {cascade: true, nullable: false})
 	@JoinColumn({
 		name: "listID"
 	})
-	list!: number;
+	list!: ListEntity;
 
 	@Column({
 		length: 255
@@ -27,22 +27,23 @@ export class ListItemEntity {
 	})
 	image!: string | null;
 
-	@OneToOne(() => UserEntity, userID => userID.id, {cascade: true, nullable: false})
+	@ManyToOne(() => UserEntity, userID => userID.id, {cascade: true, nullable: false})
 	@JoinColumn({
 		name: "userID"
 	})
 	userID!: UserEntity;
 
-	@OneToOne(() => UserEntity, purchasedUserID => purchasedUserID.id, {cascade: true, nullable: true})
+	@ManyToOne(() => UserEntity, purchasedUserID => purchasedUserID.id, {cascade: true, nullable: true})
 	@JoinColumn({
 		name: "userPurchasedID",
 	})
 	purchasedUserID!: UserEntity;
 
 	@Column({
-		type: "datetime"
+		type: "datetime",
+		nullable: true
 	})
-	purchase_date!: string;
+	purchase_date!: string | null;
 
 	@Column({
 		type: "enum",
@@ -50,7 +51,4 @@ export class ListItemEntity {
 		default: "0"
 	})
 	is_repeating!: string;
-
-	@OneToMany(() => ListItemEntity, listItems => listItems.list)
-	listItems!: ListItemEntity[];
 }
