@@ -1,5 +1,14 @@
 # Did you buy it?
-
+![Dependecy Badge](https://img.shields.io/librariesio/github/gigili/did-you-buy-it-api?style=for-the-badge)
+![Repo size badge](https://img.shields.io/github/repo-size/gigili/did-you-buy-it-api?style=for-the-badge)
+![Open issues badge](https://img.shields.io/github/issues/gigili/did-you-buy-it-api?style=for-the-badge)
+![Licence badge](https://img.shields.io/github/license/gigili/did-you-buy-it-api?style=for-the-badge)
+![Forks badge](https://img.shields.io/github/forks/gigili/did-you-buy-it-api?style=for-the-badge)
+<!--![Stars badge](https://img.shields.io/github/stars/gigili/did-you-buy-it-api?style=for-the-badge)-->
+<!--![Top language badge](https://img.shields.io/github/languages/top/gigili/did-you-buy-it-api?style=for-the-badge)-->
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 "Did you buy it?" is a shopping list app designed to help people keep track of stuff they need to buy. 
 
 # Features
@@ -25,7 +34,8 @@
     * [x] Add / remove images
   * [ ] User profile
     * [x] Edit profile
-    * [ ] Delete profile
+    * [x] Delete profile
+        * [ ] Send an email notification that the account has been closed
 
 # Local setup
 
@@ -33,7 +43,7 @@ To get started on developing this project firs you need to do
 
 ```sh
   git clone https://github.com/gigili/did-you-buy-it-api
-  cd did-you-buy-it
+  cd did-you-buy-it-api
 ```
 
 Then rename `.env.example` into `.env` file and fill in all the values
@@ -45,4 +55,4 @@ After that you can run:
   npm run dev
 ```
 
-If you do not specify a `PORT` value in the `.env` file the app will be available at `http://localohst:3030`
+If you do not specify a `PORT` value in the `.env` file the app should be available at `http://localohst:3030`
