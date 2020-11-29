@@ -64,7 +64,7 @@
 		},
 		{
 			"type": "PayPal",
-			"url": "paypal.me/igorili"
+			"url": "https://paypal.me/igorili"
 		}
 	]
 }
