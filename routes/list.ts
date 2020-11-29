@@ -7,7 +7,7 @@ import {Request} from "../util/types/request";
 
 const express = require("express");
 const router = express.Router();
-const listModel = require("../models/listModel");
+const listModel = require("../models/ListModel");
 
 //TODO: Create this
 router.get("/", authenticateToken(), (req: Request, res: Response, _: NextFunction) => {
@@ -106,7 +106,7 @@ router.get("/:listID/users", authenticateToken(), async (req: Request, res: Resp
 	const result = await listModel.getListUsers(parseInt(req.params.listID), req.user.id);
 
 	if (result.error) {
-		return res.status(500).send(invalidResponse("Unable to get list users."));
+		return res.status(result.error.code).send(invalidResponse(result.error.message));
 	}
 
 	res.send({
@@ -155,7 +155,7 @@ router.delete("/:listID/users", checkSchema(newListUserSchema), authenticateToke
 	const result = await listModel.deleteListUser(parseInt(req.params.listID), req.user.id, req.body.userID);
 
 	if (result.error) {
-		return res.status(400).send(invalidResponse("Unable to removed a user from the list."));
+		return res.status(400).send(invalidResponse(result.error.message));
 	}
 
 	res.status(201).send({

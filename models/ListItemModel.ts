@@ -1,22 +1,7 @@
 import {addDbRecord, deleteDbRecord, executeQuery, TABLES, updateDbRecord} from "../util/db";
 import {ModelResponse} from "../util/types";
 import {returnModelResponse, sendNotification} from "../util/functions";
-import {DatabaseResult, DefaultDatabaseResult} from "../util/types/database";
-import {ListUser} from "./listModel";
-
-export type ListItem = {
-	id: number,
-	listID: number,
-	name: string,
-	image: string,
-	userID: number,
-	is_repeating: string,
-	status: string,
-	last_bought: number,
-	last_bought_date: string,
-	userAddedFullName?: string,
-	userBoughtFullName?: string
-}
+import {DatabaseResult} from "../util/types/database";
 
 export type UserToken = {
 	userID: number,
@@ -24,29 +9,29 @@ export type UserToken = {
 	system: string
 }
 
-const listModel = require("./listModel");
+const listModel = require("./ListModel");
 
-const listItemModel = {
-	async getListItem(itemID: number): Promise<ModelResponse<ListItem>> {
+const ListItemModel = {
+	async getListItem(itemID: number): Promise<ModelResponse> {
 		const result = await executeQuery(`SELECT * FROM ${TABLES.ListItems} WHERE id = ?`, [itemID], {singleResult: true});
 
 		return {
 			data: result.data,
 			error: result.error
-		} as ModelResponse<ListItem>;
+		} as ModelResponse;
 	},
 
-	async getListItems(listID: number): Promise<ModelResponse<ListItem[]>> {
-		const result = await executeQuery(`SELECT * FROM ${TABLES.ListItems} WHERE listID = ?`, [listID]) as DatabaseResult<ListItem[]>;
+	async getListItems(listID: number): Promise<ModelResponse> {
+		const result = await executeQuery(`SELECT * FROM ${TABLES.ListItems} WHERE listID = ?`, [listID]) as DatabaseResult<any>;
 
 		return {
 			data: result.data,
 			error: result.error
-		} as ModelResponse<ListItem[]>;
+		} as ModelResponse;
 	},
 
-	async addListItem(listID: number, name: string, is_repeating: string, userID: number, newImageName?: string): Promise<ModelResponse<DefaultDatabaseResult>> {
-		const response: ModelResponse<DefaultDatabaseResult> = {data: {affectedRows: 0}};
+	async addListItem(listID: number, name: string, is_repeating: string, userID: number, newImageName?: string): Promise<ModelResponse> {
+		const response: ModelResponse = {data: {affectedRows: 0}};
 		const listResult = await listModel.hasAccessToList(listID, userID);
 
 		if (listResult.error || !listResult.data.id) {
@@ -72,8 +57,8 @@ const listItemModel = {
 		return returnModelResponse(response, result);
 	},
 
-	async editListItem(listID: number, name: string, is_repeating: string, userID: number, itemID: number): Promise<ModelResponse<DefaultDatabaseResult>> {
-		const response: ModelResponse<DefaultDatabaseResult> = {data: {}};
+	async editListItem(listID: number, name: string, is_repeating: string, userID: number, itemID: number): Promise<ModelResponse> {
+		const response: ModelResponse = {data: {}};
 		const listResult = await listModel.hasAccessToList(listID, userID);
 		const itemResult = await this.getListItem(itemID);
 
@@ -105,8 +90,8 @@ const listItemModel = {
 		return returnModelResponse(response, result);
 	},
 
-	async deleteListItem(listID: number, itemID: number, userID: number): Promise<ModelResponse<DefaultDatabaseResult>> {
-		const response: ModelResponse<DefaultDatabaseResult> = {data: {affectedRows: 0}};
+	async deleteListItem(listID: number, itemID: number, userID: number): Promise<ModelResponse> {
+		const response: ModelResponse = {data: {affectedRows: 0}};
 		const listResult = await listModel.hasAccessToList(listID, userID);
 		const itemResult = await this.getListItem(itemID);
 
@@ -133,8 +118,8 @@ const listItemModel = {
 		return returnModelResponse(response, result);
 	},
 
-	async getImage(listID: number, itemID: number, userID: number): Promise<ModelResponse<ListItem>> {
-		const response: ModelResponse<ListItem> = {
+	async getImage(listID: number, itemID: number, userID: number): Promise<ModelResponse> {
+		const response: ModelResponse = {
 			data: {
 				id: 0,
 				image: "",
@@ -169,8 +154,8 @@ const listItemModel = {
 		return returnModelResponse(response, result);
 	},
 
-	async setItemBoughtStatus(listID: number, itemID: number, userID: number): Promise<ModelResponse<DefaultDatabaseResult>> {
-		const response: ModelResponse<DefaultDatabaseResult> = {data: {}};
+	async setItemBoughtStatus(listID: number, itemID: number, userID: number): Promise<ModelResponse> {
+		const response: ModelResponse = {data: {}};
 		const listResult = await listModel.hasAccessToList(listID, userID);
 		const itemResult = await this.getListItem(itemID);
 
@@ -202,7 +187,7 @@ const listItemModel = {
 	},
 
 	async sendBoughtNotification(listID: number, itemID: number, userID: number, system: string) {
-		const response: ModelResponse<DefaultDatabaseResult> = {data: {}};
+		const response: ModelResponse = {data: {}};
 		const listItem = await this.getListItem(itemID);
 		const listUsers = await listModel.getListUsers(listID, userID);
 
@@ -220,9 +205,9 @@ const listItemModel = {
 
 		if (response.error) return response;
 
-		const users = listUsers.data.filter((user: ListUser) => user.userID != userID && user.status === "1");
+		const users = listUsers.data.filter((user: any) => user.userID != userID && user.status === "1");
 
-		const userIDs = users.map((user: ListUser) => user.userID);
+		const userIDs = users.map((user: any) => user.userID);
 
 		const query = `SELECT * FROM ${TABLES.UserToken} WHERE userID IN (?)`;
 		const result = await executeQuery(query, [userIDs.join(","), system]) as DatabaseResult<UserToken[]>;
@@ -232,7 +217,7 @@ const listItemModel = {
 		const tokens = result.data.map((userToken: UserToken) => userToken.token);
 
 		if (tokens.length === 0) return response;
-		const currentUser = listUsers.filter((user: ListUser) => user.userID === userID)[0] as ListUser;
+		const currentUser = listUsers.filter((user: any) => user.userID === userID)[0];
 		const item = listItem.data;
 
 		sendNotification(`${item.name} was just bought`, `${currentUser.userFullName} bought ${item.name}`, tokens);
@@ -241,4 +226,4 @@ const listItemModel = {
 	}
 };
 
-module.exports = listItemModel;
+module.exports = ListItemModel;

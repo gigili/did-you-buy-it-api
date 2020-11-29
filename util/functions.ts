@@ -1,11 +1,11 @@
 import {DatabaseResult} from "./types/database";
-import {RefreshToken} from "../models/refreshTokenModel";
+import {RefreshToken} from "../models/RefreshTokenModel";
 import {ApiResponse, EnvVars, ModelResponse, TokenData} from "./types";
 import {NextFunction, Response} from "express";
 import {Request} from "./types/request";
 
 const {VerifyErrors} = require("jsonwebtoken");
-const refreshTokenModel = require("../models/refreshTokenModel");
+const refreshTokenModel = require("../models/RefreshTokenModel");
 const jwt = require("jsonwebtoken");
 const privateKey = getEnvVar(EnvVars.JWT_SECRET);
 const nodemailer = require("nodemailer");

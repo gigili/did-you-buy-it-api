@@ -1,7 +1,5 @@
 import {DatabaseArguments, DatabaseResult} from "./types/database";
 import {Connection} from "mysql2";
-import {getEnvVar} from "./functions";
-import {EnvVars} from "./types";
 
 const mysql = require("mysql2/promise");
 
@@ -25,11 +23,11 @@ export async function getConnection(): Promise<Connection> {
 		return connection;
 	}
 	connection = await mysql.createConnection({
-		host: getEnvVar(EnvVars.MYSQL_HOST),
-		port: getEnvVar(EnvVars.MYSQL_PORT),
-		user: getEnvVar(EnvVars.MYSQL_USER),
-		password: getEnvVar(EnvVars.MYSQL_PASSWORD),
-		database: getEnvVar(EnvVars.MYSQL_DATABASE)
+		host: process.env.TYPEORM_HOST,
+		port: process.env.TYPEORM_PORT,
+		user: process.env.TYPEORM_USERNAME,
+		password: process.env.TYPEORM_PASSWORD,
+		database: process.env.TYPEORM_DATABASE
 	});
 	return connection;
 }

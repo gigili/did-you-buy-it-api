@@ -1,7 +1,8 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {ListEntity} from "./ListEntity";
 
 @Entity({
-	name: "users"
+	name: "user"
 })
 export class UserEntity {
 
@@ -28,4 +29,7 @@ export class UserEntity {
 
 	@Column({enumName: "status", enum: ["0", "1"], default: "0", type: "enum"})
 	status!: string;
+
+	@OneToMany(() => ListEntity, lists => lists.user)
+	lists!: ListEntity[];
 }

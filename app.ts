@@ -1,4 +1,5 @@
-const dotenv = require("dotenv").config();
+require("dotenv").config();
+
 import "reflect-metadata";
 import {Connection, createConnection} from "typeorm";
 import express from "express";
@@ -6,11 +7,8 @@ import {getEnvVar} from "./util/functions";
 import {EnvVars} from "./util/types";
 
 export let connection: Connection;
-
-
 const PORT = getEnvVar(EnvVars.PORT) || 3030;
 const app = express();
-
 const fileUpload = require("express-fileupload");
 const path = require("path");
 const cookieParser = require("cookie-parser");
