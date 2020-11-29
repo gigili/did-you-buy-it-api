@@ -124,7 +124,7 @@ export function getEnvVar(key: string) {
 	return process.env[key];
 }
 
-export function authenticateToken(requiredPower: number | null = null) {
+export function authenticateToken() {
 	return (req: Request, res: Response, next: NextFunction) => {
 		const authHeader = req.headers["authorization"];
 		const token = authHeader && authHeader.split(" ")[1];
@@ -136,12 +136,6 @@ export function authenticateToken(requiredPower: number | null = null) {
 		jwt.verify(token, getEnvVar(EnvVars.JWT_SECRET), (err: typeof VerifyErrors | null, user?: { exp: number, user: { id: number, username: string, power?: number } }) => {
 			if (err) {
 				return res.status(401).send(invalidResponse("Unable to verify token"));
-			}
-
-			if (requiredPower !== null && user) {
-				if (requiredPower > (user.user.power || 0)) {
-					return res.status(401).send(invalidResponse("Not authorized"));
-				}
 			}
 
 			if (typeof user !== "undefined") {

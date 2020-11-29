@@ -1,8 +1,5 @@
-import "../util/db";
-import {executeQuery, TABLES} from "../util/db";
 import {DatabaseResult} from "../util/types/database";
 import {ModelResponse} from "../util/types";
-import {returnModelResponse} from "../util/functions";
 import {connection} from "../app";
 import {ListEntity} from "../entity/ListEntity";
 import {UserEntity} from "../entity/UserEntity";
@@ -29,12 +26,6 @@ const ListModel = {
 			.getOne();
 
 		return response;
-	},
-
-	async getListsForUser(userID: number): Promise<ModelResponse> {
-		const response: ModelResponse = {data: []};
-		const result = await executeQuery(`SELECT * FROM ${TABLES.Lists} WHERE userID = ?`, [userID]);
-		return returnModelResponse(response, result);
 	},
 
 	async createList(name: string, userID: number): Promise<ModelResponse> {
