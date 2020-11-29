@@ -22,8 +22,8 @@ export type SchemaValidator = {
 	[key: string]: ValidatorsSchema
 }
 
-export type ModelResponse<T> = {
-	data: T,
+export type ModelResponse = {
+	data: any,
 	error?: {
 		message?: string,
 		code?: number
@@ -33,11 +33,6 @@ export type ModelResponse<T> = {
 //WebStorm exposes env var values in autocomplete and there is no way to disable it as of writing this (14.11.2020)
 export enum EnvVars {
 	PORT = "PORT",
-	MYSQL_HOST = "MYSQL_HOST",
-	MYSQL_PORT = "MYSQL_PORT",
-	MYSQL_USER = "MYSQL_USER",
-	MYSQL_PASSWORD = "MYSQL_PASSWORD",
-	MYSQL_DATABASE = "MYSQL_DATABASE",
 	JWT_SECRET = "JWT_SECRET",
 	EMAIL_USER = "EMAIL_USER",
 	EMAIL_PASSWORD = "EMAIL_PASSWORD",

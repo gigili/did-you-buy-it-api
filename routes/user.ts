@@ -7,7 +7,7 @@ import {updateUserProfileSchema} from "../util/schemaValidation/userSchema";
 
 const express = require("express");
 const router = express.Router();
-const userModel = require("../models/userModel");
+const userModel = require("../models/UserModel");
 const uploadHelper = require("../util/uploadHelper");
 const fs = require("fs");
 

@@ -1,14 +1,35 @@
 {
 	"name": "did-you-buy-it",
+	"type": "project",
 	"version": "0.0.1",
-	"description": "",
+	"description": "\"Did you buy it?\" is a shopping list app designed to help people keep track of stuff they need to buy and to be able to share those lists with other users.",
 	"main": "app.ts",
 	"scripts": {
-		"dev": "nodemon"
+		"dev": "nodemon",
+		"schema:sync": "ts-node node_modules/typeorm/cli.js schema:sync"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "MIT",
+	"keywords": [
+		"shopping",
+		"list",
+		"shopping list",
+		"did you buy it",
+		"shopping list tracker"
+	],
+	"bugs": {
+		"url": "https://github.com/gigili/did-you-buy-it-api/issues",
+		"email": "github@igorilic.net"
+	},
+	"repository": {
+		"url": "https://github.com/gigili/did-you-buy-it-api/",
+		"type": "GitHub",
+		"directory": ""
+	},
+	"author": {
+		"name": "Igor Ilic",
+		"email": "github@igorilic.net",
+		"url": "https://twitch.tv/gacbl"
+	},
+	"license": "GPL-3.0",
 	"dependencies": {
 		"cookie-parser": "^1.4.5",
 		"cors": "^2.8.5",
@@ -22,6 +43,8 @@
 		"mysql2": "^2.2.5",
 		"nodemailer": "^6.4.16",
 		"path": "^0.12.7",
+		"reflect-metadata": "^0.1.13",
+		"typeorm": "^0.2.29",
 		"uuid": "^8.3.1"
 	},
 	"devDependencies": {
@@ -33,5 +56,15 @@
 		"nodemon": "^2.0.6",
 		"ts-node": "^9.0.0",
 		"typescript": "^4.1.2"
-	}
+	},
+	"funding": [
+		{
+			"type": "individual",
+			"url": "https://ko-fi.com/igorilic"
+		},
+		{
+			"type": "PayPal",
+			"url": "paypal.me/igorili"
+		}
+	]
 }

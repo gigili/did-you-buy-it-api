@@ -7,7 +7,7 @@ import {loginSchema, registerSchema} from "../util/schemaValidation/indexSchema"
 const express = require("express");
 const router = express.Router();
 
-const userModel = require("../models/userModel");
+const userModel = require("../models/UserModel");
 
 router.get("/", async (req: Request, res: Response, _: NextFunction) => {
 	res.send({
@@ -46,7 +46,8 @@ router.post("/register", checkSchema(registerSchema), async (req: Request, res: 
 		return res.status(400).json(invalidResponse(msg, param));
 	}
 
-	const registerStatus = await userModel.register(req.body);
+	const {name, email, username, password} = req.body;
+	const registerStatus = await userModel.register(name, email, username, password);
 
 	if (registerStatus.error) {
 		return res.status(registerStatus.error.code).send(invalidResponse(registerStatus.error.message));

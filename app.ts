@@ -1,12 +1,14 @@
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 
+import "reflect-metadata";
+import {Connection, createConnection} from "typeorm";
 import express from "express";
 import {getEnvVar} from "./util/functions";
 import {EnvVars} from "./util/types";
 
+export let connection: Connection;
 const PORT = getEnvVar(EnvVars.PORT) || 3030;
 const app = express();
-
 const fileUpload = require("express-fileupload");
 const path = require("path");
 const cookieParser = require("cookie-parser");
@@ -39,17 +41,20 @@ app.set("view engine", "ejs");
 const logger = require("morgan");
 app.use(logger("dev"));
 
-app.listen(PORT, () => {
-	console.log(`Server is listening on port ${PORT}`);
-});
+createConnection().then(_connection => {
+	connection = _connection;
 
-const indexRouter = require("./routes/index");
-const listRouter = require("./routes/list");
-const listItemRouter = require("./routes/list_item");
-const userRouter = require("./routes/user");
+	const indexRouter = require("./routes/index");
+	const listRouter = require("./routes/list");
+	const listItemRouter = require("./routes/list_item");
+	const userRouter = require("./routes/user");
 
-app.use("/", indexRouter);
-app.use("/list", listRouter);
-app.use("/list/item", listItemRouter);
-app.use("/user", userRouter);
+	app.use("/", indexRouter);
+	app.use("/list", listRouter);
+	app.use("/list/item", listItemRouter);
+	app.use("/user", userRouter);
 
+	app.listen(PORT, () => {
+		console.log(`Server is listening on port ${PORT}`);
+	});
+}).catch(error => console.log(error));
