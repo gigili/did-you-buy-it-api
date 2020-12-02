@@ -1,8 +1,8 @@
 import {DatabaseResult} from "./types/database";
-import {RefreshToken} from "../models/RefreshTokenModel";
 import {ApiResponse, EnvVars, ModelResponse, TokenData} from "./types";
 import {NextFunction, Response} from "express";
 import {Request} from "./types/request";
+import {RefreshTokenEntity} from "../entity/RefreshTokenEntity";
 
 const {VerifyErrors} = require("jsonwebtoken");
 const refreshTokenModel = require("../models/RefreshTokenModel");
@@ -22,11 +22,11 @@ export async function generateToken(userData: { id: number, username: string }, 
 	};
 
 	if (shouldGenerateRefreshToken) {
-		const refreshTokenResult = await refreshTokenModel.getRefreshToken(userData.id) as DatabaseResult<RefreshToken>;
-		refreshToken = (refreshTokenResult.data as RefreshToken).token;
-
-		if (!refreshTokenResult.success || !refreshToken) {
+		const refreshTokenResult = await refreshTokenModel.getRefreshToken(userData.id);
+		if (refreshTokenResult.error || refreshTokenResult.data === undefined) {
 			refreshToken = await generateRefreshToken(tokenData, userData.id);
+		} else {
+			refreshToken = (refreshTokenResult.data as RefreshTokenEntity).token;
 		}
 	}
 
