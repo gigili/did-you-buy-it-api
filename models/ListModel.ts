@@ -1,11 +1,10 @@
-import {DatabaseResult} from "../util/types/database";
 import {ModelResponse} from "../util/types";
-import {connection} from "../app";
 import {ListEntity} from "../entity/ListEntity";
 import {UserEntity} from "../entity/UserEntity";
+import {getRepository} from "typeorm";
 
-const listEntity = connection.getRepository(ListEntity);
-const userEntity = connection.getRepository(UserEntity);
+const listEntity = getRepository(ListEntity);
+const userEntity = getRepository(UserEntity);
 
 export type HasAccessType = {
 	hasAccess: boolean,
@@ -157,7 +156,7 @@ const ListModel = {
 
 	async getListUsers(listID: number, userID: number) {
 		const response: ModelResponse = {data: []};
-		const user = userEntity.findOne({id: userID});
+		const user = await userEntity.findOne({id: userID});
 
 		if (!user) {
 			response.error = {
@@ -190,7 +189,7 @@ const ListModel = {
 		return response;
 	},
 
-	async addListUser(listID: number, ownerID: number, userID: number): Promise<DatabaseResult<any> | ModelResponse> {
+	async addListUser(listID: number, ownerID: number, userID: number): Promise<ModelResponse> {
 		const response: ModelResponse = {data: {}};
 		try {
 			const list = await listEntity.findOne({id: listID});

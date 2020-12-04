@@ -21,7 +21,7 @@ export class ListEntity {
 	name!: string;
 
 	@Column({
-		type: "datetime"
+		type: "timestamp"
 	})
 	created_at!: string;
 

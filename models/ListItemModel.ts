@@ -1,12 +1,12 @@
 import {ModelResponse} from "../util/types";
-import {connection} from "../app";
 import {ListItemEntity} from "../entity/ListItemEntity";
 import {ListEntity} from "../entity/ListEntity";
 import {UserEntity} from "../entity/UserEntity";
 import {HasAccessType} from "./ListModel";
+import {getRepository} from "typeorm";
 
-const listItemEntity = connection.getRepository(ListItemEntity);
-const listEntity = connection.getRepository(ListEntity);
+const listItemEntity = getRepository(ListItemEntity);
+const listEntity = getRepository(ListEntity);
 const listModel = require("./ListModel");
 const fs = require("fs");
 
@@ -46,7 +46,7 @@ const ListItemModel = {
 	async addListItem(listID: number, name: string, is_repeating: string, userID: number, newImageName?: string): Promise<ModelResponse> {
 		const response: ModelResponse = {data: {}};
 		const list = await listModel.getList(listID, userID);
-		const user = await connection.getRepository(UserEntity).findOne({id: userID});
+		const user = await getRepository(UserEntity).findOne({id: userID});
 
 		if (list.error) return list;
 
@@ -133,7 +133,7 @@ const ListItemModel = {
 		const response: ModelResponse = {data: {}};
 		const listResult = await listModel.hasAccessToList(listID, userID);
 		const itemResult = await this.getListItem(itemID);
-		const user = await connection.getRepository(UserEntity).findOne({id: userID});
+		const user = await getRepository(UserEntity).findOne({id: userID});
 
 		if (listResult.error) return listResult;
 

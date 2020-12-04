@@ -1,10 +1,10 @@
-import {connection} from "../app";
 import {RefreshTokenEntity} from "../entity/RefreshTokenEntity";
 import {ModelResponse} from "../util/types";
 import {UserEntity} from "../entity/UserEntity";
+import {getRepository} from "typeorm";
 
-const refreshTokenEntity = connection.getRepository(RefreshTokenEntity);
-const userEntity = connection.getRepository(UserEntity);
+const refreshTokenEntity = getRepository(RefreshTokenEntity);
+const userEntity = getRepository(UserEntity);
 
 const RefreshTokenModel = {
 	async getRefreshToken(userID: number) {
@@ -41,6 +41,7 @@ const RefreshTokenModel = {
 
 		try {
 			await refreshTokenEntity.save(newRefreshToken);
+			response.data = newRefreshToken;
 		} catch (e) {
 			response.error = {
 				message: "Unable to save new refresh token.",

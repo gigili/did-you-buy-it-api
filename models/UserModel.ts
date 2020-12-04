@@ -1,12 +1,12 @@
 import {generateToken, getEnvVar, sendEmail} from "../util/functions";
 import {EnvVars, ModelResponse, TokenData} from "../util/types";
-import {connection} from "../app";
 import {UserEntity} from "../entity/UserEntity";
+import {getRepository} from "typeorm";
 
 const uuid = require("uuid");
 const fs = require("fs");
 
-const userEntity = connection.getRepository(UserEntity);
+const userEntity = getRepository(UserEntity);
 
 const userModel = {
 	async login(username: string, password: string) {

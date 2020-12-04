@@ -40,7 +40,7 @@ export class ListItemEntity {
 	purchasedUserID!: UserEntity;
 
 	@Column({
-		type: "datetime",
+		type: "timestamp",
 		nullable: true
 	})
 	purchase_date!: string | null;
