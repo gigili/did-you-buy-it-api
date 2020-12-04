@@ -13,7 +13,7 @@ export class ListEntity {
 	@JoinColumn({
 		name: "userID",
 	})
-	user!: UserEntity;
+	user!: Promise<UserEntity>;
 
 	@Column({
 		length: 150
@@ -29,8 +29,8 @@ export class ListEntity {
 	@JoinTable({
 		name: "list_user"
 	})
-	users!: UserEntity[];
+	users!: Promise<UserEntity[]>;
 
 	@OneToMany(() => ListItemEntity, items => items.list)
-	items!: ListItemEntity[];
+	items!: Promise<ListItemEntity[]>;
 }

@@ -13,7 +13,7 @@ export class ListItemEntity {
 	@JoinColumn({
 		name: "listID"
 	})
-	list!: ListEntity;
+	list!: Promise<ListEntity>;
 
 	@Column({
 		length: 255
@@ -31,7 +31,7 @@ export class ListItemEntity {
 	@JoinColumn({
 		name: "userID"
 	})
-	userID!: UserEntity;
+	userID!: Promise<UserEntity>;
 
 	@ManyToOne(() => UserEntity, purchasedUserID => purchasedUserID.id, {cascade: true, nullable: true})
 	@JoinColumn({

@@ -16,16 +16,40 @@ export type HasAccessType = {
 const ListModel = {
 	async getList(listID: number, ownerID: number): Promise<ModelResponse> {
 		const response: ModelResponse = {data: {}};
+		const user = await userEntity.findOne({id: ownerID});
 
-		response.data = await connection.getRepository(ListEntity)
-			.createQueryBuilder("l")
-			.leftJoinAndSelect("l.users", "users")
-			.leftJoinAndSelect("l.user", "owner")
-			.leftJoinAndSelect("l.items", "items")
-			.where("l.id = :listID AND l.userID = :ownerID", {listID, ownerID})
-			.getOne();
+		if (!user) {
+			response.error = {
+				message: "Invalid user.",
+				code: 401
+			};
+			return response;
+		}
 
-		return response;
+		const data = await listEntity.findOne({
+			where: {
+				id: listID,
+				user: user
+			}
+		});
+
+		if (!data) {
+			response.error = {
+				message: "List not found.",
+				code: 404
+			};
+			return response;
+		}
+
+
+		response.data = {
+			...data,
+			user: await data.user,
+			users: await data.users,
+			items: await data.items
+		};
+
+		return Promise.resolve(response);
 	},
 
 	async createList(name: string, userID: number): Promise<ModelResponse> {
@@ -41,7 +65,7 @@ const ListModel = {
 		}
 
 		const list = new ListEntity();
-		list.user = user;
+		list.user = Promise.resolve(user);
 		list.name = name;
 		list.created_at = new Date().toISOString();
 
@@ -71,7 +95,7 @@ const ListModel = {
 			return response;
 		}
 
-		const list = await listEntity.findOne({id: listID, user: user});
+		const list = await listEntity.findOne({where: {id: listID, user: user}});
 
 		if (!list) {
 			response.error = {
@@ -133,13 +157,23 @@ const ListModel = {
 
 	async getListUsers(listID: number, userID: number) {
 		const response: ModelResponse = {data: []};
+		const user = userEntity.findOne({id: userID});
 
-		const list = await connection.getRepository(ListEntity)
-			.createQueryBuilder("list")
-			.leftJoinAndSelect("list.users", "users")
-			.leftJoinAndSelect("list.user", "user")
-			.where("list.id = :listID AND list.userID = :userID", {listID, userID})
-			.getOne();
+		if (!user) {
+			response.error = {
+				message: "Invalid user.",
+				code: 401
+			};
+			return response;
+		}
+
+		const list = await listEntity.findOne({
+			where: {
+				id: listID,
+				user: user
+			},
+			relations: ["user", "users"]
+		});
 
 		if (!list) {
 			response.error = {
@@ -149,8 +183,8 @@ const ListModel = {
 			return response;
 		}
 
-		const users = list.users;
-		users.push(list.user);
+		const users = await list.users;
+		users.push((await list.user));
 
 		response.data = users;
 		return response;
@@ -159,19 +193,14 @@ const ListModel = {
 	async addListUser(listID: number, ownerID: number, userID: number): Promise<DatabaseResult<any> | ModelResponse> {
 		const response: ModelResponse = {data: {}};
 		try {
-			const list = await connection.getRepository(ListEntity)
-				.createQueryBuilder("list")
-				.leftJoinAndSelect("list.users", "users")
-				.leftJoinAndSelect("list.user", "user")
-				.where("list.id = :id", {id: listID})
-				.getOne();
+			const list = await listEntity.findOne({id: listID});
 
 			if (!list) {
 				response.error = {
 					message: "List not found.",
 					code: 404
 				};
-			} else if (list.user.id !== ownerID) {
+			} else if ((await list.user).id !== ownerID) {
 				response.error = {
 					message: "You can't add new users to this list.",
 					code: 401
@@ -195,7 +224,7 @@ const ListModel = {
 				return response;
 			}
 
-			for (const usr of list!.users) {
+			for (const usr of (await list!.users)) {
 				if (usr.id === user.id) {
 					response.error = {
 						message: "User is already in the list.",
@@ -205,7 +234,7 @@ const ListModel = {
 				}
 			}
 
-			list?.users.push(user!);
+			(await list?.users!).push(user!);
 			await listEntity.save(list!);
 		} catch (e) {
 			console.error(e);
@@ -222,7 +251,7 @@ const ListModel = {
 	async deleteListUser(listID: number, ownerID: number, userID: number): Promise<ModelResponse> {
 		const response: ModelResponse = {data: {}};
 		try {
-			const list = await connection.getRepository(ListEntity)
+			const list = await listEntity
 				.createQueryBuilder("list")
 				.leftJoinAndSelect("list.users", "users")
 				.leftJoinAndSelect("list.user", "user")
@@ -234,12 +263,12 @@ const ListModel = {
 					message: "List not found.",
 					code: 404
 				};
-			} else if (list.user.id !== ownerID) {
+			} else if ((await list.user).id !== ownerID) {
 				response.error = {
 					message: "You can't remove users from this list.",
 					code: 401
 				};
-			} else if (ownerID === userID && list.user.id === ownerID) {
+			} else if (ownerID === userID && (await list.user).id === ownerID) {
 				response.error = {
 					message: "You can't remove yourself from this list.",
 					code: 400
@@ -249,7 +278,7 @@ const ListModel = {
 			if (response.error) return response;
 
 			if (list) {
-				list.users = list.users.filter((usr => usr.id !== userID));
+				list.users = Promise.resolve((await list.users).filter((usr => usr.id !== userID)));
 				await listEntity.save(list!);
 			}
 		} catch (e) {

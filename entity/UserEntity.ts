@@ -31,5 +31,5 @@ export class UserEntity {
 	status!: string;
 
 	@OneToMany(() => ListEntity, lists => lists.user)
-	lists!: ListEntity[];
+	lists!: Promise<ListEntity[]>;
 }

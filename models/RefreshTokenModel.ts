@@ -19,7 +19,7 @@ const RefreshTokenModel = {
 			return response;
 		}
 
-		response.data = await refreshTokenEntity.findOne({user: user});
+		response.data = await refreshTokenEntity.findOne({where: {user: user}});
 		return response;
 	},
 
@@ -36,7 +36,7 @@ const RefreshTokenModel = {
 		}
 
 		const newRefreshToken = new RefreshTokenEntity();
-		newRefreshToken.user = user;
+		newRefreshToken.user = Promise.resolve(user);
 		newRefreshToken.token = refreshToken;
 
 		try {
@@ -64,7 +64,7 @@ const RefreshTokenModel = {
 			return response;
 		}
 
-		const refreshToken = await refreshTokenEntity.findOne({user: user});
+		const refreshToken = await refreshTokenEntity.findOne({where: {user: user}});
 
 		if (!refreshToken) {
 			response.error = {

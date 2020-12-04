@@ -24,7 +24,7 @@ const userModel = {
 		}
 
 		const tokenData: TokenData = await generateToken({id: user.id, username: user.username}, true);
-		console.log(tokenData);
+
 		if (tokenData.error) {
 			response.error = {message: "Login failed", code: 500};
 			return response;

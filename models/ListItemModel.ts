@@ -39,7 +39,7 @@ const ListItemModel = {
 			return response;
 		}
 
-		response.data = await listItemEntity.find({list: list});
+		response.data = await listItemEntity.find({where: {list: list}});
 		return response;
 	},
 
@@ -75,7 +75,7 @@ const ListItemModel = {
 			newListItem.list = list.data;
 			newListItem.name = name;
 			newListItem.is_repeating = is_repeating;
-			newListItem.userID = user;
+			newListItem.userID = Promise.resolve(user);
 			if (newImageName !== undefined) {
 				newListItem.image = newImageName;
 			}
