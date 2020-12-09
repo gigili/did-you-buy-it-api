@@ -311,6 +311,50 @@ const ListModel = {
 		} as HasAccessType;
 
 		return response;
+	},
+
+	async getUserLists(userID: number, page: number = 1, limit: number = 10): Promise<ModelResponse> {
+		console.log(page, limit);
+		const response: ModelResponse = {data: {}};
+		const user = await userEntity.findOne({id: userID});
+
+		if (!user) {
+			response.error = {
+				message: "Invalid user.",
+				code: 400
+			};
+			return response;
+		}
+
+		/*response.data = await listEntity.find({
+			where: {
+				user : user
+			},
+			relations: ["items"],
+			skip: (page-1),
+			take: limit,
+			order: {
+				id: "DESC"
+			}
+		});*/
+
+		const result = await listEntity
+			.createQueryBuilder("l")
+			.where("l.userID = :userID", {userID: user.id})
+			.skip((page - 1))
+			.take(limit)
+			.loadAllRelationIds({
+				relations: ["items", "users", "user"],
+				disableMixedMap: true
+			})
+			.getManyAndCount();
+
+		response.data = {
+			lists: [], //result[0],
+			total: result[1],
+			pages: Math.ceil(result[1] / limit)
+		};
+		return response;
 	}
 };
 

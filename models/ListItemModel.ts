@@ -39,7 +39,7 @@ const ListItemModel = {
 			return response;
 		}
 
-		response.data = await listItemEntity.find({where: {list: list}});
+		response.data = await listItemEntity.find({where: {list: list}, order: {purchasedUserID: "ASC", id: "DESC"}});
 		return response;
 	},
 
