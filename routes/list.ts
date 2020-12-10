@@ -11,10 +11,8 @@ const listModel = require("../models/ListModel");
 
 router.get("/", authenticateToken(), async (req: Request, res: Response) => {
 	if (!req.user) return res.status(401).send(invalidResponse("Missing token."));
-	const page = parseInt(req.params.page) || 1;
-	const limit = parseInt(req.params.limit) || 10;
-
-	console.log(page, limit);
+	const page = parseInt(<string>req.query.page) || 1;
+	const limit = parseInt(<string>req.query.limit) || 10;
 
 	const list = await listModel.getUserLists(req.user.id, page, limit);
 

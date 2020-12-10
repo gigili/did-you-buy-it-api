@@ -59,7 +59,7 @@ const ListItemModel = {
 		}
 
 		const hasListAccess = await listModel.hasAccessToList(listID, userID);
-		if (hasListAccess.error) return hasListAccess.error;
+		if (hasListAccess.error) return hasListAccess;
 
 		const listAccess = hasListAccess.data as HasAccessType;
 		if (!listAccess.hasAccess) {

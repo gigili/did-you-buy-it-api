@@ -2,6 +2,7 @@ import {ModelResponse} from "../util/types";
 import {ListEntity} from "../entity/ListEntity";
 import {UserEntity} from "../entity/UserEntity";
 import {getRepository} from "typeorm";
+import {ListItemEntity} from "../entity/ListItemEntity";
 
 const listEntity = getRepository(ListEntity);
 const userEntity = getRepository(UserEntity);
@@ -25,12 +26,19 @@ const ListModel = {
 			return response;
 		}
 
-		const data = await listEntity.findOne({
-			where: {
-				id: listID,
-				user: user
-			}
-		});
+		const hasListAccess = await this.hasAccessToList(listID, ownerID);
+		if (hasListAccess.error) return hasListAccess;
+
+		const listAccess = hasListAccess.data as HasAccessType;
+		if (!listAccess.hasAccess) {
+			response.error = {
+				message: "You don't have access to this list",
+				code: 401
+			};
+			return response;
+		}
+
+		const data = await listEntity.findOne({where: {id: listID}});
 
 		if (!data) {
 			response.error = {
@@ -39,7 +47,6 @@ const ListModel = {
 			};
 			return response;
 		}
-
 
 		response.data = {
 			...data,
@@ -294,15 +301,22 @@ const ListModel = {
 
 	async hasAccessToList(listID: number, userID: number) {
 		const response: ModelResponse = {data: {}};
-		const list = await this.getList(listID, userID);
+		const list = await listEntity.findOne({
+			where: {
+				id: listID
+			}
+		});
 
-		if (list.error) {
-			response.error = list.error;
+		if (!list) {
+			response.error = {
+				message: "List not found",
+				code: 404
+			};
 			return response;
 		}
 
-		const isListOwner = list.data.user.id === userID;
-		const isListGuest = list.data.users.some((usr: UserEntity) => usr.id === userID);
+		const isListOwner = (await list.user).id === userID;
+		const isListGuest = (await list.users).some((usr: UserEntity) => usr.id === userID);
 
 		response.data = {
 			hasAccess: (isListOwner || isListGuest),
@@ -314,7 +328,6 @@ const ListModel = {
 	},
 
 	async getUserLists(userID: number, page: number = 1, limit: number = 10): Promise<ModelResponse> {
-		console.log(page, limit);
 		const response: ModelResponse = {data: {}};
 		const user = await userEntity.findOne({id: userID});
 
@@ -326,34 +339,24 @@ const ListModel = {
 			return response;
 		}
 
-		/*response.data = await listEntity.find({
-			where: {
-				user : user
-			},
-			relations: ["items"],
-			skip: (page-1),
-			take: limit,
-			order: {
-				id: "DESC"
-			}
-		});*/
-
-		const result = await listEntity
+		if (page <= 0) page = 1;
+		response.data = await listEntity
 			.createQueryBuilder("l")
+			.select("l.*")
+			.addSelect("COUNT(li.id)", "cntItems")
+			.addSelect("SUM(CASE WHEN li.userPurchasedID IS NULL THEN 0 ELSE 1 END)", "cntBoughtItems")
+			.addSelect("(COUNT(lu.listId) + 1)", "cntUsers")
+			.leftJoin(ListItemEntity, "li", "li.listID = l.id")
+			.leftJoin("list_user", "lu", "lu.listId = l.id")
 			.where("l.userID = :userID", {userID: user.id})
+			.orWhere("lu.userId = :userID", {userID: user.id})
+			.orderBy("l.id", "DESC")
+			.groupBy("l.id")
 			.skip((page - 1))
 			.take(limit)
-			.loadAllRelationIds({
-				relations: ["items", "users", "user"],
-				disableMixedMap: true
-			})
-			.getManyAndCount();
+			.getRawMany();
 
-		response.data = {
-			lists: [], //result[0],
-			total: result[1],
-			pages: Math.ceil(result[1] / limit)
-		};
+
 		return response;
 	}
 };

@@ -27,8 +27,8 @@ export class UserEntity {
 	@Column({length: 15, select: false})
 	activation_key!: string;
 
-	@Column({enumName: "status", enum: ["0", "1"], default: "0", type: "enum"})
-	status!: string;
+	@Column({default: false})
+	status!: boolean;
 
 	@OneToMany(() => ListEntity, lists => lists.user)
 	lists!: Promise<ListEntity[]>;
