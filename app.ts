@@ -1,13 +1,10 @@
 require("dotenv").config();
 
 import "reflect-metadata";
-import {Connection, createConnection} from "typeorm";
+import {ConnectionOptions, createConnection} from "typeorm";
 import express from "express";
-import {getEnvVar} from "./util/functions";
-import {EnvVars} from "./util/types";
 
-export let connection: Connection;
-const PORT = getEnvVar(EnvVars.PORT) || 3030;
+const PORT = process.env.PORT || 3030;
 const app = express();
 const fileUpload = require("express-fileupload");
 const path = require("path");
@@ -41,9 +38,31 @@ app.set("view engine", "ejs");
 const logger = require("morgan");
 app.use(logger("dev"));
 
-createConnection().then(_connection => {
-	connection = _connection;
+const connectionOptions: ConnectionOptions = {
+	type: "postgres",
+	port: parseInt(process.env.DB_PORT || "5432"),
+	username: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+	database: process.env.DB,
+	synchronize: true,
+	logging: false,
+	entities: [
+		"entity/**/*"
+	],
+	migrations: [
+		"migration/**/*"
+	],
+	subscribers: [
+		"subscriber/**/*"
+	],
+	cli: {
+		"entitiesDir": "entity",
+		"migrationsDir": "migration",
+		"subscribersDir": "subscriber"
+	}
+};
 
+createConnection(connectionOptions).then(_connection => {
 	const indexRouter = require("./routes/index");
 	const listRouter = require("./routes/list");
 	const listItemRouter = require("./routes/list_item");

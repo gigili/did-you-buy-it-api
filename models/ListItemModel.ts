@@ -1,12 +1,12 @@
 import {ModelResponse} from "../util/types";
-import {connection} from "../app";
 import {ListItemEntity} from "../entity/ListItemEntity";
 import {ListEntity} from "../entity/ListEntity";
 import {UserEntity} from "../entity/UserEntity";
 import {HasAccessType} from "./ListModel";
+import {getRepository} from "typeorm";
 
-const listItemEntity = connection.getRepository(ListItemEntity);
-const listEntity = connection.getRepository(ListEntity);
+const listItemEntity = getRepository(ListItemEntity);
+const listEntity = getRepository(ListEntity);
 const listModel = require("./ListModel");
 const fs = require("fs");
 
@@ -39,14 +39,14 @@ const ListItemModel = {
 			return response;
 		}
 
-		response.data = await listItemEntity.find({list: list});
+		response.data = await listItemEntity.find({where: {list: list}, order: {purchasedUserID: "ASC", id: "DESC"}});
 		return response;
 	},
 
 	async addListItem(listID: number, name: string, is_repeating: string, userID: number, newImageName?: string): Promise<ModelResponse> {
 		const response: ModelResponse = {data: {}};
 		const list = await listModel.getList(listID, userID);
-		const user = await connection.getRepository(UserEntity).findOne({id: userID});
+		const user = await getRepository(UserEntity).findOne({id: userID});
 
 		if (list.error) return list;
 
@@ -59,7 +59,7 @@ const ListItemModel = {
 		}
 
 		const hasListAccess = await listModel.hasAccessToList(listID, userID);
-		if (hasListAccess.error) return hasListAccess.error;
+		if (hasListAccess.error) return hasListAccess;
 
 		const listAccess = hasListAccess.data as HasAccessType;
 		if (!listAccess.hasAccess) {
@@ -75,7 +75,7 @@ const ListItemModel = {
 			newListItem.list = list.data;
 			newListItem.name = name;
 			newListItem.is_repeating = is_repeating;
-			newListItem.userID = user;
+			newListItem.userID = Promise.resolve(user);
 			if (newImageName !== undefined) {
 				newListItem.image = newImageName;
 			}
@@ -133,7 +133,7 @@ const ListItemModel = {
 		const response: ModelResponse = {data: {}};
 		const listResult = await listModel.hasAccessToList(listID, userID);
 		const itemResult = await this.getListItem(itemID);
-		const user = await connection.getRepository(UserEntity).findOne({id: userID});
+		const user = await getRepository(UserEntity).findOne({id: userID});
 
 		if (listResult.error) return listResult;
 

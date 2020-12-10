@@ -1,4 +1,5 @@
 # Did you buy it?
+
 ![Dependecy Badge](https://img.shields.io/librariesio/github/gigili/did-you-buy-it-api?style=for-the-badge)
 ![Repo size badge](https://img.shields.io/github/repo-size/gigili/did-you-buy-it-api?style=for-the-badge)
 ![Open issues badge](https://img.shields.io/github/issues/gigili/did-you-buy-it-api?style=for-the-badge)
@@ -9,22 +10,23 @@
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
-"Did you buy it?" is a shopping list app designed to help people keep track of stuff they need to buy. 
+"Did you buy it?" is a shopping list app designed to help people keep track of stuff they need to buy.
 
 # Features
-  * [x] Login
-  * [x] Register 
+
+* [x] Login
+* [x] Register
     * [x] Send an activation email
     * [x] Activate user account
-  * [x] Lists
+* [x] Lists
     * [x] Create list
     * [x] Update list
     * [x] Delete list
     * [x] List users that have access to the list
     * [x] Allow other users access to the list
     * [x] Remove users from the list
-    * [ ] Autocomplete endpoint for when adding users ? 
-  * [ ] List items
+    * [ ] Autocomplete endpoint for when adding users ?
+* [ ] List items
     * [x] Add list item
         * [x] Add images
     * [x] Update list item
@@ -32,7 +34,7 @@
             * [ ] Send notification to other users of the list
     * [x] Delete list item
     * [x] Add / remove images
-  * [ ] User profile
+* [ ] User profile
     * [x] Edit profile
     * [x] Delete profile
         * [ ] Send an email notification that the account has been closed
@@ -46,9 +48,17 @@ To get started on developing this project firs you need to do
   cd did-you-buy-it-api
 ```
 
-Then rename `.env.example` into `.env` file and fill in all the values
+Then rename `.env.example` into `.env` file and fill in all the values.
 
-After that you can run:
+To run the app:
+
+* Start up docker container for the Postgres database
+
+```shell
+    docker-compose up
+```
+
+* Run the Express app with:
 
 ```sh
   npm install
@@ -56,3 +66,12 @@ After that you can run:
 ```
 
 If you do not specify a `PORT` value in the `.env` file the app should be available at `http://localohst:3030`
+
+# Notes
+
+For Docker:
+
+```sh
+  # might need to run as sudo and run only once
+  docker volume create --name dybi-pg -d local    
+```

@@ -1,5 +1,5 @@
 import {checkSchema, validationResult} from "express-validator";
-import {NextFunction, Response} from "express";
+import {Response} from "express";
 import {listDeleteSchema, listSchema, listUpdateSchema, newListUserSchema} from "../util/schemaValidation/listSchema";
 import {authenticateToken, invalidResponse} from "../util/functions";
 import {ApiResponse} from "../util/types";
@@ -9,8 +9,19 @@ const express = require("express");
 const router = express.Router();
 const listModel = require("../models/ListModel");
 
+router.get("/", authenticateToken(), async (req: Request, res: Response) => {
+	if (!req.user) return res.status(401).send(invalidResponse("Missing token."));
+	const page = parseInt(<string>req.query.page) || 1;
+	const limit = parseInt(<string>req.query.limit) || 10;
 
-router.get("/:listID", authenticateToken(), async (req: Request, res: Response, _: NextFunction) => {
+	const list = await listModel.getUserLists(req.user.id, page, limit);
+
+	if (list.error) return res.status(list.error.code).send(invalidResponse(list.error.message));
+
+	res.status(200).send(list);
+});
+
+router.get("/:listID", authenticateToken(), async (req: Request, res: Response) => {
 	if (!req.user) return res.status(401).send(invalidResponse("Missing token."));
 	const list = await listModel.getList(parseInt(req.params.listID), req.user.id);
 

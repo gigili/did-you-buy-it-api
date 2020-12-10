@@ -14,5 +14,5 @@ export class RefreshTokenEntity {
 	@JoinColumn({
 		name: "userID"
 	})
-	user!: UserEntity;
+	user!: Promise<UserEntity>;
 }

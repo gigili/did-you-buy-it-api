@@ -1,8 +1,7 @@
-import {DatabaseResult} from "./types/database";
-import {RefreshToken} from "../models/RefreshTokenModel";
-import {ApiResponse, EnvVars, ModelResponse, TokenData} from "./types";
+import {ApiResponse, EnvVars, TokenData} from "./types";
 import {NextFunction, Response} from "express";
 import {Request} from "./types/request";
+import {RefreshTokenEntity} from "../entity/RefreshTokenEntity";
 
 const {VerifyErrors} = require("jsonwebtoken");
 const refreshTokenModel = require("../models/RefreshTokenModel");
@@ -22,11 +21,11 @@ export async function generateToken(userData: { id: number, username: string }, 
 	};
 
 	if (shouldGenerateRefreshToken) {
-		const refreshTokenResult = await refreshTokenModel.getRefreshToken(userData.id) as DatabaseResult<RefreshToken>;
-		refreshToken = (refreshTokenResult.data as RefreshToken).token;
-
-		if (!refreshTokenResult.success || !refreshToken) {
+		const refreshTokenResult = await refreshTokenModel.getRefreshToken(userData.id);
+		if (refreshTokenResult.error || refreshTokenResult.data === undefined) {
 			refreshToken = await generateRefreshToken(tokenData, userData.id);
+		} else {
+			refreshToken = (refreshTokenResult.data as RefreshTokenEntity).token;
 		}
 	}
 
@@ -52,7 +51,7 @@ export async function generateToken(userData: { id: number, username: string }, 
 export async function generateRefreshToken(tokenData: object, userID: number): Promise<string | null> {
 	const refreshToken = jwt.sign(tokenData, privateKey);
 	const result = await refreshTokenModel.addRefreshToken(userID, refreshToken);
-	return result.success ? refreshToken : null;
+	return !result.error ? refreshToken : null;
 }
 
 export function invalidResponse(msg: string, field?: string, errorCode?: number): ApiResponse {
@@ -147,26 +146,6 @@ export function authenticateToken() {
 			next(); // pass the execution off to whatever request the client intended
 		});
 	};
-}
-
-export function returnModelResponse(response: ModelResponse, result?: DatabaseResult<any>): ModelResponse {
-	if (response.error) return response;
-
-	if (result) {
-		if (result.success) {
-			response.data = result.data ? result.data : [];
-			if (response.error) delete response.error;
-		} else {
-			response.error = {
-				message: result.error?.message,
-				code: result.error?.code
-			};
-
-			if (response.data) delete response.data;
-		}
-	}
-
-	return response;
 }
 
 export function sendNotification(title: string, message: string, recipients: string[]) {

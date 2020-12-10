@@ -1,12 +1,12 @@
 import {generateToken, getEnvVar, sendEmail} from "../util/functions";
 import {EnvVars, ModelResponse, TokenData} from "../util/types";
-import {connection} from "../app";
 import {UserEntity} from "../entity/UserEntity";
+import {getRepository} from "typeorm";
 
 const uuid = require("uuid");
 const fs = require("fs");
 
-const userEntity = connection.getRepository(UserEntity);
+const userEntity = getRepository(UserEntity);
 
 const userModel = {
 	async login(username: string, password: string) {
@@ -18,7 +18,7 @@ const userModel = {
 			return response;
 		}
 
-		if (user.status !== "1") {
+		if (!user.status) {
 			response.error = {message: "Account is not active.", code: 400};
 			return response;
 		}
@@ -113,14 +113,14 @@ const userModel = {
 			response.error.message = "User account doesn't exist.";
 			response.error.code = 400;
 			return response;
-		} else if (user.status === "1") {
+		} else if (user.status) {
 			response.error.message = "User account is already active.";
 			response.error.code = 400;
 			return response;
 		}
 
 		try {
-			user.status = "1";
+			user.status = true;
 			await userEntity.save(user);
 		} catch (e) {
 			response.error.message = "Failed to activate user account.";
