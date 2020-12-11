@@ -4,6 +4,7 @@ import {authenticateToken, invalidResponse} from "../util/functions";
 import {ApiResponse} from "../util/types";
 import {checkSchema, validationResult} from "express-validator";
 import {deleteListItemSchema, editListItemSchema, newListItemSchema} from "../util/schemaValidation/listItemSchema";
+import {UploadedFile} from "express-fileupload";
 
 const fs = require("fs");
 const uploadHelper = require("../util/uploadHelper");
@@ -43,6 +44,7 @@ router.post("/:listID", checkSchema(newListItemSchema), authenticateToken(), asy
 
 	let newImageName;
 	if (req.files && req.files.image) {
+		const image = req.files.image as UploadedFile;
 		const validFile = uploadHelper.allowed_file_type(req.files);
 		if (!validFile) {
 			return res.status(400).send(invalidResponse("Invalid file type"));
@@ -52,8 +54,8 @@ router.post("/:listID", checkSchema(newListItemSchema), authenticateToken(), asy
 			fs.mkdirSync("./public/images/listItem", {recursive: true});
 		}
 
-		newImageName = Date.now() + "-" + req.files.image.name;
-		await req.files.image.mv(`./public/images/listItem/${newImageName}`);
+		newImageName = Date.now() + "-" + image.name;
+		await image.mv(`./public/images/listItem/${newImageName}`);
 	}
 
 	const {name, is_repeating} = req.body;
@@ -87,6 +89,7 @@ router.patch("/:listID/:itemID", checkSchema(editListItemSchema), authenticateTo
 
 	let newImageName;
 	if (req.files && req.files.image) {
+		const image = req.files.image as UploadedFile;
 		const validFile = uploadHelper.allowed_file_type(req.files);
 		if (!validFile) {
 			return res.status(400).send(invalidResponse("Invalid file type"));
@@ -96,8 +99,8 @@ router.patch("/:listID/:itemID", checkSchema(editListItemSchema), authenticateTo
 			fs.mkdirSync("./public/images/listItem", {recursive: true});
 		}
 
-		newImageName = req.params.itemID + "-" + req.files.image.name;
-		await req.files.image.mv(`./public/images/listItem/${newImageName}`);
+		newImageName = req.params.itemID + "-" + image.name;
+		await image.mv(`./public/images/listItem/${newImageName}`);
 	}
 
 	const {name, is_repeating} = req.body;

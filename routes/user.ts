@@ -4,6 +4,7 @@ import {Request} from "../util/types/request";
 import {ApiResponse} from "../util/types";
 import {checkSchema, validationResult} from "express-validator";
 import {updateUserProfileSchema} from "../util/schemaValidation/userSchema";
+import {UploadedFile} from "express-fileupload";
 
 const express = require("express");
 const router = express.Router();
@@ -39,6 +40,7 @@ router.patch("/", authenticateToken(), checkSchema(updateUserProfileSchema), asy
 
 	let newImageName;
 	if (req.files && req.files.image) {
+		const image = req.files.image as UploadedFile;
 		const validFile = uploadHelper.allowed_file_type(req.files);
 		if (!validFile) {
 			return res.status(400).send(invalidResponse("Invalid file type"));
@@ -48,8 +50,8 @@ router.patch("/", authenticateToken(), checkSchema(updateUserProfileSchema), asy
 			fs.mkdirSync("./public/images/user", {recursive: true});
 		}
 
-		newImageName = `${req.user.id}-${req.files.image.name}`;
-		await req.files.image.mv(`./public/images/user/${newImageName}`);
+		newImageName = `${req.user.id}-${image.name}`;
+		await image.mv(`./public/images/user/${newImageName}`);
 	}
 
 	const {name, email} = req.body;

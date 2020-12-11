@@ -1,4 +1,4 @@
-import {FileArray} from "express-fileupload";
+import {FileArray, UploadedFile} from "express-fileupload";
 
 const fs = require("fs");
 
@@ -22,7 +22,8 @@ const uploadHelper = {
 			return true;
 		}
 
-		for (const image of Object.values(files)) {
+		for (const img of Object.values(files)) {
+			const image = img as UploadedFile;
 			const extension = image.name.substring(image.name.lastIndexOf(".") + 1, image.name.length);
 			if (!this.AllowedExtensions.images.includes(extension)) {
 				return false;
@@ -34,17 +35,6 @@ const uploadHelper = {
 
 	//TODO: Implement a general function for handling of single or multiple file uploads
 	async handle_upload(file: FileArray, fileName?: string, path: string = "./public/images/") {
-		if (file) {
-			const validFile = uploadHelper.allowed_file_type(file);
-			if (!validFile) return "Invalid file type";
-
-			if (!fs.existsSync(path)) {
-				fs.mkdirSync(path, {recursive: true});
-			}
-
-			const newImageName = fileName || file.image.name;
-			await file.image.mv(`./public/images/user/${newImageName}`);
-		}
 	}
 };
 
