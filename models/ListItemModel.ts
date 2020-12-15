@@ -149,7 +149,7 @@ const ListItemModel = {
 
 		const item = itemResult.data as ListItemEntity;
 
-		item.purchasedUserID = user;
+		item.purchasedUserID = Promise.resolve(user);
 		item.purchase_date = new Date().toISOString();
 
 		try {

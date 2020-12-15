@@ -38,7 +38,7 @@ const ListModel = {
 			return response;
 		}
 
-		const data = await listEntity.findOne({where: {id: listID}});
+		const data = await listEntity.findOne({where: {id: listID}, relations: ["items", "items.purchasedUserID"]});
 
 		if (!data) {
 			response.error = {
@@ -49,7 +49,9 @@ const ListModel = {
 		}
 
 		response.data = {
-			...data,
+			id: data.id,
+			name: data.name,
+			created_at: data.created_at,
 			user: await data.user,
 			users: await data.users,
 			items: await data.items
