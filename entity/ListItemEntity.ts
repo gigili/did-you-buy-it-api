@@ -37,7 +37,7 @@ export class ListItemEntity {
 	@JoinColumn({
 		name: "userPurchasedID",
 	})
-	purchasedUserID!: Promise<UserEntity>;
+	purchasedUserID!: UserEntity | null;
 
 	@Column({
 		type: "timestamp",

@@ -13,7 +13,7 @@ const fs = require("fs");
 const ListItemModel = {
 	async getListItem(itemID: number) {
 		const response: ModelResponse = {data: {}};
-		const item = await listItemEntity.findOne({id: itemID});
+		const item = await listItemEntity.findOne({ where: { id: itemID }, relations: ["purchasedUserID"]});
 
 		if (!item) {
 			response.error = {
@@ -129,7 +129,7 @@ const ListItemModel = {
 		return response;
 	},
 
-	async setItemBoughtStatus(listID: number, itemID: number, userID: number): Promise<ModelResponse> {
+	async setItemBoughtState(listID: number, itemID: number, userID: number): Promise<ModelResponse> {
 		const response: ModelResponse = {data: {}};
 		const listResult = await listModel.hasAccessToList(listID, userID);
 		const itemResult = await this.getListItem(itemID);
@@ -148,22 +148,29 @@ const ListItemModel = {
 		}
 
 		const item = itemResult.data as ListItemEntity;
+    const isPurchased = item.purchasedUserID;
+    if(!isPurchased){
+  		item.purchasedUserID = user;
+	  	item.purchase_date = new Date().toISOString();
+    }else{
+      item.purchasedUserID = null;
+      item.purchase_date = null;
+    }
 
-		item.purchasedUserID = Promise.resolve(user);
-		item.purchase_date = new Date().toISOString();
-
-		try {
+    try {
 			await listItemEntity.save(item);
 		} catch (e) {
 			response.error = {
 				message: "Unable to mark item as bought.",
 				code: 500
 			};
+      console.log(e.message);
 			return response;
 		} finally {
 			await this.sendBoughtNotification(listID, itemID, userID, "all");
 		}
 
+    response.data = item;
 		return response;
 	},
 

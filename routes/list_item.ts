@@ -128,14 +128,15 @@ router.patch("/:listID/:itemID/bought", authenticateToken(), async (req: Request
 		return res.status(401).send(invalidResponse("Missing token."));
 	}
 
-	const result = await listItemModel.setItemBoughtStatus(parseInt(req.params.listID), parseInt(req.params.itemID), req.user.id);
+	const result = await listItemModel.setItemBoughtState(parseInt(req.params.listID), parseInt(req.params.itemID), req.user.id);
 
 	if (result.error) {
 		return res.status(result.error.code).send(invalidResponse(result.error.message));
 	}
 
 	res.send({
-		success: true
+    success: true,
+    data: result.data
 	} as ApiResponse);
 });
 
