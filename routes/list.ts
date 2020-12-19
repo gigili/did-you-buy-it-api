@@ -1,6 +1,6 @@
 import {checkSchema, validationResult} from "express-validator";
 import {Response} from "express";
-import {listDeleteSchema, listSchema, listUpdateSchema, newListUserSchema} from "../util/schemaValidation/listSchema";
+import {listDeleteSchema, listSchema, listUpdateSchema, newListUserSchema, deleteListUserSchema} from "../util/schemaValidation/listSchema";
 import {authenticateToken, invalidResponse} from "../util/functions";
 import {ApiResponse} from "../util/types";
 import {Request} from "../util/types/request";
@@ -146,7 +146,7 @@ router.post("/:listID/users", checkSchema(newListUserSchema), authenticateToken(
 	} as ApiResponse);
 });
 
-router.delete("/:listID/users", checkSchema(newListUserSchema), authenticateToken(), async (req: Request, res: Response) => {
+router.delete("/:listID/users/:userID", checkSchema(deleteListUserSchema), authenticateToken(), async (req: Request, res: Response) => {
 	const errors = validationResult(req);
 
 	if (!errors.isEmpty()) {
@@ -159,7 +159,7 @@ router.delete("/:listID/users", checkSchema(newListUserSchema), authenticateToke
 		return res.status(400).send(invalidResponse("Invalid token."));
 	}
 
-	const result = await listModel.deleteListUser(parseInt(req.params.listID), req.user.id, req.body.userID);
+	const result = await listModel.deleteListUser(parseInt(req.params.listID), req.user.id, parseInt(req.params.userID));
 
 	if (result.error) {
 		return res.status(400).send(invalidResponse(result.error.message));

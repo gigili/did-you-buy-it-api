@@ -43,3 +43,19 @@ export const newListUserSchema: SchemaValidator = {
 		toInt: true
 	} as ValidatorsSchema
 };
+
+export const deleteListUserSchema : SchemaValidator = {
+  userID: {
+    in: ["params"],
+    isInt: true,
+    toInt: true,
+    notEmpty: {
+      errorMessage: "User ID is required"
+    }
+  } as ValidatorsSchema,
+  listID: {
+	in: ["params"],
+	isInt: true,
+	toInt: true
+} as ValidatorsSchema
+};
