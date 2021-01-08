@@ -43,6 +43,7 @@ router.post("/:listID", checkSchema(newListItemSchema), authenticateToken(), asy
 	}
 
 	let newImageName;
+
 	if (req.files && req.files.image) {
 		const image = req.files.image as UploadedFile;
 		const validFile = uploadHelper.allowed_file_type(req.files);
@@ -135,8 +136,8 @@ router.patch("/:listID/:itemID/bought", authenticateToken(), async (req: Request
 	}
 
 	res.send({
-    success: true,
-    data: result.data
+		success: true,
+		data: result.data
 	} as ApiResponse);
 });
 

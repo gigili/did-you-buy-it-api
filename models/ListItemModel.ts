@@ -82,6 +82,7 @@ const ListItemModel = {
 
 			await listItemEntity.save(newListItem);
 		} catch (e) {
+			console.log(e.stackTrace);
 			response.error = {
 				message: "Unable to add new list item.",
 				code: 500
