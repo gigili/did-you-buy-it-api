@@ -1,7 +1,7 @@
 import {generateToken, getEnvVar, sendEmail} from "../util/functions";
 import {EnvVars, ModelResponse, TokenData} from "../util/types";
 import {UserEntity} from "../entity/UserEntity";
-import {getRepository} from "typeorm";
+import {getRepository, ILike, Not} from "typeorm";
 
 const uuid = require("uuid");
 const fs = require("fs");
@@ -215,6 +215,35 @@ const userModel = {
 				code: 500
 			};
 		}
+
+		return response;
+	},
+
+	async find(userID: number, search: string, start: number = 0, limit: number = 10): Promise<ModelResponse> {
+		const response: ModelResponse = {data: {}};
+		const searchValue = `%${search}%`;
+		const users = await userEntity.findAndCount({
+			where: [
+				{name: ILike(searchValue), status: true, id: Not(userID)},
+				{username: ILike(searchValue), status: true, id: Not(userID)},
+				{email: ILike(searchValue), status: true, id: Not(userID)}
+			],
+			skip: start,
+			take: limit
+		});
+
+		if (!users) {
+			response.error = {
+				message: "Unable to find users.",
+				code: 500
+			};
+			return response;
+		}
+
+		response.data = {
+			users: users[0],
+			total: users[1]
+		};
 
 		return response;
 	}

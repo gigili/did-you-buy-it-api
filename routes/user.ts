@@ -84,4 +84,27 @@ router.delete("/", authenticateToken(), async (req: Request, res: Response) => {
 	});
 });
 
+router.post("/find", authenticateToken(), async (req: Request, res: Response) => {
+	if (!req.user) {
+		return res.status(401).send(invalidResponse("Missing token."));
+	}
+
+	let {limit} = req.body;
+	const {search, start} = req.body;
+
+	if (!limit) {
+		limit = 10;
+	}
+
+	const result = await userModel.find(req.user.id, search, start, limit);
+	if (result.error) {
+		return res.status(result.error.code).send(invalidResponse(result.error.message));
+	}
+
+	res.send({
+		success: true,
+		data: result.data
+	});
+});
+
 module.exports = router;
