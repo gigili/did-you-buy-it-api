@@ -222,14 +222,16 @@ const userModel = {
 	async find(userID: number, search: string, start: number = 0, limit: number = 10): Promise<ModelResponse> {
 		const response: ModelResponse = {data: {}};
 		const searchValue = `%${search}%`;
+
+		//TODO: Maybe use proper pagination here?
 		const users = await userEntity.findAndCount({
 			where: [
 				{name: ILike(searchValue), status: true, id: Not(userID)},
 				{username: ILike(searchValue), status: true, id: Not(userID)},
 				{email: ILike(searchValue), status: true, id: Not(userID)}
 			],
-			skip: start,
-			take: limit
+			//skip: start,
+			take: 50
 		});
 
 		if (!users) {

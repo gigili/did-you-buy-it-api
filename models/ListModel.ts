@@ -167,6 +167,8 @@ const ListModel = {
 	},
 
 	async getListUsers(listID: number, userID: number) {
+		//TODO: Refactor this to be able to sort users by owner first, names after that
+		// ORDER BY list.isOwner DESC, user.name ASC
 		const response: ModelResponse = {data: []};
 		const user = await userEntity.findOne({id: userID});
 
