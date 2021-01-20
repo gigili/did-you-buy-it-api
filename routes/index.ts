@@ -1,8 +1,9 @@
 import {checkSchema, validationResult} from "express-validator";
-import {NextFunction, Request, Response} from "express";
-import {invalidResponse} from "../util/functions";
+import {NextFunction, Response} from "express";
+import {authenticateToken, generateRefreshToken, generateToken, invalidResponse} from "../util/functions";
 import {ApiResponse} from "../util/types";
 import {loginSchema, registerSchema} from "../util/schemaValidation/indexSchema";
+import {Request} from "../util/types/request";
 
 const express = require("express");
 const router = express.Router();
@@ -78,6 +79,23 @@ router.get("/activate/:email/:activationKey", async (req: Request, res: Response
 	return res.render("activate", {
 		message: "Account activated. You can login now.",
 		type: "success"
+	});
+});
+
+router.post("/refresh", authenticateToken(), async (req: Request, res: Response) => {
+	if (!req.user) {
+		return res.status(401).send(invalidResponse("Invalid token."));
+	}
+
+	const token = await generateToken(req.user, false);
+
+	if (token.error) {
+		return res.status(403).send(invalidResponse(token.error));
+	}
+
+	res.send({
+		success: true,
+		data: token
 	});
 });
 

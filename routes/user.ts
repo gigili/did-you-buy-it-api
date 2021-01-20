@@ -14,7 +14,7 @@ const fs = require("fs");
 
 router.get("/", authenticateToken(), async (req: Request, res: Response) => {
 	if (!req.user) {
-		return res.status(401).send(invalidResponse("Missing token."));
+		return res.status(401).send(invalidResponse("Invalid token."));
 	}
 
 	const user = await userModel.getUser(req.user.id);
@@ -35,7 +35,7 @@ router.patch("/", authenticateToken(), checkSchema(updateUserProfileSchema), asy
 	}
 
 	if (!req.user) {
-		return res.status(401).send(invalidResponse("Missing token."));
+		return res.status(401).send(invalidResponse("Invalid token."));
 	}
 
 	let newImageName;
@@ -71,7 +71,7 @@ router.patch("/", authenticateToken(), checkSchema(updateUserProfileSchema), asy
 
 router.delete("/", authenticateToken(), async (req: Request, res: Response) => {
 	if (!req.user) {
-		return res.status(401).send(invalidResponse("Missing token."));
+		return res.status(401).send(invalidResponse("Invalid token."));
 	}
 
 	const result = await userModel.closeAccount(req.user.id);
@@ -86,7 +86,7 @@ router.delete("/", authenticateToken(), async (req: Request, res: Response) => {
 
 router.post("/find", authenticateToken(), async (req: Request, res: Response) => {
 	if (!req.user) {
-		return res.status(401).send(invalidResponse("Missing token."));
+		return res.status(401).send(invalidResponse("Invalid token."));
 	}
 
 	let {limit} = req.body;

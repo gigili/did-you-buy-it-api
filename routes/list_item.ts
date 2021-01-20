@@ -17,6 +17,10 @@ router.get("/:listID", authenticateToken(), async (req: Request, res: Response) 
 		return res.status(400).send(invalidResponse("Missing list ID."));
 	}
 
+	if (!req.user) {
+		return res.status(401).send(invalidResponse("Invalid token."));
+	}
+
 	const itemResult = await listItemModel.getListItems(parseInt(req.params.listID));
 
 	if (itemResult.error) {
@@ -39,7 +43,7 @@ router.post("/:listID", checkSchema(newListItemSchema), authenticateToken(), asy
 	}
 
 	if (!req.user) {
-		return res.status(401).send(invalidResponse("Missing token."));
+		return res.status(401).send(invalidResponse("Invalid token."));
 	}
 
 	let newImageName;
@@ -85,7 +89,7 @@ router.patch("/:listID/:itemID", checkSchema(editListItemSchema), authenticateTo
 	}
 
 	if (!req.user) {
-		return res.status(401).send(invalidResponse("Missing token."));
+		return res.status(401).send(invalidResponse("Invalid token."));
 	}
 
 	let newImageName;
@@ -126,7 +130,7 @@ router.patch("/:listID/:itemID", checkSchema(editListItemSchema), authenticateTo
 
 router.patch("/:listID/:itemID/bought", authenticateToken(), async (req: Request, res: Response) => {
 	if (!req.user) {
-		return res.status(401).send(invalidResponse("Missing token."));
+		return res.status(401).send(invalidResponse("Invalid token."));
 	}
 
 	const result = await listItemModel.setItemBoughtState(parseInt(req.params.listID), parseInt(req.params.itemID), req.user.id);
@@ -151,7 +155,7 @@ router.delete("/:listID/:itemID", checkSchema(deleteListItemSchema), authenticat
 	}
 
 	if (!req.user) {
-		return res.status(401).send(invalidResponse("Missing token."));
+		return res.status(401).send(invalidResponse("Invalid token."));
 	}
 
 	const deleteItemResult = await listItemModel.deleteListItem(
@@ -177,7 +181,7 @@ router.delete("/:listID/:itemID/image", checkSchema(deleteListItemSchema), authe
 	}
 
 	if (!req.user) {
-		return res.status(401).send(invalidResponse("Missing token."));
+		return res.status(401).send(invalidResponse("Invalid token."));
 	}
 
 	const listItemImage = await listItemModel.deleteItemImage(

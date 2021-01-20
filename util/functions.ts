@@ -29,7 +29,7 @@ export async function generateToken(userData: { id: number, username: string }, 
 		}
 	}
 
-	if (refreshToken === null) {
+	if (shouldGenerateRefreshToken && refreshToken === null) {
 		return {
 			access_token: null,
 			refresh_token: null,
@@ -129,7 +129,7 @@ export function authenticateToken() {
 		const token = authHeader && authHeader.split(" ")[1];
 
 		if (!token) {
-			return res.status(401).send({"success": false, "message": "Token is missing."});
+			return res.status(401).send(invalidResponse("Invalid token."));
 		}
 
 		jwt.verify(token, getEnvVar(EnvVars.JWT_SECRET), (err: typeof VerifyErrors | null, user?: { exp: number, user: { id: number, username: string, power?: number } }) => {

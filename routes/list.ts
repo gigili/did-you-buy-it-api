@@ -10,7 +10,7 @@ const router = express.Router();
 const listModel = require("../models/ListModel");
 
 router.get("/", authenticateToken(), async (req: Request, res: Response) => {
-	if (!req.user) return res.status(401).send(invalidResponse("Missing token."));
+	if (!req.user) return res.status(401).send(invalidResponse("Invalid token."));
 	const page = parseInt(<string>req.query.page) || 1;
 	const limit = parseInt(<string>req.query.limit) || 10;
 
@@ -22,7 +22,7 @@ router.get("/", authenticateToken(), async (req: Request, res: Response) => {
 });
 
 router.get("/:listID", authenticateToken(), async (req: Request, res: Response) => {
-	if (!req.user) return res.status(401).send(invalidResponse("Missing token."));
+	if (!req.user) return res.status(401).send(invalidResponse("Invalid token."));
 	const list = await listModel.getList(parseInt(req.params.listID), req.user.id);
 
 	if (list.error) return res.status(list.error.code).send(invalidResponse(list.error.message));
@@ -39,14 +39,14 @@ router.post("/", checkSchema(listSchema), authenticateToken(), async (req: Reque
 		return res.status(400).json(invalidResponse(msg, param));
 	}
 
-	if (req.user === undefined) {
+	if (!req.user) {
 		return res.status(401).send(invalidResponse("Invalid token"));
 	}
 
 	const result = await listModel.createList(req.body.name, req.user.id);
 
 	if (result.error) {
-		return res.status(400).send(invalidResponse(result.error?.message));
+		return res.status(result.error.code).send(invalidResponse(result.error?.message));
 	}
 
 	res.status(201).send({
@@ -63,14 +63,14 @@ router.patch("/:listID", checkSchema(listUpdateSchema), authenticateToken(), asy
 		return res.status(400).json(invalidResponse(msg, param));
 	}
 
-	if (req.user === undefined) {
+	if (!req.user) {
 		return res.status(401).send(invalidResponse("Invalid token"));
 	}
 
 	const result = await listModel.updateList(parseInt(req.params.listID), req.body.name, req.user.id);
 
 	if (result.error) {
-		return res.status(400).send(invalidResponse(result.error?.message));
+		return res.status(result.error.code).send(invalidResponse(result.error?.message));
 	}
 
 	res.status(200).send({
@@ -87,14 +87,14 @@ router.delete("/:listID", checkSchema(listDeleteSchema), authenticateToken(), as
 		return res.status(400).json(invalidResponse(msg, param));
 	}
 
-	if (req.user === undefined) {
+	if (!req.user) {
 		return res.status(401).send(invalidResponse("Invalid token"));
 	}
 
 	const result = await listModel.deleteList(parseInt(req.params.listID), req.user.id);
 
 	if (result.error) {
-		return res.status(400).send(invalidResponse(result.error?.message));
+		return res.status(result.error.code).send(invalidResponse(result.error?.message));
 	}
 
 	res.status(200).send({
@@ -106,8 +106,9 @@ router.get("/:listID/users", authenticateToken(), async (req: Request, res: Resp
 	if (!req.params.listID) {
 		return res.status(400).send(invalidResponse("Missing list ID."));
 	}
+
 	if (!req.user) {
-		return res.status(400).send(invalidResponse("Invalid token."));
+		return res.status(401).send(invalidResponse("Invalid token."));
 	}
 
 	const result = await listModel.getListUsers(parseInt(req.params.listID), req.user.id);
@@ -132,13 +133,13 @@ router.post("/:listID/users", checkSchema(newListUserSchema), authenticateToken(
 	}
 
 	if (!req.user) {
-		return res.status(400).send(invalidResponse("Invalid token."));
+		return res.status(401).send(invalidResponse("Invalid token."));
 	}
 
 	const result = await listModel.addListUser(parseInt(req.params.listID), req.user.id, req.body.userID);
 
 	if (result.error) {
-		return res.status(400).send(invalidResponse(result.error.message));
+		return res.status(result.error.code).send(invalidResponse(result.error.message));
 	}
 
 	res.status(201).send({
@@ -156,13 +157,13 @@ router.delete("/:listID/users/:userID", checkSchema(deleteListUserSchema), authe
 	}
 
 	if (!req.user) {
-		return res.status(400).send(invalidResponse("Invalid token."));
+		return res.status(401).send(invalidResponse("Invalid token."));
 	}
 
 	const result = await listModel.deleteListUser(parseInt(req.params.listID), req.user.id, parseInt(req.params.userID));
 
 	if (result.error) {
-		return res.status(400).send(invalidResponse(result.error.message));
+		return res.status(result.error.code).send(invalidResponse(result.error.message));
 	}
 
 	res.status(201).send({
