@@ -1,6 +1,5 @@
-# Did you buy it?
+# Did You Buy It?
 
-![Dependecy Badge](https://img.shields.io/librariesio/github/gigili/did-you-buy-it-api?style=for-the-badge)
 ![Repo size badge](https://img.shields.io/github/repo-size/gigili/did-you-buy-it-api?style=for-the-badge)
 ![Open issues badge](https://img.shields.io/github/issues/gigili/did-you-buy-it-api?style=for-the-badge)
 ![Licence badge](https://img.shields.io/github/license/gigili/did-you-buy-it-api?style=for-the-badge)
@@ -38,6 +37,7 @@
     * [x] Edit profile
     * [x] Delete profile
         * [ ] Send an email notification that the account has been closed
+* [ ] Reset password
 
 # Local setup
 
