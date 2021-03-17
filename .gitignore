@@ -1,6 +1,9 @@
-node_modules/
+/node_modules/*
 .idea/
-
+/postgres-data/
 public/images/
 .env
-pg-data/
+/pg-data/*
+/node/*
+/logs/*
+/vendor/

@@ -1,0 +1,19 @@
+{
+    "name": "gac/did-you-buy-it-web",
+    "description": "Did You Buy It? web API",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Igor Ilic",
+            "email": "githubo@igorilic.net"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "ext-json": "*",
+        "byjg/migration": "4.2.*",
+        "byjg/migration-cli": "4.1.*",
+        "ramsey/uuid": "^4.1"
+    }
+}

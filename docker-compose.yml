@@ -1,28 +1,25 @@
 version: '3.1'
+
 services:
-  pg:
-    image: "postgres:12"
-    container_name: "dybi-postgres"
-    restart: always
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB}
-    ports:
-      - "${DB_PORT}:5432"
+  db:
+    container_name: "dybi-pg"
+    image: postgres:12.4-alpine
     volumes:
-      - dybi-pg:/var/lib/postgresql/data
+      - "./postgres-data:/var/lib/postgresql/data:rw"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "dybi"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    restart: unless-stopped
 
   pg-admin:
     image: "dpage/pgadmin4"
-    container_name: "dybi-postgres-admin"
+    container_name: "dybi-pg-admin"
     restart: always
     ports:
       - 8088:80
     environment:
       PGADMIN_DEFAULT_EMAIL: "github@igorilic.net"
-      PGADMIN_DEFAULT_PASSWORD: ${DB_PASSWORD}
-
-volumes:
-  dybi-pg:
-    external: true
+      PGADMIN_DEFAULT_PASSWORD: "postgres"
