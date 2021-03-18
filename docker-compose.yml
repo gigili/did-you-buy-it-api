@@ -1,6 +1,10 @@
 version: '3.1'
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
   db:
     container_name: "dybi-pg"
     image: postgres:12.4-alpine
