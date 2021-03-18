@@ -7,5 +7,7 @@
 	"username_taken": "username is already taken",
 	"email_taken": "email is already taken",
 	"account_registered_success": "account registered successfully",
-	"account_registered_error": "there was a problem while registering an account"
+	"account_registered_error": "there was a problem while registering an account",
+	"missing_token": "missing token",
+	"invalid_token": "invalid token"
 }

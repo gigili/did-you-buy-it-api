@@ -4,9 +4,9 @@
 	use Ramsey\Uuid\Uuid;
 
 	try {
-		function login(array $params) {
-			$username = $params["username"] ?? NULL;
-			$password = $params["password"] ?? NULL;
+		function login() {
+			$username = $_REQUEST["username"] ?? NULL;
+			$password = $_REQUEST["password"] ?? NULL;
 
 			if (is_null($username) || mb_strlen($username) < 3) {
 				error_response(Translation::translate("invalid_username"), errorField: "username");
@@ -25,14 +25,15 @@
 				error_response(Translation::translate("invalid_login_credentials"), 401);
 			}
 
-			echo json_encode(["res" => $result]);
+			$tokens = generate_token($result[0]->id, true);
+			echo json_encode(["success" => true, "data" => ["access_token" => $tokens["accessToken"], "refresh_token" => $tokens["refreshToken"]]]);
 		}
 
-		#[NoReturn] function register(array $params) {
-			$name = $params["name"] ?? NULL;
-			$email = $params["email"] ?? NULL;
-			$username = $params["username"] ?? NULL;
-			$password = $params["password"] ?? NULL;
+		#[NoReturn] function register() {
+			$name = $_REQUEST["name"] ?? NULL;
+			$email = $_REQUEST["email"] ?? NULL;
+			$username = $_REQUEST["username"] ?? NULL;
+			$password = $_REQUEST["password"] ?? NULL;
 
 			if (is_null($name) || mb_strlen($name) < 3) error_response(Translation::translate("invalid_name"), 400, "name");
 			if (is_null($email) || mb_strlen($email) < 3) error_response(Translation::translate("invalid_email"), 400, "email");
@@ -44,8 +45,8 @@
 			$uniqueCheck = Database::execute_query("SELECT * FROM users.user WHERE username = ? OR email = ?", [$username, $email]);
 			if (count($uniqueCheck) > 0) {
 				foreach ($uniqueCheck as $check) {
-					if ($check->username === $username) error_response(Translation::translate("username_taken"), errorField: "username");
-					if ($check->email === $email) error_response(Translation::translate("email_taken"), errorField: "email");
+					if ($check->username === $username) error_response(Translation::translate("username_taken"), 409, errorField: "username");
+					if ($check->email === $email) error_response(Translation::translate("email_taken"), 409, errorField: "email");
 				}
 			}
 
@@ -65,8 +66,12 @@
 			error_response(Translation::translate("account_registered_error"), 500);
 		}
 
-		$routes->add("/login", "login", $input, ["POST"]);
-		$routes->add("/register", "register", $input, ["POST"]);
+		$routes->add("/login", "login", ["POST"]);
+		$routes->add("/register", "register", ["POST"]);
+
+		$routes->add("/verify", function () {
+			echo json_encode(['success' => true, "res" => $_REQUEST, "ses" => $_SESSION]);
+		}, ["POST"])->middleware(["decode_token"]);
 	} catch (Exception $ex) {
 		error_response("API error: {$ex->getMessage()}");
 	}

@@ -1,5 +1,7 @@
 <?php
 	declare(strict_types=1);
+
+	session_start();
 	include_once "vendor/autoload.php";
 
 	$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -8,12 +10,12 @@
 	try {
 		$routes = new Routes();
 		$input = json_decode(file_get_contents("php://input")) ?? [];
-		$input = array_merge($input, $_REQUEST);
+		$_REQUEST = array_merge($input, $_REQUEST);
 		$files = glob($_SERVER['DOCUMENT_ROOT'] . "/routes/*.php");
 
 		$routes->add("/", function () {
 			echo json_encode(["message" => Translation::translate(key: "hello_world")]);
-		}, NULL, ["GET", "POST", "PUT", "PATCH", "DELETE"]);
+		}, ["GET", "POST", "PUT", "PATCH", "DELETE"]);
 
 		foreach ($files as $file) {
 			if (file_exists($file)) {

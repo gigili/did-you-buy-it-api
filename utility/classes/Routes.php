@@ -29,7 +29,7 @@
 		 * @return Routes returns the instance of the Routes utility
 		 * @throws Exception Throws an exception when you try to declare and already existing route
 		 */
-		public function add(string $url = "", callable|string|null $callback = NULL, array|null $params = [], array $method = ["GET"]): self {
+		public function add(string $url = "", callable|string|null $callback = NULL, array $method = ["GET"]): self {
 			if (is_string($method)) {
 				$method = [$method];
 			}
@@ -57,7 +57,7 @@
 					"url" => $url,
 					"callback" => $callback,
 					"allowed_method" => $m,
-					"params" => $params,
+					"params" => [],
 					"regex" => $nUrl,
 					"middleware" => []
 				];
@@ -116,8 +116,7 @@
 				}
 			}
 
-			header('HTTP/1.1 404 Not Found');
-			return false;
+			error_response("Route not found", 404);
 		}
 
 		/**
