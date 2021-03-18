@@ -1,2 +1,1 @@
-DROP TABLE lists.list;
-DROP SCHEMA lists;
+DROP TABLE lists.list_item;

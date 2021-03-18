@@ -1,0 +1,8 @@
+{
+	"hello_world": "hello world",
+	"invalid_username": "invalid username",
+	"invalid_password": "invalid password",
+	"invalid_login_credentials": "invalid login credentials",
+	"invalid_name": "invalid name",
+	"username_taken": "username taken"
+}

@@ -1,19 +1,27 @@
 <?php
 	declare(strict_types=1);
 	include_once "vendor/autoload.php";
-	include_once "utility/helpers.php";
-	include_once "utility/Database.php";
-	include_once "utility/Routes.php";
+
+	$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+	$dotenv->load();
 
 	try {
 		$routes = new Routes();
+		$input = json_decode(file_get_contents("php://input")) ?? [];
+		$input = array_merge($input, $_REQUEST);
+		$files = glob($_SERVER['DOCUMENT_ROOT'] . "/routes/*.php");
 
 		$routes->add("/", function () {
-			$result = Database::execute_query("SELECT * FROM \"Test\"");
-			echo json_encode(["message" => "Hello World", "result" => $result]);
+			echo json_encode(["message" => Translation::translate(key: "hello_world")]);
 		}, NULL, ["GET", "POST", "PUT", "PATCH", "DELETE"]);
+
+		foreach ($files as $file) {
+			if (file_exists($file)) {
+				include_once($file);
+			}
+		}
 
 		$routes->route();
 	} catch (Exception $ex) {
-		die(json_encode(["error" => "API Error: {$ex->getMessage()}"]));
+		error_response("API Error: {$ex->getMessage()}");
 	}
