@@ -1,0 +1,187 @@
+{
+	"_type": "export",
+	"__export_format": 4,
+	"__export_date": "2021-03-18T22:34:36.842Z",
+	"__export_source": "insomnia.desktop.app:v2021.1.1",
+	"resources": [
+		{
+			"_id": "req_dfc3fa5ac0514a1092349ea3bbb69e34",
+			"parentId": "fld_148d0cb4ea24489da012af4a9de25f46",
+			"modified": 1616105276163,
+			"created": 1616100228046,
+			"url": "{{ _.base_url }}/login",
+			"name": "Login",
+			"description": "",
+			"method": "POST",
+			"body": {
+				"mimeType": "multipart/form-data",
+				"params": [
+					{
+						"name": "username",
+						"value": "gac",
+						"description": "",
+						"id": "pair_f92b4ae5fde9402492db8e41bb817178"
+					},
+					{
+						"name": "password",
+						"value": "748fb9e85b9396af6f06cf1c9524af2531c65fb505cfbd0add1e2f31573",
+						"description": "",
+						"id": "pair_92feac1e53424adf9b56d262a1a1a27e"
+					}
+				]
+			},
+			"parameters": [],
+			"headers": [
+				{
+					"name": "Content-Type",
+					"value": "multipart/form-data",
+					"id": "pair_16e55faef62649118a63c5fee56d95bc"
+				}
+			],
+			"authentication": {},
+			"metaSortKey": -1616100228046,
+			"isPrivate": false,
+			"settingStoreCookies": true,
+			"settingSendCookies": true,
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingFollowRedirects": "global",
+			"_type": "request"
+		},
+		{
+			"_id": "fld_148d0cb4ea24489da012af4a9de25f46",
+			"parentId": "wrk_5a3f7df7c48848f985335d70a191b785",
+			"modified": 1616100623808,
+			"created": 1616100623808,
+			"name": "Auth",
+			"description": "",
+			"environment": {},
+			"environmentPropertyOrder": null,
+			"metaSortKey": -1616100623808,
+			"_type": "request_group"
+		},
+		{
+			"_id": "wrk_5a3f7df7c48848f985335d70a191b785",
+			"parentId": null,
+			"modified": 1616003034372,
+			"created": 1616003034372,
+			"name": "Did you buy it",
+			"description": "",
+			"scope": "collection",
+			"_type": "workspace"
+		},
+		{
+			"_id": "req_c8b7165cb05546e4a820b7b74c0402d1",
+			"parentId": "fld_148d0cb4ea24489da012af4a9de25f46",
+			"modified": 1616101707467,
+			"created": 1616100570243,
+			"url": "{{ _.base_url }}/register",
+			"name": "Register",
+			"description": "",
+			"method": "POST",
+			"body": {
+				"mimeType": "multipart/form-data",
+				"params": [
+					{
+						"name": "name",
+						"value": "Gac Test",
+						"description": "",
+						"id": "pair_f92b4ae5fde9402492db8e41bb817178",
+						"disabled": false
+					},
+					{
+						"name": "email",
+						"value": "gac@gac.com",
+						"description": "",
+						"id": "pair_92feac1e53424adf9b56d262a1a1a27e",
+						"disabled": false
+					},
+					{
+						"name": "username",
+						"value": "gac",
+						"description": "",
+						"id": "pair_0b2cbef218584d1ea00f529519637675",
+						"disabled": false
+					},
+					{
+						"name": "password",
+						"value": "748fb9e85b9396af6f06cf1c9524af2531c65fb505cfbd0add1e2f31573",
+						"description": "",
+						"id": "pair_f54633d9083849ec9eb802178d20a2f1",
+						"disabled": false
+					}
+				]
+			},
+			"parameters": [],
+			"headers": [
+				{
+					"name": "Content-Type",
+					"value": "multipart/form-data",
+					"id": "pair_16e55faef62649118a63c5fee56d95bc"
+				}
+			],
+			"authentication": {},
+			"metaSortKey": -1616100227996,
+			"isPrivate": false,
+			"settingStoreCookies": true,
+			"settingSendCookies": true,
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingFollowRedirects": "global",
+			"_type": "request"
+		},
+		{
+			"_id": "env_2a4c3b5c40c4b4d83f33bff73b7e83bf41d2c331",
+			"parentId": "wrk_5a3f7df7c48848f985335d70a191b785",
+			"modified": 1616103565085,
+			"created": 1616003034422,
+			"name": "Base Environment",
+			"data": {
+				"base_url": "http://dybi.local/",
+				"token": "Request => {% response 'body', 'req_dfc3fa5ac0514a1092349ea3bbb69e34', 'b64::JC5kYXRhWyJhY2Nlc3NfdG9rZW4iXQ==::46b', 'no-history', 60 %}"
+			},
+			"dataPropertyOrder": {
+				"&": [
+					"base_url",
+					"token"
+				]
+			},
+			"color": null,
+			"isPrivate": false,
+			"metaSortKey": 1616003034422,
+			"_type": "environment"
+		},
+		{
+			"_id": "jar_2a4c3b5c40c4b4d83f33bff73b7e83bf41d2c331",
+			"parentId": "wrk_5a3f7df7c48848f985335d70a191b785",
+			"modified": 1616105576189,
+			"created": 1616003034423,
+			"name": "Default Jar",
+			"cookies": [
+				{
+					"key": "PHPSESSID",
+					"value": "qse9qju6b6js00ambovm0obq4n",
+					"domain": "dybi.local",
+					"path": "/",
+					"hostOnly": true,
+					"creation": "2021-03-18T22:12:56.188Z",
+					"lastAccessed": "2021-03-18T22:12:56.188Z",
+					"id": "0007759675181149284"
+				}
+			],
+			"_type": "cookie_jar"
+		},
+		{
+			"_id": "spc_40cb9421deb34025b139a2887c0ec0e2",
+			"parentId": "wrk_5a3f7df7c48848f985335d70a191b785",
+			"modified": 1616003034376,
+			"created": 1616003034376,
+			"fileName": "Did you buy it",
+			"contents": "",
+			"contentType": "yaml",
+			"_type": "api_spec"
+		}
+	]
+}

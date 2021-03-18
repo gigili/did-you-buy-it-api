@@ -68,10 +68,6 @@
 
 		$routes->add("/login", "login", ["POST"]);
 		$routes->add("/register", "register", ["POST"]);
-
-		$routes->add("/verify", function () {
-			echo json_encode(['success' => true, "res" => $_REQUEST, "ses" => $_SESSION]);
-		}, ["POST"])->middleware(["decode_token"]);
 	} catch (Exception $ex) {
 		error_response("API error: {$ex->getMessage()}");
 	}
