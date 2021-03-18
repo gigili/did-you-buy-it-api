@@ -7,6 +7,6 @@ RUN apk add --no-cache  $PHPIZE_DEPS bash \
 
 COPY . /app
 WORKDIR /app/
-RUN composer install --dev
+RUN composer update --dev
 
 
