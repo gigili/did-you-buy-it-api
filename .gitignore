@@ -1,6 +1,7 @@
 /node_modules/*
 .idea/
 /postgres-data/
+postgres-data
 public/images/
 .env
 /pg-data/*
