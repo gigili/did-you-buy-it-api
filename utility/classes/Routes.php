@@ -30,10 +30,6 @@
 		 * @throws Exception Throws an exception when you try to declare and already existing route
 		 */
 		public function add(string $url = "", callable|string|null $callback = NULL, array $method = ["GET"]): self {
-			if (is_string($method)) {
-				$method = [$method];
-			}
-
 			$tmpUrl = $url;
 
 			foreach ($method as $m) {
