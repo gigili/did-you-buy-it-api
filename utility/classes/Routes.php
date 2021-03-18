@@ -115,8 +115,7 @@
 					}
 				}
 			}
-
-			error_response("Route not found", 404);
+        	throw new RouteNotFoundException();
 		}
 
 		/**

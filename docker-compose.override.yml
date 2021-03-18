@@ -1,0 +1,15 @@
+version: '3.1'
+
+services:
+  app:
+    volumes:
+     - ".:/app/"
+  db:
+    ports:
+      - "5432:5432"
+  pg-admin:
+    ports:
+      - "80:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "github@igorilic.net"
+      PGADMIN_DEFAULT_PASSWORD: "root"

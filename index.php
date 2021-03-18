@@ -24,6 +24,8 @@
 		}
 
 		$routes->route();
+	} catch (\NotFoundException $ex) {
+        error_response("Not Found", 404);
 	} catch (Exception $ex) {
 		error_response("API Error: {$ex->getMessage()}");
 	}
