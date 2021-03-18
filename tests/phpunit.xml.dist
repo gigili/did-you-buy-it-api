@@ -1,24 +1,16 @@
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/7.1/phpunit.xsd"
-         cacheTokens="false"
-         executionOrder="random"
-         convertErrorsToExceptions="true"
-         convertDeprecationsToExceptions="false"
-         cacheResult="false">
-
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" executionOrder="random" convertErrorsToExceptions="true" convertDeprecationsToExceptions="false" cacheResult="false">
+    <coverage>
+        <include>
+            <directory suffix=".php">./</directory>
+        </include>
+    </coverage>
     <php>
 
     </php>
-
     <testsuites>
         <testsuite name="Did You Buy It Testsuite">
             <directory>.</directory>
         </testsuite>
     </testsuites>
-
-    <filter>
-        <whitelist>
-            <directory suffix=".php">./</directory>
-        </whitelist>
-    </filter>
 </phpunit>
