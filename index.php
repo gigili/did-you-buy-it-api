@@ -1,6 +1,7 @@
 <?php
 	declare(strict_types=1);
-	include_once "vendor/autoload.php";
+
+include_once "vendor/autoload.php";
 
 	$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 	$dotenv->load();
@@ -22,6 +23,8 @@
 		}
 
 		$routes->route();
+	} catch (\NotFoundException $ex) {
+        error_response("Not Found", 404);
 	} catch (Exception $ex) {
 		error_response("API Error: {$ex->getMessage()}");
 	}

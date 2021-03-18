@@ -115,9 +115,7 @@
 					}
 				}
 			}
-
-			header('HTTP/1.1 404 Not Found');
-			return false;
+        	throw new RouteNotFoundException();
 		}
 
 		/**
