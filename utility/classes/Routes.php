@@ -29,7 +29,7 @@
 		 * @return Routes returns the instance of the Routes utility
 		 * @throws Exception Throws an exception when you try to declare and already existing route
 		 */
-		public function add(string $url = "", callable $callback = NULL, array|null $params = [], array $method = ["GET"]): self {
+		public function add(string $url = "", callable|string|null $callback = NULL, array|null $params = [], array $method = ["GET"]): self {
 			if (is_string($method)) {
 				$method = [$method];
 			}

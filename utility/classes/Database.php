@@ -7,24 +7,25 @@
 		private PDO $db;
 
 		private function __construct(
-			private string $db_host,
-			private int $db_port,
-			private string $db_name,
-			private string $db_user,
-			private string $db_password
+			string $db_host,
+			int $db_port,
+			string $db_name,
+			string $db_user,
+			string $db_password
 		) {
-			$this->db = new PDO("pgsql:dbname={$this->db_name} host={$this->db_host} port={$this->db_port}", $this->db_user, $this->db_password);
+			$this->db = new PDO("pgsql:dbname={$db_name} host={$db_host} port={$db_port}", $db_user, $db_password);
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		}
 
 		public static function getInstance(): Database {
 			if (self::$instance == NULL) {
-				$db_host = "localhost";
-				$db_port = 5432;
-				$db_name = "dybi";
-				$db_user = "postgres";
-				$db_password = "postgres";
-				self::$instance = new Database($db_host, $db_port, $db_name, $db_user, $db_password);
+				self::$instance = new Database(
+					$_ENV["PG_HOST"],
+					intval($_ENV["PG_PORT"]),
+					$_ENV["PG_DATABASE"],
+					$_ENV["PG_USERNAME"],
+					$_ENV["PG_PASSWORD"]
+				);
 			}
 
 			return self::$instance;

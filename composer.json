@@ -7,7 +7,7 @@
 	"authors": [
 		{
 			"name": "Igor Ilic",
-			"email": "githubo@igorilic.net",
+			"email": "github@igorilic.net",
 			"homepage": "https://github.com/gigili/did-you-buy-it-api",
 			"role": "Developer"
 		}
@@ -21,6 +21,16 @@
 		"byjg/migration": "4.2.*",
 		"byjg/migration-cli": "4.1.*",
 		"ramsey/uuid": "^4.1",
-		"ext-pdo": "*"
+		"ext-pdo": "*",
+		"firebase/php-jwt": "^5.2",
+		"vlucas/phpdotenv": "^5.3"
+	},
+	"autoload": {
+		"classmap": [
+			"utility/classes"
+		],
+		"files": [
+			"utility/helpers.php"
+		]
 	}
 }
