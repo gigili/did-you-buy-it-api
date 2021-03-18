@@ -4,5 +4,8 @@
 	"invalid_password": "invalid password",
 	"invalid_login_credentials": "invalid login credentials",
 	"invalid_name": "invalid name",
-	"username_taken": "username taken"
+	"username_taken": "username is already taken",
+	"email_taken": "email is already taken",
+	"account_registered_success": "account registered successfully",
+	"account_registered_error": "there was a problem while registering an account"
 }

@@ -33,7 +33,6 @@
 
 		public static function execute_query(string $query, array $params = []): array {
 			$db = Database::getInstance()->db;
-			$db->beginTransaction();
 			$stm = $db->prepare($query);
 
 			if (count($params) > 0) {
