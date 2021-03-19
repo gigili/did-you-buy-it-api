@@ -4,6 +4,9 @@
 	use Firebase\JWT\JWT;
 	use JetBrains\PhpStorm\ArrayShape;
 	use JetBrains\PhpStorm\NoReturn;
+	use PHPMailer\PHPMailer\Exception;
+	use PHPMailer\PHPMailer\PHPMailer;
+	use PHPMailer\PHPMailer\SMTP;
 
 	if (!function_exists("dump")) {
 		function dump(array $data, bool $asJSON = true) {
@@ -86,5 +89,69 @@
 
 			$_SESSION['userID'] = $userID;
 			return true;
+		}
+	}
+
+	if (!function_exists("send_email")) {
+		function send_email(
+			string $to,
+			string $subject,
+			string $body,
+			string|null $altBody = NULL,
+			array $attachments = [],
+			string|null $from = NULL,
+			string|null $emailTemplate = NULL,
+			bool $debug = false
+		): bool {
+			$mail = new PHPMailer(true);
+
+			try {
+				//Server settings
+				if ($debug) $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+
+				$mail->isSMTP();
+				$mail->Host = $_ENV["EMAIL_HOST"];
+				$mail->SMTPAuth = false;
+				/*$mail->Username = $_ENV["EMAIL_USER"];
+				$mail->Password = $_ENV["EMAIL_PASSWORD"];
+				$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;*/
+				$mail->Port = $_ENV["EMAIL_PORT"];
+
+				//Recipients
+				$mail->setFrom("test@dybi.local", $from ?? 'Did You Buy It?');
+
+				if (str_contains($to, ",")) {
+					$recipients = explode(",", $to);
+					foreach ($recipients as $recipient) {
+						$mail->addAddress($recipient);
+					}
+				} else {
+					$mail->addAddress($to);
+				}
+
+				//Attachments
+				if (count($attachments) > 0) {
+					foreach ($attachments as $attachment) {
+						$mail->addAttachment($attachment);
+					}
+				}
+
+				if (!is_null($emailTemplate)) {
+					$emailBody = file_get_contents($_SERVER["DOCUMENT_ROOT"] . "/assets/email_templates/{$emailTemplate}.html");
+					$body = str_replace("{{email_body}}", $body, $emailBody);
+				}
+
+				//Content
+				$mail->isHTML(true);
+				$mail->Subject = $subject;
+				$mail->Body = $body;
+
+				if (!is_null($altBody)) $mail->AltBody = $altBody;
+				if ($mail->send()) return true;
+
+				return false;
+			} catch (Exception $e) {
+				error_response(Translation::translate("unable_to_send_email"), 500);
+			}
 		}
 	}

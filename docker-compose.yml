@@ -21,3 +21,6 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: "github@igorilic.net"
       PGADMIN_DEFAULT_PASSWORD: "${PG_PASSWORD}"
+
+  mailhog:
+    image: "mailhog/mailhog:latest"

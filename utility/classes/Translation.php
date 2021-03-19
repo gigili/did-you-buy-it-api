@@ -13,7 +13,7 @@
 			return self::$instance;
 		}
 
-		public static function translate(string $key, bool $capitalized = true, string $language = "eng"): string {
+		public static function translate(string $key, bool $capitalized = true, string $language = "eng", array $arguments = []): string {
 			$translationFilePath = $_SERVER["DOCUMENT_ROOT"] . "/languages/{$language}.json";
 			if (!file_exists($translationFilePath)) {
 				error_response("Translation file for language '{$language}' doesn't exist.");
@@ -27,10 +27,18 @@
 
 			$translatedString = $translations[$key];
 
+			if (count($arguments) > 0) {
+				preg_match_all("/{(.+?)}/", $translatedString, $matches);
+				if (count($matches) > 0) {
+					foreach ($matches[1] as $match) {
+						$translatedString = preg_replace("/{($match)}/", $arguments[$match] ?? "", $translatedString);
+					}
+				}
+			}
+
 			if ($capitalized === false) return $translatedString;
 
 			return self::mb_ucfirst($translatedString);
-
 		}
 
 		private static function mb_ucfirst($string): string {
