@@ -8,3 +8,4 @@ public/images/
 /node/*
 /logs/*
 /vendor/
+.phpunit.result.cache

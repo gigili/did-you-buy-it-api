@@ -1,20 +1,20 @@
 {
-	"_readme": [
-		"This file locks the dependencies of your project to a known state",
-		"Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
-		"This file is @generated automatically"
-	],
-	"content-hash": "a58ad32e562d2f0cffb044d7c05f13aa",
-	"packages": [
-		{
-			"name": "brick/math",
-			"version": "0.9.2",
-			"source": {
-				"type": "git",
-				"url": "https://github.com/brick/math.git",
-				"reference": "dff976c2f3487d42c1db75a3b180e2b9f0e72ce0"
-			},
-			"dist": {
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "a58ad32e562d2f0cffb044d7c05f13aa",
+    "packages": [
+        {
+            "name": "brick/math",
+            "version": "0.9.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/brick/math.git",
+                "reference": "dff976c2f3487d42c1db75a3b180e2b9f0e72ce0"
+            },
+            "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/brick/math/zipball/dff976c2f3487d42c1db75a3b180e2b9f0e72ce0",
                 "reference": "dff976c2f3487d42c1db75a3b180e2b9f0e72ce0",
@@ -478,73 +478,73 @@
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
             "keywords": [
-				"jwt",
-				"php"
-			],
-			"support": {
-				"issues": "https://github.com/firebase/php-jwt/issues",
-				"source": "https://github.com/firebase/php-jwt/tree/v5.2.1"
-			},
-			"time": "2021-02-12T00:02:00+00:00"
-		},
-		{
-			"name": "gac/routing",
-			"version": "1.0.6",
-			"source": {
-				"type": "git",
-				"url": "https://github.com/gigili/PHP-routing.git",
-				"reference": "a4425eaa516bcf00fa802e24147a092a79f46c5a"
-			},
-			"dist": {
-				"type": "zip",
-				"url": "https://api.github.com/repos/gigili/PHP-routing/zipball/a4425eaa516bcf00fa802e24147a092a79f46c5a",
-				"reference": "a4425eaa516bcf00fa802e24147a092a79f46c5a",
-				"shasum": ""
-			},
-			"require": {
-				"ext-json": "*",
-				"php": ">=7.4"
-			},
-			"type": "class",
-			"autoload": {
-				"psr-4": {
-					"Gac\\Routing\\": "./"
-				}
-			},
-			"notification-url": "https://packagist.org/downloads/",
-			"license": [
-				"GPL-3.0-only"
-			],
-			"authors": [
-				{
-					"name": "Igor Ilić",
-					"email": "github@igorilic.net",
-					"role": "Developer"
-				}
-			],
-			"description": "Custom routing class",
-			"homepage": "https://github.com/gigili/PHP-routing",
-			"keywords": [
-				"route",
-				"routing"
-			],
-			"support": {
-				"issues": "https://github.com/gigili/PHP-routing/issues",
-				"source": "https://github.com/gigili/PHP-routing/tree/1.0.6"
-			},
-			"time": "2021-03-21T20:56:07+00:00"
-		},
-		{
-			"name": "graham-campbell/result-type",
-			"version": "v1.0.1",
-			"source": {
-				"type": "git",
-				"url": "https://github.com/GrahamCampbell/Result-Type.git",
-				"reference": "7e279d2cd5d7fbb156ce46daada972355cea27bb"
-			},
-			"dist": {
-				"type": "zip",
-				"url": "https://api.github.com/repos/GrahamCampbell/Result-Type/zipball/7e279d2cd5d7fbb156ce46daada972355cea27bb",
+                "jwt",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/firebase/php-jwt/issues",
+                "source": "https://github.com/firebase/php-jwt/tree/v5.2.1"
+            },
+            "time": "2021-02-12T00:02:00+00:00"
+        },
+        {
+            "name": "gac/routing",
+            "version": "1.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gigili/PHP-routing.git",
+                "reference": "b6f60bd4dcfd6f2a48111bb190003715b0ef6e6f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gigili/PHP-routing/zipball/b6f60bd4dcfd6f2a48111bb190003715b0ef6e6f",
+                "reference": "b6f60bd4dcfd6f2a48111bb190003715b0ef6e6f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=7.4"
+            },
+            "type": "class",
+            "autoload": {
+                "psr-4": {
+                    "Gac\\Routing\\": "./"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Igor Ilić",
+                    "email": "github@igorilic.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Custom routing class",
+            "homepage": "https://github.com/gigili/PHP-routing",
+            "keywords": [
+                "route",
+                "routing"
+            ],
+            "support": {
+                "issues": "https://github.com/gigili/PHP-routing/issues",
+                "source": "https://github.com/gigili/PHP-routing/tree/1.0.7"
+            },
+            "time": "2021-03-21T21:06:19+00:00"
+        },
+        {
+            "name": "graham-campbell/result-type",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/GrahamCampbell/Result-Type.git",
+                "reference": "7e279d2cd5d7fbb156ce46daada972355cea27bb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/GrahamCampbell/Result-Type/zipball/7e279d2cd5d7fbb156ce46daada972355cea27bb",
                 "reference": "7e279d2cd5d7fbb156ce46daada972355cea27bb",
                 "shasum": ""
             },

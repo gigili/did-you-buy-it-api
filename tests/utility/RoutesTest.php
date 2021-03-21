@@ -1,6 +1,8 @@
 <?php
 
 
+	use Gac\Routing\Exceptions\RouteNotFoundException;
+	use Gac\Routing\Routes;
 	use PHPUnit\Framework\TestCase;
 
 	class RoutesTest extends TestCase
@@ -40,8 +42,9 @@
     {
         $url = "/";
         $method = ["GET"];
-        $router = new Routes();
-        $router->add($url, array($this, "onRoute"), $method);
+		$router = new Routes();
+		$router->add($url, function () {
+		}, $method);
 
         $router->route();
 
