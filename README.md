@@ -12,26 +12,26 @@
 * [x] Login
 * [x] Register
     * [x] Send an activation email
-    * [] Activate user account
-* [] Lists
-    * [] Create list
-    * [] Update list
-    * [] Delete list
-    * [] List users that have access to the list
-    * [] Allow other users access to the list
-    * [] Remove users from the list
+    * [ ] Activate user account
+* [ ] Lists
+    * [ ] Create list
+    * [ ] Update list
+    * [ ] Delete list
+    * [ ] List users that have access to the list
+    * [ ] Allow other users access to the list
+    * [ ] Remove users from the list
     * [ ] Autocomplete endpoint for when adding users ?
 * [ ] List items
-    * [] Add list item
-        * [] Add images
-    * [] Update list item
-        * [] Mark item as bought
+    * [ ] Add list item
+        * [ ] Add images
+    * [ ] Update list item
+        * [ ] Mark item as bought
             * [ ] Send notification to other users of the list
-    * [] Delete list item
-    * [] Add / remove images
+    * [ ] Delete list item
+    * [ ] Add / remove images
 * [ ] User profile
-    * [] Edit profile
-    * [] Delete profile
+    * [ ] Edit profile
+    * [ ] Delete profile
         * [ ] Send an email notification that the account has been closed
 * [ ] Reset password
 
