@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 4,
-	"__export_date": "2021-03-18T22:34:36.842Z",
+	"__export_date": "2021-03-21T22:39:54.481Z",
 	"__export_source": "insomnia.desktop.app:v2021.1.1",
 	"resources": [
 		{
@@ -64,9 +64,9 @@
 		{
 			"_id": "wrk_5a3f7df7c48848f985335d70a191b785",
 			"parentId": null,
-			"modified": 1616003034372,
+			"modified": 1616366379157,
 			"created": 1616003034372,
-			"name": "Did you buy it",
+			"name": "Did you buy it?",
 			"description": "",
 			"scope": "collection",
 			"_type": "workspace"
@@ -74,7 +74,7 @@
 		{
 			"_id": "req_c8b7165cb05546e4a820b7b74c0402d1",
 			"parentId": "fld_148d0cb4ea24489da012af4a9de25f46",
-			"modified": 1616101707467,
+			"modified": 1616357204431,
 			"created": 1616100570243,
 			"url": "{{ _.base_url }}/register",
 			"name": "Register",
@@ -85,21 +85,21 @@
 				"params": [
 					{
 						"name": "name",
-						"value": "Gac Test",
+						"value": "Tester Test",
 						"description": "",
 						"id": "pair_f92b4ae5fde9402492db8e41bb817178",
 						"disabled": false
 					},
 					{
 						"name": "email",
-						"value": "gac@gac.com",
+						"value": "test@test.com",
 						"description": "",
 						"id": "pair_92feac1e53424adf9b56d262a1a1a27e",
 						"disabled": false
 					},
 					{
 						"name": "username",
-						"value": "gac",
+						"value": "test2",
 						"description": "",
 						"id": "pair_0b2cbef218584d1ea00f529519637675",
 						"disabled": false
