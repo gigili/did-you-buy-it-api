@@ -85,5 +85,5 @@ Don't forget to add this to your hosts
 
 ```apacheconf
 127.0.0.1 dybi.local
-127.0.0.1 www.dybi.local⏎   
+127.0.0.1 www.dybi.local
 ```
