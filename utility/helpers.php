@@ -1,6 +1,7 @@
 <?php
 	declare(strict_types=1);
 
+	use Dybi\Types\EmailTemplateType;
 	use Firebase\JWT\JWT;
 	use JetBrains\PhpStorm\ArrayShape;
 	use JetBrains\PhpStorm\NoReturn;
@@ -100,7 +101,7 @@
 			string|null $altBody = NULL,
 			array $attachments = [],
 			string|null $from = NULL,
-			string|null $emailTemplate = NULL,
+			string|array|null $emailTemplate = NULL,
 			bool $debug = false
 		): bool {
 			$mail = new PHPMailer(true);
@@ -136,9 +137,21 @@
 					}
 				}
 
-				if (!is_null($emailTemplate)) {
-					$emailBody = file_get_contents($_SERVER["DOCUMENT_ROOT"] . "/assets/email_templates/{$emailTemplate}.html");
-					$body = str_replace("{{email_body}}", $body, $emailBody);
+				if (is_null($emailTemplate) === false) {
+					$templateFile = is_array($emailTemplate) ? $emailTemplate["file"] ?? 'default' : $emailTemplate;
+					$args = is_array($emailTemplate) ? $emailTemplate["args"] ?? [] : [];
+
+					$emailTemplateFile = $_SERVER["DOCUMENT_ROOT"] . "/assets/emails/{$templateFile}.html";
+					if (file_exists($emailTemplateFile)) {
+						$emailBody = file_get_contents($emailTemplateFile);
+						$body = str_replace("{{emailBody}}", $body, $emailBody);
+
+						foreach ($args as $arg => $value) {
+							$body = preg_replace("/{{{$arg}}}/", $value, $body);
+						}
+					}
+
+					$altBody = is_array($emailTemplate) ? $emailTemplate["emailPreview"] ?? $altBody : $altBody;
 				}
 
 				//Content
@@ -150,7 +163,8 @@
 				if ($mail->send()) return true;
 
 				return false;
-			} catch (Exception $e) {
+			} catch (Exception $ex) {
+				Logger::log("Failed to send email: {$ex->getMessage()}");
 				error_response(Translation::translate("unable_to_send_email"), 500);
 			}
 		}

@@ -6,11 +6,11 @@
 	"invalid_name": "invalid name",
 	"username_taken": "username is already taken",
 	"email_taken": "email is already taken",
-	"account_registered_success": "account registered successfully",
+	"account_registered_success": "account registered successfully. Confirm your email.",
 	"account_registered_error": "there was a problem while registering an account",
 	"missing_token": "missing token",
 	"invalid_token": "invalid token",
 	"confirm_your_email": "confirm your email",
-	"confirm_email_body": "hello {name}<br/><br/>to confirm your account, please click on the button that says Confirm account or click on the link below it: {link}<br/><br/>Best regards,<br/>Did You Buy It? team",
+	"confirm_email_body": "dear {name}<br/><br/>to confirm your account, please click on the button that says Confirm account or click on the link below it. <br/><br/> Did You Buy It? team",
 	"unable_to_send_email": "unable to send email"
 }

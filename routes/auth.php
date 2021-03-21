@@ -61,14 +61,21 @@
 			);
 
 			if (count($result) === 1) {
-				$activationLink = "{$_SERVER["HTTP_HOST"]}/activate/{$activationKey}";
+				$activationLink = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER["HTTP_HOST"]}/activate/{$activationKey}";
+				$emailBody = Translation::translate("confirm_email_body", arguments: ["name" => $name]);
 				send_email(
 					$email,
 					Translation::translate("confirm_your_email"),
-					Translation::translate("confirm_email_body", arguments: [
-						"name" => $name,
-						"link" => $activationLink
-					])
+					$emailBody,
+					emailTemplate: [
+						"file" => "confirm_email",
+						"args" => [
+							"emailTitle" => Translation::translate("confirm_your_email"),
+							"emailPreview" => strip_tags($emailBody),
+							"emailConfirmText" => Translation::translate("confirm_your_email"),
+							"emailActivationLink" => $activationLink
+						]
+					]
 				);
 				header("HTTP/1.1 201");
 				echo json_encode(["success" => true, "message" => Translation::translate("account_registered_success")]);
@@ -80,5 +87,6 @@
 		$routes->add("/login", "login", ["POST"]);
 		$routes->add("/register", "register", ["POST"]);
 	} catch (Exception $ex) {
-		error_response("API error: {$ex->getMessage()}");
+		Logger::log("Api Error: {$ex->getMessage()}");
+		error_response("Error processing your request", 500);
 	}

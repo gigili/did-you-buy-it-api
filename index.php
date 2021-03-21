@@ -4,10 +4,13 @@
 	session_start();
 	include_once "vendor/autoload.php";
 
-	$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-	$dotenv->load();
+	use Gac\Routing\Exceptions\RouteNotFoundException;
+	use Gac\Routing\Routes;
 
 	try {
+		$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+		$dotenv->load();
+
 		$routes = new Routes();
 		$input = json_decode(file_get_contents("php://input")) ?? [];
 		$_REQUEST = array_merge($input, $_REQUEST);
@@ -24,8 +27,8 @@
 		}
 
 		$routes->route();
-	} catch (\NotFoundException $ex) {
-        error_response("Not Found", 404);
+	} catch (RouteNotFoundException $ex) {
+		error_response("Route not found", 404);
 	} catch (Exception $ex) {
 		error_response("API Error: {$ex->getMessage()}");
 	}
