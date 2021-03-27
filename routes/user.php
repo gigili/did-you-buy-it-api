@@ -48,7 +48,7 @@
 
 			$uploadResult = NULL;
 			if (isset($_REQUEST["file"])) {
-				$uploadResult = FileUpload::upload(FilePaths::USER_PHOTOS, $_REQUEST["file"]);
+				$uploadResult = FileUpload::upload(FileUploadPaths::USER_PHOTOS, $_REQUEST["file"]);
 			}
 
 			Database::execute_query(
@@ -60,8 +60,8 @@
 		}
 
 
-		$routes->add("/user/", "get_user_profile", ["GET"])->middleware(["decode_token"]);
-		$routes->add("/user/", "update_user_profile", ["PATCH"])->middleware(["decode_token"]);
+		$routes->add("/user", "get_user_profile", ["GET"])->middleware(["decode_token"]);
+		$routes->add("/user", "update_user_profile", ["PATCH"])->middleware(["decode_token"]);
 	} catch (Exception $ex) {
 		Logger::log("Api Error: {$ex->getMessage()}");
 		error_response("Error processing your request", 500);
