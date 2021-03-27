@@ -34,6 +34,7 @@
 				$errorCode = 500;
 			}
 
+			header("Content-Type: application/json");
 			header("HTTP/1.1 {$errorCode}");
 			echo json_encode([
 				"success" => false,

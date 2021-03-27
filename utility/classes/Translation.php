@@ -14,6 +14,8 @@
 		}
 
 		public static function translate(string $key, bool $capitalized = true, string $language = "eng", array $arguments = []): string {
+			$language = $_SESSION["lang"] ?? $language;
+
 			$translationFilePath = $_SERVER["DOCUMENT_ROOT"] . "/languages/{$language}.json";
 			if (!file_exists($translationFilePath)) {
 				error_response("Translation file for language '{$language}' doesn't exist.");
@@ -22,7 +24,7 @@
 			$translations = json_decode(file_get_contents($translationFilePath), true);
 
 			if (is_null($translations[$key])) {
-				error_response("***no_translation({$language}, {$key})***");
+				error_response("***no_translation({$key},{$language})***");
 			}
 
 			$translatedString = $translations[$key];

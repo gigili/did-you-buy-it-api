@@ -12,5 +12,9 @@
 	"invalid_token": "invalid token",
 	"confirm_your_email": "confirm your email",
 	"confirm_email_body": "dear {name}<br/><br/>to confirm your account, please click on the button that says Confirm account or click on the link below it. <br/><br/> Did You Buy It? team",
-	"unable_to_send_email": "unable to send email"
+	"unable_to_send_email": "unable to send email",
+	"missing_activation_key": "missing activation key",
+	"invalid_activation_key": "invalid activation key",
+	"account_already_active": "account already active",
+	"account_activated_success": "account activated successfully"
 }

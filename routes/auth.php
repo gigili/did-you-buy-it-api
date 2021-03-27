@@ -84,8 +84,36 @@
 			}
 		}
 
+		function activate_account($params) {
+			if (!isset($params) || !isset($params["activationKey"])) {
+				error_response(Translation::translate("missing_activation_key"), 400);
+			}
+
+			$activationKey = $params["activationKey"];
+
+			$result = Database::execute_query("SELECT id, activation_key, status FROM users.user WHERE activation_key = ?", [$activationKey]);
+
+			if (count($result) === 0 || !isset($result[0]->id)) {
+				error_response(Translation::translate("invalid_activation_key"), 400);
+			}
+
+			$userData = $result[0];
+
+			if ($userData->status === '1') {
+				error_response(Translation::translate("account_already_active"), 400);
+			}
+
+			Database::execute_query(
+				"UPDATE users.user SET status = '1' WHERE id = ? AND activation_key = ?",
+				[$userData->id, $activationKey]
+			);
+
+			echo json_encode(["success" => true, "message" => Translation::translate("account_activated_success")]);
+		}
+
 		$routes->add("/login", "login", ["POST"]);
 		$routes->add("/register", "register", ["POST"]);
+		$routes->add("/activate/:activationKey", "activate_account", ["GET"]);
 	} catch (Exception $ex) {
 		Logger::log("Api Error: {$ex->getMessage()}");
 		error_response("Error processing your request", 500);
