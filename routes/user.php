@@ -59,9 +59,27 @@
 			echo json_encode(["success" => true]);
 		}
 
+		function delete_user_profile() {
+			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+				error_response(Translation::translate("invalid_token"), 401);
+			}
+
+			$userID = $_SESSION["userID"];
+			$result = Database::execute_query("SELECT id, name, username, email, image, status FROM users.user WHERE id = ?", [$userID], true);
+
+			if (!isset($result->id)) {
+				error_response(Translation::translate("user_not_found"), 404);
+			}
+
+			Database::execute_query("DELETE FROM users.user WHERE id = ?", [$userID]);
+
+			echo json_encode(["success" => true]);
+		}
+
 
 		$routes->add("/user", "get_user_profile", ["GET"])->middleware(["decode_token"]);
 		$routes->add("/user", "update_user_profile", ["PATCH"])->middleware(["decode_token"]);
+		$routes->add("/user", "delete_user_profile", ["DELETE"])->middleware(["decode_token"]);
 	} catch (Exception $ex) {
 		Logger::log("Api Error: {$ex->getMessage()}");
 		error_response("Error processing your request", 500);
