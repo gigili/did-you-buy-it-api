@@ -9,3 +9,5 @@ public/images/
 /logs/*
 /vendor/
 .phpunit.result.cache
+uploads/
+public/uploads/

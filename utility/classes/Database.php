@@ -31,7 +31,7 @@
 			return self::$instance;
 		}
 
-		public static function execute_query(string $query, array $params = []): array {
+		public static function execute_query(string $query, array $params = [], bool $singleResult = false): array|object {
 			$db = Database::getInstance()->db;
 			$stm = $db->prepare($query);
 
@@ -41,6 +41,7 @@
 				$stm->execute();
 			}
 
-			return $stm->fetchAll(PDO::FETCH_OBJ);
+			$result = $stm->fetchAll(PDO::FETCH_OBJ);
+			return $singleResult === false ? $result : $result[0];
 		}
 	}

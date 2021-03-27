@@ -16,5 +16,12 @@
 	"missing_activation_key": "missing activation key",
 	"invalid_activation_key": "invalid activation key",
 	"account_already_active": "account already active",
-	"account_activated_success": "account activated successfully"
+	"account_activated_success": "account activated successfully",
+	"user_not_found": "user not found",
+	"invalid_email": "invalid email",
+	"required_field": "required field",
+	"unsupported_file_type": "unsupported file type",
+	"invalid_upload_path": "invalid upload path specified",
+	"file_too_large": "file too large",
+	"upload_failed": "upload failed"
 }

@@ -13,7 +13,11 @@
 
 		$routes = new Routes();
 		$input = json_decode(file_get_contents("php://input")) ?? [];
-		$_REQUEST = array_merge($input, $_REQUEST);
+		$params = [];
+		new ParseInputStream($params);
+		$_REQUEST = array_merge($_REQUEST, (array)$input);
+		$_REQUEST = array_merge($_REQUEST, $params);
+
 		$files = glob($_SERVER['DOCUMENT_ROOT'] . "/routes/*.php");
 
 		$routes->add("/", function () {
