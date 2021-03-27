@@ -111,9 +111,21 @@
 			echo json_encode(["success" => true, "message" => Translation::translate("account_activated_success")]);
 		}
 
+		function refresh_token() {
+			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+				error_response(Translation::translate("invalid_token"), 403);
+			}
+
+			$userID = $_SESSION["userID"];
+			$tokens = generate_token($userID);
+
+			echo json_encode(["success" => true, "data" => ["access_token" => $tokens["accessToken"], "refresh_token" => $tokens["refreshToken"]]]);
+		}
+
 		$routes->add("/login", "login", ["POST"]);
 		$routes->add("/register", "register", ["POST"]);
 		$routes->add("/activate/:activationKey", "activate_account", ["GET"]);
+		$routes->add("/refresh", "refresh_token", ["POST"])->middleware(["decode_token"]);
 	} catch (Exception $ex) {
 		Logger::log("Api Error: {$ex->getMessage()}");
 		error_response("Error processing your request", 500);

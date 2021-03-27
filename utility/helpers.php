@@ -77,7 +77,7 @@
 
 	if (!function_exists("decode_token")) {
 		function decode_token(): bool {
-			if (!preg_match('/Bearer Request =>\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
+			if (!preg_match('/Bearer Request =>|Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
 				error_response(Translation::translate("missing_token"), 401);
 			}
 
