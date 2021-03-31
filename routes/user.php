@@ -76,10 +76,35 @@
 			echo json_encode(["success" => true]);
 		}
 
+		function filter_users() {
+			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+				error_response(Translation::translate("invalid_token"), 401);
+			}
+
+			$search = $_REQUEST['search'] ?? NULL;
+
+			if (empty($search)) {
+				error_response(Translation::translate("required_field"), 400, "search");
+			}
+
+			$search = "%{$search}%";
+
+			$result = Database::execute_query("
+				SELECT id, name, username, email, image, status FROM users.user
+				WHERE username LIKE ? OR email LIKE ? OR name LIKE ?
+				LIMIT 50
+			", [$search, $search, $search]);
+
+			echo json_encode([
+				"success" => true,
+				"data" => $result
+			]);
+		}
 
 		$routes->add("/user", "get_user_profile", ["GET"])->middleware(["decode_token"]);
 		$routes->add("/user", "update_user_profile", ["PATCH"])->middleware(["decode_token"]);
 		$routes->add("/user", "delete_user_profile", ["DELETE"])->middleware(["decode_token"]);
+		$routes->add("/user/find", "filter_users", ["POST"])->middleware(["decode_token"]);
 	} catch (Exception $ex) {
 		Logger::log("Api Error: {$ex->getMessage()}");
 		error_response("Error processing your request", 500);

@@ -75,7 +75,7 @@
 			}
 
 			preg_match('/boundary=(.*)$/', $_SERVER['CONTENT_TYPE'], $matches);
-			return $matches[1];
+			return $matches[1] ?? "";
 		}
 
 		/**

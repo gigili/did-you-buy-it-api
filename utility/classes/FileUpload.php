@@ -49,6 +49,3 @@
 			}
 		}
 	}
-
-	// $f = new FileUpload();
-	// $filePath = FileUpload::upload() : string | array
