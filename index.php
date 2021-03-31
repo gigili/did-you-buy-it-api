@@ -34,5 +34,6 @@
 	} catch (RouteNotFoundException $ex) {
 		error_response("Route not found", 404);
 	} catch (Exception $ex) {
-		error_response("API Error: {$ex->getMessage()}");
+		Logger::error("Api Error: {$ex->getMessage()}");
+		error_response("Error processing your request", 500);
 	}

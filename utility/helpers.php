@@ -1,7 +1,6 @@
 <?php
 	declare(strict_types=1);
 
-	use Dybi\Types\EmailTemplateType;
 	use Firebase\JWT\JWT;
 	use JetBrains\PhpStorm\ArrayShape;
 	use JetBrains\PhpStorm\NoReturn;

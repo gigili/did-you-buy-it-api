@@ -8,8 +8,36 @@
 				mkdir($_SERVER["DOCUMENT_ROOT"] . "/logs", 0644);
 			}
 
+			$prefix = "[" . date("Y-m-d H:i:s") . "] ";
+
 			$handle = fopen($_SERVER["DOCUMENT_ROOT"] . "/logs/log.txt", "a+");
+			fwrite($handle, $prefix . $message . "\n");
 			fwrite($handle, $message . "\n");
+			fclose($handle);
+		}
+
+		public static function warning(string $message = "") {
+			if (is_dir($_SERVER["DOCUMENT_ROOT"] . "/logs") === false) {
+				mkdir($_SERVER["DOCUMENT_ROOT"] . "/logs", 0644);
+			}
+
+			$prefix = "[" . date("Y-m-d H:i:s") . " | WARNING] ";
+
+			$handle = fopen($_SERVER["DOCUMENT_ROOT"] . "/logs/log.txt", "a+");
+			fwrite($handle, $prefix . $message . "\n");
+			fwrite($handle, $message . "\n");
+			fclose($handle);
+		}
+
+		public static function error(string $message = "") {
+			if (is_dir($_SERVER["DOCUMENT_ROOT"] . "/logs") === false) {
+				mkdir($_SERVER["DOCUMENT_ROOT"] . "/logs", 0644);
+			}
+
+			$prefix = "[" . date("Y-m-d H:i:s") . " | ERROR] ";
+
+			$handle = fopen($_SERVER["DOCUMENT_ROOT"] . "/logs/log.txt", "a+");
+			fwrite($handle, $prefix . $message . "\n");
 			fclose($handle);
 		}
 

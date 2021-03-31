@@ -23,5 +23,12 @@
 	"unsupported_file_type": "unsupported file type",
 	"invalid_upload_path": "invalid upload path specified",
 	"file_too_large": "file too large",
-	"upload_failed": "upload failed"
+	"upload_failed": "upload failed",
+	"unable_to_add_new_list": "unable to add new list",
+	"list_not_found": "list not found",
+	"not_authorized": "not authorized",
+	"cant_add_yourself_to_list": "can't add yourself to the list",
+	"user_already_in_list": "user already added to the list",
+	"invalid_value": "invalid value",
+	"user_not_in_list": "user not in list"
 }

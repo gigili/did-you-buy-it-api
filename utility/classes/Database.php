@@ -42,6 +42,6 @@
 			}
 
 			$result = $stm->fetchAll(PDO::FETCH_OBJ);
-			return $singleResult === false ? $result : $result[0];
+			return $singleResult === false ? $result : $result[0] ?? [];
 		}
 	}
