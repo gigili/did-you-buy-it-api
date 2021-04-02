@@ -9,39 +9,66 @@
 			}
 
 			$userID = $_SESSION["userID"];
-			/*
-			 .createQueryBuilder("l")
-			.select("l.*")
-			.addSelect("COUNT(li.id)", "cntItems")
-			.addSelect("SUM(CASE WHEN li.userPurchasedID IS NULL THEN 0 ELSE 1 END)", "cntBoughtItems")
-			.addSelect("(COUNT(lu.listId) + 1)", "cntUsers")
-			.leftJoin(ListItemEntity, "li", "li.listID = l.id")
-			.leftJoin("list_user", "lu", "lu.listId = l.id")
-			.where("l.userID = :userID", {userID: user.id})
-			.orWhere("lu.userId = :userID", {userID: user.id})
-			.orderBy("l.id", "DESC")
-			.groupBy("l.id")
-			.skip((page - 1))
-			.take(limit)
-			.getRawMany();
-			 */
+			$page = isset($_REQUEST['page']) && $_REQUEST['page'] != '' ? $_REQUEST['page'] : 0;
+			$limit = isset($_REQUEST['limit']) && $_REQUEST['limit'] != '' ? $_REQUEST['limit'] : 10;
+
+			if ($page < 0) $page = 0;
+			if ($limit > 50) $limit = 100;
 
 			$query = "
-				SELECT 
-				       l.*,
-				       lic.cntItems
+				SELECT DISTINCT l.*,
+					   COALESCE(lic.cntItems, 0) AS cntItems,
+					   (COALESCE(cntUsers, 0) + 1) AS cntUsers,
+					   COALESCE(cntBoughtItems, 0) AS cntBoughtItems
 				FROM lists.list AS l
 				LEFT JOIN (
-				    SELECT 
-				           listid, 
-				           COUNT(id) AS cntItems, 
-				           COUNT(CASE WHEN purchaseduserid IS NULL THEN 0 ELSE 1 END) AS cntBoughtItems  
-				    FROM lists.list_item
-				    GROUP BY listid
+					SELECT listid,
+						   COUNT(id)                                                  AS cntItems,
+						   COUNT(CASE WHEN purchaseduserid IS NULL THEN 0 ELSE 1 END) AS cntBoughtItems
+					FROM lists.list_item
+					GROUP BY listid
 				) AS lic ON lic.listid = l.id
-				LEFT JOIN lists.list_user AS lu ON lu.listid = l.id
+				LEFT JOIN (
+					SELECT listid, COUNT(userid) as cntUsers
+					FROM lists.list_user
+					GROUP BY listid
+				) AS lu ON lu.listid = l.id
+				LEFT JOIN lists.list_user AS llu ON l.id = llu.listid
+				WHERE l.userid = ? OR llu.userid = ?
+				ORDER BY l.created_at DESC
+				LIMIT ? OFFSET ?;
 			";
-			//$result = Database::execute_query("SELECT * FROM lists.list WHERE userid = ?", [$userID]);
+			$result = Database::execute_query($query, [$userID, $userID, $limit, ($page * $limit)]);
+
+			echo json_encode([
+				"success" => true,
+				"data" => $result
+			]);
+		}
+
+		function get_list(array $params) {
+			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+				error_response(Translation::translate("invalid_token"), 401);
+			}
+
+			if (!isset($params["listID"]) || empty($params["listID"]) || !Uuid::isValid($params["listID"])) {
+				error_response(Translation::translate("required_field"), 400, "listID");
+			}
+
+			$userID = $_SESSION["userID"];
+			$listID = $params["listID"];
+
+			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [$listID], true);
+			if (empty($list)) {
+				error_response(Translation::translate("list_not_found"), 404);
+			}
+
+			$result = Database::execute_query("SELECT * FROM lists.fngetlist(?,?)", [$listID, $userID]);
+
+			echo json_encode([
+				"succes" => true,
+				"data" => $result
+			]);
 		}
 
 		function add_list() {
@@ -231,11 +258,26 @@
 				error_response(Translation::translate("list_not_found"), 404);
 			}
 
-			//$listUsers = Database::execute_query("SELECT * FROM ");
+			$listUsers = Database::execute_query("SELECT u.id, u.name, u.email,u.username, u.image, u.status, 0 as owner  FROM lists.list_user AS lu
+														LEFT JOIN lists.list AS l on lu.listid = l.id
+														LEFT JOIN users.user AS u ON lu.userid = u.id
+														WHERE l.id = ? AND u.status = '1'
+														UNION ALL
+														SELECT u.id, u.name, u.email,u.username, u.image, u.status, 1 as owner  FROM users.user AS u
+														LEFT JOIN lists.list AS l ON u.id = l.userid
+														WHERE l.id = ?AND u.status = '1'
+			", [$listID, $listID]);
+
+			echo json_encode([
+				"success" => true,
+				"data" => $listUsers
+			]);
 		}
 
 		$routes->add("/list", "get_users_lists", ["GET"])->middleware(["decode_token"]);
 		$routes->add("/list", "add_list", ["POST"])->middleware(["decode_token"]);
+
+		$routes->add("/list/:listID", "get_list", ["GET"])->middleware(["decode_token"]);
 		$routes->add("/list/:listID", "update_list", ["PATCH"])->middleware(["decode_token"]);
 		$routes->add("/list/:listID", "delete_list", ["DELETE"])->middleware(["decode_token"]);
 
