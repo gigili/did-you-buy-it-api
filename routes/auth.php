@@ -1,5 +1,6 @@
 <?php
 
+	use Gac\Routing\Request;
 	use JetBrains\PhpStorm\NoReturn;
 	use Ramsey\Uuid\Uuid;
 
@@ -84,12 +85,10 @@
 			}
 		}
 
-		function activate_account($params) {
-			if (!isset($params) || !isset($params["activationKey"])) {
+		function activate_account(Request $request, string $activationKey) {
+			if (!isset($activationKey) || empty($activationKey)) {
 				error_response(Translation::translate("missing_activation_key"), 400);
 			}
-
-			$activationKey = $params["activationKey"];
 
 			$result = Database::execute_query("SELECT id, activation_key, status FROM users.user WHERE activation_key = ?", [$activationKey]);
 
@@ -124,8 +123,8 @@
 
 		$routes->add("/login", "login", ["POST"]);
 		$routes->add("/register", "register", ["POST"]);
-		$routes->add("/activate/:activationKey", "activate_account", ["GET"]);
-		$routes->add("/refresh", "refresh_token", ["POST"])->middleware(["decode_token"]);
+		$routes->add("/activate/{activationKey}", "activate_account", ["GET"]);
+		$routes->middleware(["decode_token"])->add("/refresh", "refresh_token", ["POST"]);
 	} catch (Exception $ex) {
 		Logger::log("Api Error: {$ex->getMessage()}");
 		error_response("Error processing your request", 500);

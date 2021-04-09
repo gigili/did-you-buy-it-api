@@ -101,10 +101,10 @@
 			]);
 		}
 
-		$routes->add("/user", "get_user_profile", ["GET"])->middleware(["decode_token"]);
-		$routes->add("/user", "update_user_profile", ["PATCH"])->middleware(["decode_token"]);
-		$routes->add("/user", "delete_user_profile", ["DELETE"])->middleware(["decode_token"]);
-		$routes->add("/user/find", "filter_users", ["POST"])->middleware(["decode_token"]);
+		$routes->middleware(["decode_token"])->add("/user", "get_user_profile", ["GET"]);
+		$routes->middleware(["decode_token"])->add("/user", "update_user_profile", ["PATCH"]);
+		$routes->middleware(["decode_token"])->add("/user", "delete_user_profile", ["DELETE"]);
+		$routes->middleware(["decode_token"])->add("/user/find", "filter_users", ["POST"]);
 	} catch (Exception $ex) {
 		Logger::log("Api Error: {$ex->getMessage()}");
 		error_response("Error processing your request", 500);

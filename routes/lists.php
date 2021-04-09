@@ -1,5 +1,6 @@
 <?php
 
+	use Gac\Routing\Request;
 	use Ramsey\Uuid\Uuid;
 
 	try {
@@ -46,17 +47,16 @@
 			]);
 		}
 
-		function get_list(array $params) {
+		function get_list(Request $request, string $listID) {
 			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
-			if (!isset($params["listID"]) || empty($params["listID"]) || !Uuid::isValid($params["listID"])) {
+			if (!isset($listID) || empty($listID) || !Uuid::isValid($listID)) {
 				error_response(Translation::translate("required_field"), 400, "listID");
 			}
 
 			$userID = $_SESSION["userID"];
-			$listID = $params["listID"];
 
 			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [$listID], true);
 			if (empty($list)) {
@@ -91,7 +91,7 @@
 			]);
 		}
 
-		function update_list(array $params) {
+		function update_list(Request $request, string $listID) {
 			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
@@ -102,12 +102,11 @@
 				error_response(Translation::translate("required_field"), 400, "name");
 			}
 
-			if (!isset($params["listID"]) || empty($params["listID"]) || !Uuid::isValid($params["listID"])) {
+			if (!isset($listID) || empty($listID) || !Uuid::isValid($listID)) {
 				error_response(Translation::translate("required_field"), 400, "listID");
 			}
 
 			$userID = $_SESSION["userID"];
-			$listID = $params["listID"];
 
 			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [$listID], true);
 
@@ -124,17 +123,16 @@
 			echo json_encode(["success" => true]);
 		}
 
-		function delete_list(array $params) {
+		function delete_list(Request $request, string $listID) {
 			if (isset($_SESSION) || !isset($_SESSION["userID"])) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
-			if (!isset($params["listID"]) || empty($params["listID"]) || !Uuid::isValid($params["listID"])) {
+			if (!isset($listID) || empty($listID) || !Uuid::isValid($listID)) {
 				error_response(Translation::translate("required_field"), 400, "listID");
 			}
 
 			$userID = $_SESSION["userID"];
-			$listID = $params["listID"];
 
 			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [$listID], true);
 
@@ -151,18 +149,17 @@
 			echo json_encode(["success" => true]);
 		}
 
-		function add_user_to_list(array $params) {
+		function add_user_to_list(Request $request, string $listID) {
 			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
-			if (!isset($params["listID"]) || empty($params["listID"]) || !Uuid::isValid($params["listID"])) {
+			if (!isset($listID) || empty($listID) || !Uuid::isValid($listID)) {
 				error_response(Translation::translate("required_field"), 400, "listID");
 			}
 
 			$userID = $_SESSION["userID"];
-			$listID = $params["listID"];
-			$guestID = $_REQUEST["userID"] ?? NULL;
+			$guestID = $request->get("userID") ?? NULL;
 
 			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [$listID], true);
 
@@ -197,18 +194,17 @@
 			echo json_encode(["success" => true]);
 		}
 
-		function delete_user_from_list(array $params) {
+		function delete_user_from_list(Request $request, string $listID, string $userID) {
 			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
-			if (!isset($params["listID"]) || empty($params["listID"]) || !Uuid::isValid($params["listID"])) {
+			if (!isset($listID) || empty($listID) || !Uuid::isValid($listID)) {
 				error_response(Translation::translate("required_field"), 400, "listID");
 			}
 
+			$guestID = $userID ?? NULL;
 			$userID = $_SESSION["userID"];
-			$listID = $params["listID"];
-			$guestID = $params["userID"] ?? NULL;
 
 			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [$listID], true);
 
@@ -242,13 +238,12 @@
 			echo json_encode(["success" => true]);
 		}
 
-		function get_list_users(array $params) {
+		function get_list_users(Request $request, string $listID) {
 			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
-			$listID = $params["listID"] ?? NULL;
-			if (is_null($listID) || !Uuid::isValid($listID)) {
+			if (empty($listID) || !Uuid::isValid($listID)) {
 				error_response(Translation::translate("invalid_value"), 400, "listID");
 			}
 
@@ -274,16 +269,16 @@
 			]);
 		}
 
-		$routes->add("/list", "get_users_lists", ["GET"])->middleware(["decode_token"]);
-		$routes->add("/list", "add_list", ["POST"])->middleware(["decode_token"]);
-
-		$routes->add("/list/:listID", "get_list", ["GET"])->middleware(["decode_token"]);
-		$routes->add("/list/:listID", "update_list", ["PATCH"])->middleware(["decode_token"]);
-		$routes->add("/list/:listID", "delete_list", ["DELETE"])->middleware(["decode_token"]);
-
-		$routes->add("/list/:listID/user", "get_list_users", ["GET"])->middleware(["decode_token"]);
-		$routes->add("/list/:listID/user", "add_user_to_list", ["POST"])->middleware(["decode_token"]);
-		$routes->add("/list/:listID/user/:userID", "delete_user_from_list", ["DELETE"])->middleware(["decode_token"]);
+		$routes->prefix("/list")
+			->middleware(["decode_token"])
+			->route("/", "get_users_lists", ["GET"])
+			->route("/", "add_list", ["POST"])
+			->route("/{listID}", "get_list", ["GET"])
+			->route("/{listID}", "update_list", ["PATCH"])
+			->route("/{listID}", "delete_list", ["DELETE"])
+			->route("/{listID}/user", "get_list_users", ["GET"])
+			->route("/{listID}/user", "add_user_to_list", ["POST"])
+			->add("/{listID}/user/{userID}", "delete_user_from_list", ["DELETE"]);
 	} catch (Exception $ex) {
 		Logger::error("Api Error: {$ex->getMessage()}");
 		error_response("Error processing your request", 500);

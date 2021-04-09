@@ -25,7 +25,7 @@
 		"firebase/php-jwt": "^5.2",
 		"vlucas/phpdotenv": "^5.3",
 		"phpmailer/phpmailer": "^6.3",
-		"gac/routing": "^1.0"
+		"gac/routing": "^2.0"
 	},
 	"autoload": {
 		"classmap": [

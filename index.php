@@ -30,7 +30,7 @@
 			}
 		}
 
-		$routes->route();
+		$routes->handle();
 	} catch (RouteNotFoundException $ex) {
 		error_response("Route not found", 404);
 	} catch (Exception $ex) {
