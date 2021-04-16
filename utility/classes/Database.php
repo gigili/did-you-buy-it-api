@@ -17,14 +17,25 @@
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		}
 
-		public static function getInstance(): Database {
+		public static function getInstance(
+			?string $db_host = NULL,
+			?int $db_port = NULL,
+			?string $db_name = NULL,
+			?string $db_user = NULL,
+			?string $db_password = NULL
+		): Database {
 			if (self::$instance == NULL) {
+				$db_host = $db_host ?? $_ENV["POSTGRES_HOST"];
+				$db_port = $db_port ?? intval($_ENV["POSTGRES_PORT"]);
+				$db_name = $db_name ?? $_ENV["POSTGRES_DATABASE"];
+				$db_user = $db_user ?? $_ENV["POSTGRES_USERNAME"];
+				$db_password = $db_password ?? $_ENV["POSTGRES_PASSWORD"];
 				self::$instance = new Database(
-					$_ENV["PG_HOST"],
-					intval($_ENV["PG_PORT"]),
-					$_ENV["PG_DATABASE"],
-					$_ENV["PG_USERNAME"],
-					$_ENV["PG_PASSWORD"]
+					$db_host,
+					$db_port,
+					$db_name,
+					$db_user,
+					$db_password
 				);
 			}
 
