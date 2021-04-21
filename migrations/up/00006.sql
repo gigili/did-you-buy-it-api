@@ -20,12 +20,12 @@ BEGIN
     DROP TABLE IF EXISTS tmpItems;
 
     CREATE TEMP TABLE tmpUsers AS
-    SELECT u.*
+    SELECT u.id, u.name, u.email, u.username, u.image, u.status
     from users."user" AS u
              LEFT JOIN lists.list AS l ON u.id = l.userid
     WHERE l.id = list_id
     UNION ALL
-    SELECT u2.*
+    SELECT u2.id, u2.name, u2.email, u2.username, u2.image, u2.status
     FROM lists.list_user AS lu
              LEFT JOIN lists.list AS l2 on lu.listid = l2.id
              LEFT JOIN users."user" AS u2 ON lu.userid = u2.id

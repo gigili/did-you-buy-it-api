@@ -9,7 +9,7 @@ CREATE TABLE lists.list_item
     image           VARCHAR(255) NULL,
     is_repeating    BOOLEAN      NOT NULL
         CONSTRAINT DF_ListItem_IsRepeating DEFAULT false,
-    purchased_at    TIMESTAMPTZ  NOT NULL
+    purchased_at TIMESTAMPTZ NULL
 );
 
 ALTER TABLE lists.list_item

@@ -9,7 +9,6 @@
 
 
 	use Gac\DidYouBuyIt\utility\classes\Database;
-	use Gac\DidYouBuyIt\utility\classes\Logger;
 	use Gac\DidYouBuyIt\utility\classes\Translation;
 	use Gac\Routing\Request;
 	use JetBrains\PhpStorm\NoReturn;
@@ -21,8 +20,6 @@
 		{
 			$username = $_REQUEST["username"] ?? NULL;
 			$password = $_REQUEST["password"] ?? NULL;
-
-			Logger::log("Test log message here");
 
 			if ( is_null($username) || mb_strlen($username) < 3 ) {
 				error_response(Translation::translate("invalid_username"), errorField: "username");

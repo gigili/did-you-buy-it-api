@@ -2,6 +2,9 @@
 	declare( strict_types=1 );
 
 	use Firebase\JWT\JWT;
+	use Gac\DidYouBuyIt\utility\classes\Database;
+	use Gac\DidYouBuyIt\utility\classes\Logger;
+	use Gac\DidYouBuyIt\utility\classes\Translation;
 	use JetBrains\PhpStorm\ArrayShape;
 	use JetBrains\PhpStorm\NoReturn;
 	use PHPMailer\PHPMailer\Exception;
@@ -9,7 +12,7 @@
 	use PHPMailer\PHPMailer\SMTP;
 
 	if ( !function_exists("dump") ) {
-		function dump(array $data, bool $asJSON = true)
+		function dump(array|object $data, bool $asJSON = true)
 		{
 			if ( $asJSON === true ) {
 				echo json_encode($data);
@@ -22,7 +25,7 @@
 	}
 
 	if ( !function_exists("dd") ) {
-		#[NoReturn] function dd(array $data, bool $asJSON = true)
+		#[NoReturn] function dd(array|object $data, bool $asJSON = true)
 		{
 			dump($data, $asJSON);
 			die(1);
@@ -43,8 +46,8 @@
 				"data" => [],
 				"error" => [
 					"message" => $message,
-					"field" => $errorField
-				]
+					"field" => $errorField,
+				],
 			]);
 			die(1);
 		}
@@ -64,7 +67,7 @@
 			);
 
 			$accessTokenPayload = $payload;
-			$accessTokenPayload["exp"] = strtotime(date('Y-m-d H:i:s', strtotime(' + 10 minutes')));
+			$accessTokenPayload["exp"] = strtotime(date('Y-m-d H:i:s', strtotime(' + 2 hours'))); //strtotime(' + 10 minutes')
 			$accessToken = JWT::encode($accessTokenPayload, $_ENV["JWT_KEY"]);
 			$refreshToken = NULL;
 			if ( $generateRefreshToken === true ) {
@@ -73,7 +76,7 @@
 
 			return [
 				"accessToken" => $accessToken,
-				"refreshToken" => $refreshToken
+				"refreshToken" => $refreshToken,
 			];
 		}
 	}
@@ -173,5 +176,20 @@
 				Logger::log("Failed to send email: {$ex->getMessage()}");
 				error_response(Translation::translate("unable_to_send_email"), 500);
 			}
+		}
+	}
+
+	if ( !function_exists("has_access_to_list") ) {
+		function has_access_to_list($listID, $userID): object
+		{
+			$list = Database::execute_query('SELECT * FROM lists.fngetlist(?,?)', [ $listID, $userID ], true);
+
+			$listUsers = json_decode($list->users);
+
+			if ( !in_array($userID, array_map(fn($u) => $u->id, $listUsers)) ) {
+				error_response(Translation::translate('not_authorized'), 403);
+			}
+
+			return $list;
 		}
 	}

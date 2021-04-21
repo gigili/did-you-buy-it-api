@@ -13,8 +13,7 @@
 			"file" => [ "pdf", "doc", "docx", "xls", "xlsx" ],
 		];
 
-		public static function upload(string $path,
-									  array $file): string
+		public static function upload(string $path, array $file): string
 		{
 			if ( empty($path) ) {
 				error_response(Translation::translate("invalid_upload_path"), 500);
@@ -32,7 +31,7 @@
 
 			$uploadPath = $_SERVER["DOCUMENT_ROOT"] . "/uploads/{$path}/{$file["name"]}";
 
-			if ( !is_dir(dirname(pathinfo($uploadPath, PATHINFO_DIRNAME))) ) {
+			if ( !is_dir(pathinfo($uploadPath, PATHINFO_DIRNAME)) ) {
 				mkdir(pathinfo($uploadPath, PATHINFO_DIRNAME), 0755, true);
 			}
 

@@ -1,5 +1,6 @@
 <?php
 	declare( strict_types=1 );
+	date_default_timezone_set('Europe/Belgrade');
 
 	session_start();
 	include_once "vendor/autoload.php";
@@ -14,12 +15,13 @@
 		$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 		$dotenv->load();
 
-		$routes = new Routes();
 		$input = json_decode(file_get_contents("php://input")) ?? [];
 		$params = [];
 		new ParseInputStream($params);
 		$_REQUEST = array_merge($_REQUEST, (array)$input);
 		$_REQUEST = array_merge($_REQUEST, $params);
+
+		$routes = new Routes();
 
 		$files = glob($_SERVER['DOCUMENT_ROOT'] . "/routes/*.php");
 

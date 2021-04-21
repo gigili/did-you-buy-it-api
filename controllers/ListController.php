@@ -28,6 +28,7 @@
 			if ( $page < 0 ) {
 				$page = 0;
 			}
+
 			if ( $limit > 50 ) {
 				$limit = 100;
 			}
@@ -63,8 +64,7 @@
 			]);
 		}
 
-		function get_list(Request $request,
-						  string $listID)
+		function get_list(Request $request, string $listID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
@@ -144,8 +144,7 @@
 			echo json_encode([ "success" => true ]);
 		}
 
-		function delete_list(Request $request,
-							 string $listID)
+		function delete_list(Request $request, string $listID)
 		{
 			if ( isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
@@ -172,8 +171,7 @@
 			echo json_encode([ "success" => true ]);
 		}
 
-		function add_user_to_list(Request $request,
-								  string $listID)
+		function add_user_to_list(Request $request, string $listID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
@@ -219,9 +217,7 @@
 			echo json_encode([ "success" => true ]);
 		}
 
-		function delete_user_from_list(Request $request,
-									   string $listID,
-									   string $userID)
+		function delete_user_from_list(Request $request, string $listID, string $userID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
@@ -266,8 +262,7 @@
 			echo json_encode([ "success" => true ]);
 		}
 
-		function get_list_users(Request $request,
-								string $listID)
+		function get_list_users(Request $request, string $listID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);

@@ -22,18 +22,18 @@
     * [x] Remove users from the list
     * [x] Autocomplete endpoint for when adding users ?
 * [ ] List items
-    * [ ] Add list item
-        * [ ] Add images
-    * [ ] Update list item
-        * [ ] Mark item as bought
+    * [x] Add list item
+        * [x] Add images
+    * [x] Update list item
+        * [x] Mark item as bought
             * [ ] Send notification to other users of the list
-    * [ ] Delete list item
-    * [ ] Add / remove images
-* [x] User profile
+    * [x] Delete list item
+    * [x] Add / remove images
+* [] User profile
     * [x] Edit profile
     * [x] Delete profile
         * [x] Send an email notification that the account has been closed
-* [ ] Reset password
+    * [ ] Reset password
 
 # Local setup
 

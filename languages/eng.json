@@ -30,5 +30,10 @@
   "cant_add_yourself_to_list": "can't add yourself to the list",
   "user_already_in_list": "user already added to the list",
   "invalid_value": "invalid value",
-  "user_not_in_list": "user not in list"
+  "user_not_in_list": "user not in list",
+  "validation_min_length": "minimum length of a value must be: {0}",
+  "validation_max_length": "maximum length of a value must be: {0}",
+  "value_must_be_numeric": "value must be numeric",
+  "list_item_not_found": "list item not found",
+  "only_owner_can_delete_this_item": "only the owner can delete this item"
 }
