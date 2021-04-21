@@ -73,8 +73,16 @@
 			if ( !isset($_SESSION) || !isset($_SESSION['userID']) ) {
 				error_response(Translation::translate('invalid_token'), 401);
 			}
-
 			$userID = $_SESSION['userID'];
+
+			Validation::validate([
+				'listID' => [ [ 'valid_uuid' => $listID ] ],
+				'userID' => [ [ 'valid_uuid' => $userID ] ],
+				'itemID' => [ [ 'valid_uuid' => $itemID ] ],
+				'name' => [ 'required', [ 'min_length' => 3 ], [ 'max_length' => 250 ] ],
+				'is_repeating' => [ 'required', 'numeric' ],
+			], $request);
+
 			has_access_to_list($listID, $userID);
 
 			$item = Database::execute_query('SELECT * FROM lists.list_item WHERE id = ?', [ $itemID ], true);
@@ -82,11 +90,6 @@
 			if ( !$item || !isset($item->id) ) {
 				error_response(Translation::translate('list_item_not_found'), 404);
 			}
-
-			Validation::validate([
-				'name' => [ 'required', [ 'min_length' => 3 ], [ 'max_length' => 250 ] ],
-				'is_repeating' => [ 'required', 'numeric' ],
-			], $request);
 
 			$name = $request->get('name');
 			$is_repeating = $request->get('is_repeating');

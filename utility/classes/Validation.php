@@ -9,6 +9,7 @@
 
 
 	use Gac\Routing\Request;
+	use Ramsey\Uuid\Uuid;
 
 	/**
 	 * Class Validation
@@ -46,6 +47,9 @@
 
 						case "numeric":
 							self::numeric($field, $request);
+							break;
+						case "valid_uuid":
+							self::valid_uuid($field, $request, $ruleCondition);
 							break;
 					}
 				}
@@ -95,6 +99,14 @@
 
 			if ( !is_numeric($value) ) {
 				error_response(Translation::translate('value_must_be_numeric'), 400, $field);
+			}
+		}
+
+		private static function valid_uuid(string $field, Request $request, mixed $ruleCondition)
+		{
+			$value = $request->get($field) ?? $ruleCondition;
+			if ( !Uuid::isValid($value) ) {
+				error_response(Translation::translate("invalid_id"), 400, $field);
 			}
 		}
 	}

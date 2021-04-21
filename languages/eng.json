@@ -35,5 +35,6 @@
   "validation_max_length": "maximum length of a value must be: {0}",
   "value_must_be_numeric": "value must be numeric",
   "list_item_not_found": "list item not found",
-  "only_owner_can_delete_this_item": "only the owner can delete this item"
+  "only_owner_can_delete_this_item": "only the owner can delete this item",
+  "invalid_id": "invalid id"
 }
