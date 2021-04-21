@@ -15,16 +15,16 @@
 				"reference": "dff976c2f3487d42c1db75a3b180e2b9f0e72ce0"
 			},
 			"dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/dff976c2f3487d42c1db75a3b180e2b9f0e72ce0",
-                "reference": "dff976c2f3487d42c1db75a3b180e2b9f0e72ce0",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": "^7.1 || ^8.0"
-            },
-            "require-dev": {
+				"type": "zip",
+				"url": "https://api.github.com/repos/brick/math/zipball/dff976c2f3487d42c1db75a3b180e2b9f0e72ce0",
+				"reference": "dff976c2f3487d42c1db75a3b180e2b9f0e72ce0",
+				"shasum": ""
+			},
+			"require": {
+				"ext-json": "*",
+				"php": "^7.1 || ^8.0"
+			},
+			"require-dev": {
                 "php-coveralls/php-coveralls": "^2.2",
                 "phpunit/phpunit": "^7.5.15 || ^8.5 || ^9.0",
                 "vimeo/psalm": "4.3.2"
@@ -477,16 +477,16 @@
             ],
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
-            "keywords": [
-                "jwt",
-                "php"
-            ],
-            "support": {
-                "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v5.2.1"
-            },
-            "time": "2021-02-12T00:02:00+00:00"
-        },
+			"keywords": [
+				"jwt",
+				"php"
+			],
+			"support": {
+				"issues": "https://github.com/firebase/php-jwt/issues",
+				"source": "https://github.com/firebase/php-jwt/tree/v5.2.1"
+			},
+			"time": "2021-02-12T00:02:00+00:00"
+		},
 		{
 			"name": "gac/routing",
 			"version": "v2.0.1",
@@ -552,16 +552,16 @@
 			],
 			"time": "2021-04-09T21:15:50+00:00"
 		},
-        {
-            "name": "graham-campbell/result-type",
-            "version": "v1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/GrahamCampbell/Result-Type.git",
-                "reference": "7e279d2cd5d7fbb156ce46daada972355cea27bb"
-            },
-            "dist": {
-                "type": "zip",
+		{
+			"name": "graham-campbell/result-type",
+			"version": "v1.0.1",
+			"source": {
+				"type": "git",
+				"url": "https://github.com/GrahamCampbell/Result-Type.git",
+				"reference": "7e279d2cd5d7fbb156ce46daada972355cea27bb"
+			},
+			"dist": {
+				"type": "zip",
                 "url": "https://api.github.com/repos/GrahamCampbell/Result-Type/zipball/7e279d2cd5d7fbb156ce46daada972355cea27bb",
                 "reference": "7e279d2cd5d7fbb156ce46daada972355cea27bb",
                 "shasum": ""
@@ -598,16 +598,16 @@
             "keywords": [
                 "Graham Campbell",
                 "GrahamCampbell",
-                "Result Type",
-                "Result-Type",
-                "result"
-            ],
-            "support": {
-                "issues": "https://github.com/GrahamCampbell/Result-Type/issues",
-                "source": "https://github.com/GrahamCampbell/Result-Type/tree/v1.0.1"
-            },
-            "funding": [
-                {
+				"Result Type",
+				"Result-Type",
+				"result"
+			],
+			"support": {
+				"issues": "https://github.com/GrahamCampbell/Result-Type/issues",
+				"source": "https://github.com/GrahamCampbell/Result-Type/tree/v1.0.1"
+			},
+			"funding": [
+				{
 					"url": "https://github.com/GrahamCampbell",
 					"type": "github"
 				},
@@ -664,16 +664,16 @@
 			"license": [
 				"LGPL-2.1-only"
 			],
-            "authors": [
-                {
-                    "name": "Marcus Bointon",
-                    "email": "phpmailer@synchromedia.co.uk"
-                },
-                {
-                    "name": "Jim Jagielski",
-                    "email": "jimjag@gmail.com"
-                },
-                {
+			"authors": [
+				{
+					"name": "Marcus Bointon",
+					"email": "phpmailer@synchromedia.co.uk"
+				},
+				{
+					"name": "Jim Jagielski",
+					"email": "jimjag@gmail.com"
+				},
+				{
                     "name": "Andy Prevost",
                     "email": "codeworxtech@users.sourceforge.net"
                 },
@@ -1062,16 +1062,16 @@
             "license": [
                 "MIT"
             ],
-            "description": "A PHP library for generating and working with universally unique identifiers (UUIDs).",
-            "homepage": "https://github.com/ramsey/uuid",
-            "keywords": [
-                "guid",
-                "identifier",
-                "uuid"
-            ],
-            "support": {
-                "issues": "https://github.com/ramsey/uuid/issues",
-                "rss": "https://github.com/ramsey/uuid/releases.atom",
+			"description": "A PHP library for generating and working with universally unique identifiers (UUIDs).",
+			"homepage": "https://github.com/ramsey/uuid",
+			"keywords": [
+				"guid",
+				"identifier",
+				"uuid"
+			],
+			"support": {
+				"issues": "https://github.com/ramsey/uuid/issues",
+				"rss": "https://github.com/ramsey/uuid/releases.atom",
 				"source": "https://github.com/ramsey/uuid"
 			},
 			"funding": [
@@ -1106,16 +1106,16 @@
 			"conflict": {
 				"symfony/dependency-injection": "<3.4",
 				"symfony/event-dispatcher": "<4.3|>=5",
-                "symfony/lock": "<4.4",
-                "symfony/process": "<3.3"
-            },
-            "provide": {
-                "psr/log-implementation": "1.0"
-            },
-            "require-dev": {
-                "psr/log": "~1.0",
-                "symfony/config": "^3.4|^4.0|^5.0",
-                "symfony/dependency-injection": "^3.4|^4.0|^5.0",
+				"symfony/lock": "<4.4",
+				"symfony/process": "<3.3"
+			},
+			"provide": {
+				"psr/log-implementation": "1.0"
+			},
+			"require-dev": {
+				"psr/log": "~1.0",
+				"symfony/config": "^3.4|^4.0|^5.0",
+				"symfony/dependency-injection": "^3.4|^4.0|^5.0",
                 "symfony/event-dispatcher": "^4.3",
                 "symfony/lock": "^4.4|^5.0",
                 "symfony/process": "^3.4|^4.0|^5.0",
@@ -1492,23 +1492,23 @@
             ],
             "time": "2021-01-07T16:49:33+00:00"
         },
-        {
-            "name": "symfony/service-contracts",
-            "version": "v2.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "d15da7ba4957ffb8f1747218be9e1a121fd298a1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/d15da7ba4957ffb8f1747218be9e1a121fd298a1",
-                "reference": "d15da7ba4957ffb8f1747218be9e1a121fd298a1",
-                "shasum": ""
-            },
+		{
+			"name": "symfony/service-contracts",
+			"version": "v2.4.0",
+			"source": {
+				"type": "git",
+				"url": "https://github.com/symfony/service-contracts.git",
+				"reference": "f040a30e04b57fbcc9c6cbcf4dbaa96bd318b9bb"
+			},
+			"dist": {
+				"type": "zip",
+				"url": "https://api.github.com/repos/symfony/service-contracts/zipball/f040a30e04b57fbcc9c6cbcf4dbaa96bd318b9bb",
+				"reference": "f040a30e04b57fbcc9c6cbcf4dbaa96bd318b9bb",
+				"shasum": ""
+			},
             "require": {
                 "php": ">=7.2.5",
-                "psr/container": "^1.0"
+				"psr/container": "^1.1"
             },
             "suggest": {
                 "symfony/service-implementation": ""
@@ -1516,7 +1516,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.2-dev"
+					"dev-main": "2.4-dev"
                 },
                 "thanks": {
                     "name": "symfony/contracts",
@@ -1553,7 +1553,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/service-contracts/tree/master"
+				"source": "https://github.com/symfony/service-contracts/tree/v2.4.0"
             },
             "funding": [
                 {
@@ -1569,7 +1569,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-09-07T11:33:47+00:00"
+			"time": "2021-04-01T10:43:52+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -2152,16 +2152,16 @@
                     "homepage": "http://everzet.com"
                 },
                 {
-                    "name": "Marcello Duarte",
-                    "email": "marcello.duarte@gmail.com"
-                }
-            ],
-            "description": "Highly opinionated mocking framework for PHP 5.3+",
-            "homepage": "https://github.com/phpspec/prophecy",
-            "keywords": [
-                "Double",
-                "Dummy",
-                "fake",
+					"name": "Marcello Duarte",
+					"email": "marcello.duarte@gmail.com"
+				}
+			],
+			"description": "Highly opinionated mocking framework for PHP 5.3+",
+			"homepage": "https://github.com/phpspec/prophecy",
+			"keywords": [
+				"Double",
+				"Dummy",
+				"fake",
 				"mock",
 				"spy",
 				"stub"
@@ -2196,16 +2196,16 @@
 				"phpunit/php-text-template": "^2.0.2",
 				"sebastian/code-unit-reverse-lookup": "^2.0.2",
 				"sebastian/complexity": "^2.0",
-                "sebastian/environment": "^5.1.2",
-                "sebastian/lines-of-code": "^1.0.3",
-                "sebastian/version": "^3.0.1",
-                "theseer/tokenizer": "^1.2.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9.3"
-            },
-            "suggest": {
-                "ext-pcov": "*",
+				"sebastian/environment": "^5.1.2",
+				"sebastian/lines-of-code": "^1.0.3",
+				"sebastian/version": "^3.0.1",
+				"theseer/tokenizer": "^1.2.0"
+			},
+			"require-dev": {
+				"phpunit/phpunit": "^9.3"
+			},
+			"suggest": {
+				"ext-pcov": "*",
                 "ext-xdebug": "*"
             },
             "type": "library",
@@ -2470,16 +2470,16 @@
                 {
                     "name": "Sebastian Bergmann",
                     "email": "sebastian@phpunit.de",
-                    "role": "lead"
-                }
-            ],
-            "description": "Utility class for timing",
-            "homepage": "https://github.com/sebastianbergmann/php-timer/",
-            "keywords": [
-                "timer"
-            ],
-            "support": {
-                "issues": "https://github.com/sebastianbergmann/php-timer/issues",
+					"role": "lead"
+				}
+			],
+			"description": "Utility class for timing",
+			"homepage": "https://github.com/sebastianbergmann/php-timer/",
+			"keywords": [
+				"timer"
+			],
+			"support": {
+				"issues": "https://github.com/sebastianbergmann/php-timer/issues",
 				"source": "https://github.com/sebastianbergmann/php-timer/tree/5.0.3"
 			},
 			"funding": [
@@ -2524,16 +2524,16 @@
 				"phpunit/php-timer": "^5.0.2",
 				"sebastian/cli-parser": "^1.0.1",
 				"sebastian/code-unit": "^1.0.6",
-                "sebastian/comparator": "^4.0.5",
-                "sebastian/diff": "^4.0.3",
-                "sebastian/environment": "^5.1.3",
-                "sebastian/exporter": "^4.0.3",
-                "sebastian/global-state": "^5.0.1",
-                "sebastian/object-enumerator": "^4.0.3",
-                "sebastian/resource-operations": "^3.0.3",
-                "sebastian/type": "^2.3",
-                "sebastian/version": "^3.0.2"
-            },
+				"sebastian/comparator": "^4.0.5",
+				"sebastian/diff": "^4.0.3",
+				"sebastian/environment": "^5.1.3",
+				"sebastian/exporter": "^4.0.3",
+				"sebastian/global-state": "^5.0.1",
+				"sebastian/object-enumerator": "^4.0.3",
+				"sebastian/resource-operations": "^3.0.3",
+				"sebastian/type": "^2.3",
+				"sebastian/version": "^3.0.2"
+			},
             "require-dev": {
                 "ext-pdo": "*",
                 "phpspec/prophecy-phpunit": "^2.0.1"

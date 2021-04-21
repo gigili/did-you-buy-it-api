@@ -1,6 +1,10 @@
 <?php
 	declare(strict_types=1);
 
+	namespace Gac\DidYouBuyIt\utility\classes;
+
+	use PDO;
+
 	class Database
 	{
 		private static Database|null $instance = NULL;

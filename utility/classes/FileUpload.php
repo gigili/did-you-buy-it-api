@@ -1,5 +1,6 @@
 <?php
 
+	namespace Gac\DidYouBuyIt\utility\classes;
 
 	use JetBrains\PhpStorm\ArrayShape;
 
@@ -9,10 +10,11 @@
 		private static int $allowedFileSize = (1024 * 1024 * 5); //5 MB
 		#[ArrayShape(["image" => "array", "file" => "array"])] private static array $allowedFileTypes = [
 			"image" => ["jpg", "jpeg", "png", "bmp"],
-			"file" => ["pdf", "doc", "docx", "xls", "xlsx"]
+			"file"  => ["pdf", "doc", "docx", "xls", "xlsx"],
 		];
 
-		public static function upload(string $path, array $file): string {
+		public static function upload(string $path,
+									  array $file): string {
 			if (empty($path)) {
 				error_response(Translation::translate("invalid_upload_path"), 500);
 			}

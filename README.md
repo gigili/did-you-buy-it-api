@@ -29,10 +29,10 @@
             * [ ] Send notification to other users of the list
     * [ ] Delete list item
     * [ ] Add / remove images
-* [ ] User profile
-    * [ ] Edit profile
-    * [ ] Delete profile
-        * [ ] Send an email notification that the account has been closed
+* [x] User profile
+    * [x] Edit profile
+    * [x] Delete profile
+        * [x] Send an email notification that the account has been closed
 * [ ] Reset password
 
 # Local setup

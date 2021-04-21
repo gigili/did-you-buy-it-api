@@ -1,9 +1,12 @@
 <?php
 	declare(strict_types=1);
-	//echo "TEST";
+
 	session_start();
 	include_once "vendor/autoload.php";
 
+	use Gac\DidYouBuyIt\utility\classes\Logger;
+	use Gac\DidYouBuyIt\utility\classes\ParseInputStream;
+	use Gac\DidYouBuyIt\utility\classes\Translation;
 	use Gac\Routing\Exceptions\RouteNotFoundException;
 	use Gac\Routing\Routes;
 

@@ -33,7 +33,10 @@
 		],
 		"files": [
 			"utility/helpers.php"
-		]
+		],
+		"psr-4": {
+			"Gac\\DidYouBuyIt\\": "./"
+		}
 	},
 	"scripts": {
 		"test": "./vendor/bin/phpunit  --dont-report-useless-tests --colors=auto -c tests/phpunit.xml.dist"

@@ -1,5 +1,7 @@
 <?php
 
+	namespace Gac\DidYouBuyIt\utility\classes;
+
 	use JetBrains\PhpStorm\ArrayShape;
 
 	/**

@@ -1,5 +1,6 @@
 <?php
 
+	namespace Gac\DidYouBuyIt\utility\classes;
 
 	class Translation
 	{
