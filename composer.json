@@ -34,5 +34,8 @@
 		"files": [
 			"utility/helpers.php"
 		]
+	},
+	"scripts": {
+		"test": "./vendor/bin/phpunit  --dont-report-useless-tests --colors=auto -c tests/phpunit.xml.dist"
 	}
 }

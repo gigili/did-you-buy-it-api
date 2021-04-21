@@ -12,15 +12,15 @@
 * [x] Login
 * [x] Register
     * [x] Send an activation email
-    * [ ] Activate user account
-* [ ] Lists
-    * [ ] Create list
-    * [ ] Update list
-    * [ ] Delete list
-    * [ ] List users that have access to the list
-    * [ ] Allow other users access to the list
-    * [ ] Remove users from the list
-    * [ ] Autocomplete endpoint for when adding users ?
+    * [x] Activate user account
+* [x] Lists
+    * [x] Create list
+    * [x] Update list
+    * [x] Delete list
+    * [X] List users that have access to the list
+    * [x] Allow other users access to the list
+    * [x] Remove users from the list
+    * [x] Autocomplete endpoint for when adding users ?
 * [ ] List items
     * [ ] Add list item
         * [ ] Add images
@@ -46,13 +46,21 @@ cd did-you-buy-it-api
 
 Then rename `.env.example` into `.env` file and fill in all the values.
 
-To run the app:
+## To run the app:
 
 * Start up docker containers
 
 ```shell
 docker-compose up
 ```
+
+# Migrations
+
+    //TODO 
+
+# Tests
+
+    //TODO
 
 ## Notes
 
