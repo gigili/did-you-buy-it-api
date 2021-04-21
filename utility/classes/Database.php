@@ -1,5 +1,5 @@
 <?php
-	declare(strict_types=1);
+	declare( strict_types=1 );
 
 	namespace Gac\DidYouBuyIt\utility\classes;
 
@@ -16,7 +16,8 @@
 			string $db_name,
 			string $db_user,
 			string $db_password
-		) {
+		)
+		{
 			$this->db = new PDO("pgsql:dbname={$db_name} host={$db_host} port={$db_port}", $db_user, $db_password);
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		}
@@ -27,8 +28,9 @@
 			?string $db_name = NULL,
 			?string $db_user = NULL,
 			?string $db_password = NULL
-		): Database {
-			if (self::$instance == NULL) {
+		): Database
+		{
+			if ( self::$instance == NULL ) {
 				$db_host = $db_host ?? $_ENV["POSTGRES_HOST"];
 				$db_port = $db_port ?? intval($_ENV["POSTGRES_PORT"]);
 				$db_name = $db_name ?? $_ENV["POSTGRES_DATABASE"];
@@ -46,11 +48,12 @@
 			return self::$instance;
 		}
 
-		public static function execute_query(string $query, array $params = [], bool $singleResult = false): array|object {
+		public static function execute_query(string $query, array $params = [], bool $singleResult = false): array|object
+		{
 			$db = Database::getInstance()->db;
 			$stm = $db->prepare($query);
 
-			if (count($params) > 0) {
+			if ( count($params) > 0 ) {
 				$stm->execute($params);
 			} else {
 				$stm->execute();

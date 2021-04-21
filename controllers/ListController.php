@@ -15,8 +15,9 @@
 
 	class ListController
 	{
-		function get_users_lists() {
-			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+		function get_users_lists()
+		{
+			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
@@ -24,10 +25,10 @@
 			$page = isset($_REQUEST['page']) && $_REQUEST['page'] != '' ? $_REQUEST['page'] : 0;
 			$limit = isset($_REQUEST['limit']) && $_REQUEST['limit'] != '' ? $_REQUEST['limit'] : 10;
 
-			if ($page < 0) {
+			if ( $page < 0 ) {
 				$page = 0;
 			}
-			if ($limit > 50) {
+			if ( $limit > 50 ) {
 				$limit = 100;
 			}
 
@@ -54,224 +55,231 @@
 				ORDER BY l.created_at DESC
 				LIMIT ? OFFSET ?;
 			";
-			$result = Database::execute_query($query, [$userID, $userID, $limit, ($page * $limit)]);
+			$result = Database::execute_query($query, [ $userID, $userID, $limit, ( $page * $limit ) ]);
 
 			echo json_encode([
-								 "success" => true,
-								 "data"    => $result,
-							 ]);
+				"success" => true,
+				"data" => $result,
+			]);
 		}
 
 		function get_list(Request $request,
-						  string $listID) {
-			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+						  string $listID)
+		{
+			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
-			if (!isset($listID) || empty($listID) || !Uuid::isValid($listID)) {
+			if ( !isset($listID) || empty($listID) || !Uuid::isValid($listID) ) {
 				error_response(Translation::translate("required_field"), 400, "listID");
 			}
 
 			$userID = $_SESSION["userID"];
 
-			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [$listID], true);
-			if (empty($list)) {
+			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [ $listID ], true);
+			if ( empty($list) ) {
 				error_response(Translation::translate("list_not_found"), 404);
 			}
 
-			$result = Database::execute_query("SELECT * FROM lists.fngetlist(?,?)", [$listID, $userID]);
+			$result = Database::execute_query("SELECT * FROM lists.fngetlist(?,?)", [ $listID, $userID ]);
 
 			echo json_encode([
-								 "succes" => true,
-								 "data"   => $result,
-							 ]);
+				"succes" => true,
+				"data" => $result,
+			]);
 		}
 
-		function add_list() {
-			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+		function add_list()
+		{
+			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate('invalid_token'), 401);
 			}
 
 			$name = $_REQUEST["name"] ?? NULL;
 
-			if (empty($name)) {
+			if ( empty($name) ) {
 				error_response(Translation::translate("required_field"), 400, "name");
 			}
 
 			$userID = $_SESSION["userID"];
-			Database::execute_query("INSERT INTO lists.list (id, userid, name) VALUES (?,?,?)", [Uuid::uuid4(), $userID, $name]);
+			Database::execute_query("INSERT INTO lists.list (id, userid, name) VALUES (?,?,?)", [ Uuid::uuid4(), $userID, $name ]);
 
 			header("HTTP/1.1 201");
 			echo json_encode([
-								 "success" => true,
-							 ]);
+				"success" => true,
+			]);
 		}
 
 		function update_list(Request $request,
-							 string $listID) {
-			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+							 string $listID)
+		{
+			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
 			$name = $_REQUEST["name"] ?? NULL;
 
-			if (empty($name)) {
+			if ( empty($name) ) {
 				error_response(Translation::translate("required_field"), 400, "name");
 			}
 
-			if (!isset($listID) || empty($listID) || !Uuid::isValid($listID)) {
+			if ( !isset($listID) || empty($listID) || !Uuid::isValid($listID) ) {
 				error_response(Translation::translate("required_field"), 400, "listID");
 			}
 
 			$userID = $_SESSION["userID"];
 
-			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [$listID], true);
+			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [ $listID ], true);
 
-			if (empty($list)) {
+			if ( empty($list) ) {
 				error_response(Translation::translate("list_not_found"), 404);
 			}
 
-			if ($list->userid !== $userID) {
+			if ( $list->userid !== $userID ) {
 				error_response(Translation::translate("not_authorized"), 403);
 			}
 
-			Database::execute_query("UPDATE lists.list SET name = ? WHERE id = ? ", [$name, $listID]);
+			Database::execute_query("UPDATE lists.list SET name = ? WHERE id = ? ", [ $name, $listID ]);
 
-			echo json_encode(["success" => true]);
+			echo json_encode([ "success" => true ]);
 		}
 
 		function delete_list(Request $request,
-							 string $listID) {
-			if (isset($_SESSION) || !isset($_SESSION["userID"])) {
+							 string $listID)
+		{
+			if ( isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
-			if (!isset($listID) || empty($listID) || !Uuid::isValid($listID)) {
+			if ( !isset($listID) || empty($listID) || !Uuid::isValid($listID) ) {
 				error_response(Translation::translate("required_field"), 400, "listID");
 			}
 
 			$userID = $_SESSION["userID"];
 
-			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [$listID], true);
+			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [ $listID ], true);
 
-			if (empty($list)) {
+			if ( empty($list) ) {
 				error_response(Translation::translate("list_not_found"), 404);
 			}
 
-			if ($list->userid !== $userID) {
+			if ( $list->userid !== $userID ) {
 				error_response(Translation::translate("not_authorized"), 403);
 			}
 
-			Database::execute_query("DELETE FROM lists.list WHERE id = ?", [$listID]);
+			Database::execute_query("DELETE FROM lists.list WHERE id = ?", [ $listID ]);
 
-			echo json_encode(["success" => true]);
+			echo json_encode([ "success" => true ]);
 		}
 
 		function add_user_to_list(Request $request,
-								  string $listID) {
-			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+								  string $listID)
+		{
+			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
-			if (!isset($listID) || empty($listID) || !Uuid::isValid($listID)) {
+			if ( !isset($listID) || empty($listID) || !Uuid::isValid($listID) ) {
 				error_response(Translation::translate("required_field"), 400, "listID");
 			}
 
 			$userID = $_SESSION["userID"];
 			$guestID = $request->get("userID") ?? NULL;
 
-			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [$listID], true);
+			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [ $listID ], true);
 
-			if (empty($list)) {
+			if ( empty($list) ) {
 				error_response(Translation::translate("list_not_found"), 404);
 			}
 
-			if ($list->userid !== $userID) {
+			if ( $list->userid !== $userID ) {
 				error_response(Translation::translate("not_authorized"), 403);
 			}
 
-			if (empty($guestID)) {
+			if ( empty($guestID) ) {
 				error_response(Translation::translate("required_field"), 400, "userID");
 			}
 
-			if (!Uuid::isValid($guestID)) {
+			if ( !Uuid::isValid($guestID) ) {
 				error_response(Translation::translate("invalid_value"), 400, "userID");
 			}
 
-			if ($guestID == $userID) {
+			if ( $guestID == $userID ) {
 				error_response(Translation::translate("cant_add_yourself_to_list"));
 			}
 
-			$userAssignedToList = Database::execute_query("SELECT * FROM lists.list_user WHERE listid = ? AND userid = ?", [$listID, $guestID], true);
-			if (!empty($userAssignedToList)) {
+			$userAssignedToList = Database::execute_query("SELECT * FROM lists.list_user WHERE listid = ? AND userid = ?", [ $listID, $guestID ], true);
+			if ( !empty($userAssignedToList) ) {
 				error_response(Translation::translate("user_already_in_list"));
 			}
 
-			Database::execute_query("INSERT INTO lists.list_user (listid, userid) VALUES (?,?)", [$listID, $guestID]);
+			Database::execute_query("INSERT INTO lists.list_user (listid, userid) VALUES (?,?)", [ $listID, $guestID ]);
 
 			header("HTTP/1.1 201");
-			echo json_encode(["success" => true]);
+			echo json_encode([ "success" => true ]);
 		}
 
 		function delete_user_from_list(Request $request,
 									   string $listID,
-									   string $userID) {
-			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+									   string $userID)
+		{
+			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
-			if (!isset($listID) || empty($listID) || !Uuid::isValid($listID)) {
+			if ( !isset($listID) || empty($listID) || !Uuid::isValid($listID) ) {
 				error_response(Translation::translate("required_field"), 400, "listID");
 			}
 
 			$guestID = $userID ?? NULL;
 			$userID = $_SESSION["userID"];
 
-			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [$listID], true);
+			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [ $listID ], true);
 
-			if (empty($list)) {
+			if ( empty($list) ) {
 				error_response(Translation::translate("list_not_found"), 404);
 			}
 
-			if ($list->userid !== $userID) {
+			if ( $list->userid !== $userID ) {
 				error_response(Translation::translate("not_authorized"), 403);
 			}
 
-			if (empty($guestID)) {
+			if ( empty($guestID) ) {
 				error_response(Translation::translate("required_field"), 400, "userID");
 			}
 
-			if (!Uuid::isValid($guestID)) {
+			if ( !Uuid::isValid($guestID) ) {
 				error_response(Translation::translate("invalid_value"), 400, "userID");
 			}
 
-			if ($guestID == $userID) {
+			if ( $guestID == $userID ) {
 				error_response(Translation::translate("cant_add_yourself_to_list"));
 			}
 
-			$userAssignedToList = Database::execute_query("SELECT * FROM lists.list_user WHERE listid = ? AND userid = ?", [$listID, $guestID], true);
-			if (empty($userAssignedToList)) {
+			$userAssignedToList = Database::execute_query("SELECT * FROM lists.list_user WHERE listid = ? AND userid = ?", [ $listID, $guestID ], true);
+			if ( empty($userAssignedToList) ) {
 				error_response(Translation::translate("user_not_in_list"), 404);
 			}
 
-			Database::execute_query("DELETE FROM lists.list_user WHERE listid = ? AND userid = ?", [$listID, $guestID]);
+			Database::execute_query("DELETE FROM lists.list_user WHERE listid = ? AND userid = ?", [ $listID, $guestID ]);
 
-			echo json_encode(["success" => true]);
+			echo json_encode([ "success" => true ]);
 		}
 
 		function get_list_users(Request $request,
-								string $listID) {
-			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+								string $listID)
+		{
+			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
-			if (empty($listID) || !Uuid::isValid($listID)) {
+			if ( empty($listID) || !Uuid::isValid($listID) ) {
 				error_response(Translation::translate("invalid_value"), 400, "listID");
 			}
 
-			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [$listID], true);
+			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [ $listID ], true);
 
-			if (empty($list)) {
+			if ( empty($list) ) {
 				error_response(Translation::translate("list_not_found"), 404);
 			}
 
@@ -283,11 +291,11 @@
 														SELECT u.id, u.name, u.email,u.username, u.image, u.status, 1 AS owner  FROM users.user AS u
 														LEFT JOIN lists.list AS l ON u.id = l.userid
 														WHERE l.id = ?AND u.status = '1'
-			", [$listID, $listID]);
+			", [ $listID, $listID ]);
 
 			echo json_encode([
-								 "success" => true,
-								 "data"    => $listUsers,
-							 ]);
+				"success" => true,
+				"data" => $listUsers,
+			]);
 		}
 	}

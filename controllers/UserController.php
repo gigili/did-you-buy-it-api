@@ -15,89 +15,93 @@
 
 	class UserController
 	{
-		function get_user_profile() {
-			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+		function get_user_profile()
+		{
+			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
 			$userID = $_SESSION["userID"];
-			$result = Database::execute_query("SELECT id, name, username, email, image, status FROM users.user WHERE id = ?", [$userID], true);
+			$result = Database::execute_query("SELECT id, name, username, email, image, status FROM users.user WHERE id = ?", [ $userID ], true);
 
-			if (!isset($result->id)) {
+			if ( !isset($result->id) ) {
 				error_response(Translation::translate("user_not_found"), 404);
 			}
 
 			echo json_encode([
-								 "success" => true,
-								 "data"    => $result,
-							 ]);
+				"success" => true,
+				"data" => $result,
+			]);
 		}
 
-		function update_user_profile() {
-			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+		function update_user_profile()
+		{
+			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
 			$userID = $_SESSION["userID"];
-			$result = Database::execute_query("SELECT id, name, username, email, image, status FROM users.user WHERE id = ?", [$userID], true);
+			$result = Database::execute_query("SELECT id, name, username, email, image, status FROM users.user WHERE id = ?", [ $userID ], true);
 
-			if (!isset($result->id)) {
+			if ( !isset($result->id) ) {
 				error_response(Translation::translate("user_not_found"), 404);
 			}
 
 			$name = isset($_REQUEST['name']) && $_REQUEST['name'] != '' ? $_REQUEST['name'] : NULL;
 			$email = isset($_REQUEST['email']) && $_REQUEST['email'] != '' ? $_REQUEST['email'] : NULL;
 
-			if (is_null($name)) {
+			if ( is_null($name) ) {
 				error_response(Translation::translate("required_field"), 400, "name");
 			}
 
-			if (is_null($email)) {
+			if ( is_null($email) ) {
 				error_response(Translation::translate("required_field"), 400, "email");
 			}
 
-			if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+			if ( filter_var($email, FILTER_VALIDATE_EMAIL) === false ) {
 				error_response(Translation::translate("invalid_email"), 400, "email");
 			}
 
 			$uploadResult = NULL;
-			if (isset($_REQUEST["file"])) {
+			if ( isset($_REQUEST["file"]) ) {
 				$uploadResult = FileUpload::upload(FileUploadPaths::USER_PHOTOS, $_REQUEST["file"]);
 			}
 
 			Database::execute_query(
 				"UPDATE users.user SET name = ?, email = ?, image = ? WHERE id = ?",
-				[$name, $email, $uploadResult, $userID]
+				[ $name, $email, $uploadResult, $userID ]
 			);
 
-			echo json_encode(["success" => true]);
+			echo json_encode([ "success" => true ]);
 		}
 
-		function delete_user_profile() {
-			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+		function delete_user_profile()
+		{
+			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
 			$userID = $_SESSION["userID"];
-			$result = Database::execute_query("SELECT id, name, username, email, image, status FROM users.user WHERE id = ?", [$userID], true);
+			$result = Database::execute_query("SELECT id, name, username, email, image, status FROM users.user WHERE id = ?", [ $userID ], true);
 
-			if (!isset($result->id)) {
+			if ( !isset($result->id) ) {
 				error_response(Translation::translate("user_not_found"), 404);
 			}
 
-			Database::execute_query("DELETE FROM users.user WHERE id = ?", [$userID]);
+			Database::execute_query("DELETE FROM users.user WHERE id = ?", [ $userID ]);
 
-			echo json_encode(["success" => true]);
+			echo json_encode([ "success" => true ]);
 		}
 
-		function filter_users() {
-			if (!isset($_SESSION) || !isset($_SESSION["userID"])) {
+		function filter_users()
+		{
+			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
 			$search = $_REQUEST['search'] ?? NULL;
 
-			if (empty($search)) {
+			if ( empty($search) ) {
 				error_response(Translation::translate("required_field"), 400, "search");
 			}
 
@@ -107,11 +111,11 @@
 				SELECT id, name, username, email, image, status FROM users.user
 				WHERE username LIKE ? OR email LIKE ? OR name LIKE ?
 				LIMIT 50
-			", [$search, $search, $search]);
+			", [ $search, $search, $search ]);
 
 			echo json_encode([
-								 "success" => true,
-								 "data"    => $result,
-							 ]);
+				"success" => true,
+				"data" => $result,
+			]);
 		}
 	}

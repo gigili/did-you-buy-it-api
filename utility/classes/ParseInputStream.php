@@ -36,12 +36,13 @@
 		 *
 		 * @param array $data stream
 		 */
-		public function __construct(array &$data) {
+		public function __construct(array &$data)
+		{
 			$this->input = file_get_contents('php://input');
 
 			$boundary = $this->boundary();
 
-			if (!strlen($boundary)) {
+			if ( !strlen($boundary) ) {
 				$data = [
 					'parameters' => $this->parse(),
 					'files' => []
@@ -52,7 +53,7 @@
 				$data = $this->blocks($blocks);
 			}
 
-			if (isset($_FILES) && count($_FILES) > 0) {
+			if ( isset($_FILES) && count($_FILES) > 0 ) {
 				$file = $_FILES[array_keys($_FILES)[0]];
 				$filename = $file["name"];
 				$filetype = $file["type"];
@@ -71,8 +72,9 @@
 		 * @function boundary
 		 * @returns string
 		 */
-		private function boundary() {
-			if (!isset($_SERVER['CONTENT_TYPE'])) {
+		private function boundary()
+		{
+			if ( !isset($_SERVER['CONTENT_TYPE']) ) {
 				return NULL;
 			}
 
@@ -84,7 +86,8 @@
 		 * @function parse
 		 * @returns array
 		 */
-		private function parse() {
+		private function parse()
+		{
 			parse_str(urldecode($this->input), $result);
 			return $result;
 		}
@@ -96,7 +99,8 @@
 		 *
 		 * @return array|bool
 		 */
-		private function split(string $boundary): array|bool {
+		private function split(string $boundary): array|bool
+		{
 			$result = preg_split("/-+$boundary/", $this->input);
 			array_pop($result);
 			return $result;
@@ -109,21 +113,22 @@
 		 *
 		 * @return array
 		 */
-		private function blocks(array $array): array {
+		private function blocks(array $array): array
+		{
 			$results = [];
 
-			foreach ($array as $key1 => $value) {
-				if (empty($value)) {
+			foreach ( $array as $key1 => $value ) {
+				if ( empty($value) ) {
 					continue;
 				}
 
 				$block = $this->decide($value);
 
-				foreach ($block['parameters'] as $key2 => $val) {
+				foreach ( $block['parameters'] as $key2 => $val ) {
 					$this->parse_parameter($results, $key2, $val);
 				}
 
-				foreach ($block['files'] as $key3 => $val) {
+				foreach ( $block['files'] as $key3 => $val ) {
 					$this->parse_parameter($results, $key3, $val);
 				}
 			}
@@ -138,15 +143,16 @@
 		 *
 		 * @return array
 		 */
-		private function decide(string $string): array {
-			if (str_contains($string, 'application/octet-stream')) {
+		private function decide(string $string): array
+		{
+			if ( str_contains($string, 'application/octet-stream') ) {
 				return [
 					'parameters' => $this->file($string),
 					'files' => []
 				];
 			}
 
-			if (str_contains($string, 'filename')) {
+			if ( str_contains($string, 'filename') ) {
 				return [
 					'parameters' => [],
 					'files' => $this->file_stream($string)
@@ -166,10 +172,11 @@
 		 *
 		 * @return array
 		 */
-		private function file($string): array {
+		private function file($string): array
+		{
 			preg_match('/name=\"([^\"]*)\".*stream[\n|\r]+([^\n\r].*)?$/s', $string, $match);
 			return [
-				$match[1] => ($match[2] !== NULL ? $match[2] : '')
+				$match[1] => ( $match[2] !== NULL ? $match[2] : '' )
 			];
 		}
 
@@ -180,12 +187,13 @@
 		 *
 		 * @return array
 		 */
-		private function file_stream($data): array {
+		private function file_stream($data): array
+		{
 			$result = [];
 			$data = ltrim($data);
 
 			$idx = strpos($data, "\r\n\r\n");
-			if ($idx === FALSE) {
+			if ( $idx === FALSE ) {
 				Logger::log("ParseInputStream.file_stream(): Could not locate header separator in data:");
 				Logger::log($data);
 			} else {
@@ -197,16 +205,16 @@
 				$filetype = 'application/octet-stream';
 
 				$header = strtok($headers, "\r\n");
-				while ($header !== FALSE) {
-					if (substr($header, 0, strlen("Content-Disposition: ")) == "Content-Disposition: ") {
+				while ( $header !== FALSE ) {
+					if ( substr($header, 0, strlen("Content-Disposition: ")) == "Content-Disposition: " ) {
 						// Content-Disposition: form-data; name="attach_file[TESTING]"; filename="label2.jpg"
-						if (preg_match('/name=\"([^\"]*)\"/', $header, $nmatch)) {
+						if ( preg_match('/name=\"([^\"]*)\"/', $header, $nmatch) ) {
 							$name = $nmatch[1];
 						}
-						if (preg_match('/filename=\"([^\"]*)\"/', $header, $nmatch)) {
+						if ( preg_match('/filename=\"([^\"]*)\"/', $header, $nmatch) ) {
 							$filename = $nmatch[1];
 						}
-					} elseif (substr($header, 0, strlen("Content-Type: ")) == "Content-Type: ") {
+					} elseif ( substr($header, 0, strlen("Content-Type: ")) == "Content-Type: " ) {
 						// Content-Type: image/jpg
 						$filetype = trim(substr($header, strlen("Content-Type: ")));
 					} else {
@@ -216,7 +224,7 @@
 					$header = strtok("\r\n");
 				}
 
-				if (substr($data, -2) === "\r\n") {
+				if ( substr($data, -2) === "\r\n" ) {
 					$data = substr($data, 0, -2);
 				}
 
@@ -239,14 +247,15 @@
 		 *
 		 * @return array
 		 */
-		private function parameter($string): array {
+		private function parameter($string): array
+		{
 			$data = [];
 
-			if (preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $string, $match)) {
-				if (preg_match('/^(.*)\[]$/i', $match[1], $tmp)) {
-					$data[$tmp[1]][] = ($match[2] !== NULL ? $match[2] : '');
+			if ( preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $string, $match) ) {
+				if ( preg_match('/^(.*)\[]$/i', $match[1], $tmp) ) {
+					$data[$tmp[1]][] = ( $match[2] !== NULL ? $match[2] : '' );
 				} else {
-					$data[$match[1]] = ($match[2] !== NULL ? $match[2] : '');
+					$data[$match[1]] = ( $match[2] !== NULL ? $match[2] : '' );
 				}
 			}
 
@@ -262,17 +271,18 @@
 		 *
 		 * @return array[]
 		 */
-		#[ArrayShape(['parameters' => "array", 'files' => "array"])] private function merge(array $array): array {
+		#[ArrayShape( [ 'parameters' => "array", 'files' => "array" ] )] private function merge(array $array): array
+		{
 			$results = [
 				'parameters' => [],
 				'files' => []
 			];
 
-			if (count($array['parameters']) > 0) {
-				foreach ($array['parameters'] as $key => $value) {
-					foreach ($value as $k => $v) {
-						if (is_array($v)) {
-							foreach ($v as $kk => $vv) {
+			if ( count($array['parameters']) > 0 ) {
+				foreach ( $array['parameters'] as $key => $value ) {
+					foreach ( $value as $k => $v ) {
+						if ( is_array($v) ) {
+							foreach ( $v as $kk => $vv ) {
 								$results['parameters'][$k][] = $vv;
 							}
 						} else {
@@ -282,12 +292,12 @@
 				}
 			}
 
-			if (count($array['files']) > 0) {
-				foreach ($array['files'] as $key => $value) {
-					foreach ($value as $k => $v) {
-						if (is_array($v)) {
-							foreach ($v as $kk => $vv) {
-								if (is_array($vv) && (count($vv) === 1)) {
+			if ( count($array['files']) > 0 ) {
+				foreach ( $array['files'] as $key => $value ) {
+					foreach ( $value as $k => $v ) {
+						if ( is_array($v) ) {
+							foreach ( $v as $kk => $vv ) {
+								if ( is_array($vv) && ( count($vv) === 1 ) ) {
 									$results['files'][$k][$kk] = $vv[0];
 								} else {
 									$results['files'][$k][$kk][] = $vv[0];
@@ -303,48 +313,49 @@
 			return $results;
 		}
 
-		function parse_parameter(&$params, $parameter, $value) {
-			if (str_contains($parameter, '[')) {
-				if (preg_match('/^([^[]*)\[([^]]*)](.*)$/', $parameter, $match)) {
+		function parse_parameter(&$params, $parameter, $value)
+		{
+			if ( str_contains($parameter, '[') ) {
+				if ( preg_match('/^([^[]*)\[([^]]*)](.*)$/', $parameter, $match) ) {
 					$name = $match[1];
 					$key = $match[2];
 					$rem = $match[3];
 
-					if ($name !== '' && $name !== NULL) {
-						if (!isset($params[$name]) || !is_array($params[$name])) {
+					if ( $name !== '' && $name !== NULL ) {
+						if ( !isset($params[$name]) || !is_array($params[$name]) ) {
 							$params[$name] = array();
 						}
-						if (strlen($rem) > 0) {
-							if ($key === '' || $key === NULL) {
+						if ( strlen($rem) > 0 ) {
+							if ( $key === '' || $key === NULL ) {
 								$arr = array();
 								$this->parse_parameter($arr, $rem, $value);
 								$params[$name][] = $arr;
 							} else {
-								if (!isset($params[$name][$key]) || !is_array($params[$name][$key])) {
+								if ( !isset($params[$name][$key]) || !is_array($params[$name][$key]) ) {
 									$params[$name][$key] = array();
 								}
 								$this->parse_parameter($params[$name][$key], $rem, $value);
 							}
 						} else {
-							if ($key === '' || $key === NULL) {
+							if ( $key === '' || $key === NULL ) {
 								$params[$name][] = $value;
 							} else {
 								$params[$name][$key] = $value;
 							}
 						}
 					} else {
-						if (strlen($rem) > 0) {
-							if ($key === '' || $key === NULL) {
+						if ( strlen($rem) > 0 ) {
+							if ( $key === '' || $key === NULL ) {
 								// REVIEW Is this logic correct?!
 								$this->parse_parameter($params, $rem, $value);
 							} else {
-								if (!isset($params[$key]) || !is_array($params[$key])) {
+								if ( !isset($params[$key]) || !is_array($params[$key]) ) {
 									$params[$key] = array();
 								}
 								$this->parse_parameter($params[$key], $rem, $value);
 							}
 						} else {
-							if ($key === '' || $key === NULL) {
+							if ( $key === '' || $key === NULL ) {
 								$params[] = $value;
 							} else {
 								$params[$key] = $value;

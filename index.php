@@ -1,5 +1,5 @@
 <?php
-	declare(strict_types=1);
+	declare( strict_types=1 );
 
 	session_start();
 	include_once "vendor/autoload.php";
@@ -24,19 +24,19 @@
 		$files = glob($_SERVER['DOCUMENT_ROOT'] . "/routes/*.php");
 
 		$routes->add("/", function () {
-			echo json_encode(["message" => Translation::translate(key: "hello_world")]);
-		}, ["GET", "POST", "PUT", "PATCH", "DELETE"]);
+			echo json_encode([ "message" => Translation::translate(key: "hello_world") ]);
+		}, [ "GET", "POST", "PUT", "PATCH", "DELETE" ]);
 
-		foreach ($files as $file) {
-			if (file_exists($file)) {
-				include_once($file);
+		foreach ( $files as $file ) {
+			if ( file_exists($file) ) {
+				include_once( $file );
 			}
 		}
 
 		$routes->handle();
-	} catch (RouteNotFoundException $ex) {
+	} catch ( RouteNotFoundException $ex ) {
 		error_response("Route not found", 404);
-	} catch (Exception $ex) {
+	} catch ( Exception $ex ) {
 		Logger::error("Api Error: {$ex->getMessage()}");
 		error_response("Error processing your request", 500);
 	}

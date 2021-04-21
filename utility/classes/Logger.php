@@ -4,8 +4,9 @@
 
 	class Logger
 	{
-		public static function log(string $message = "") {
-			if (is_dir($_SERVER["DOCUMENT_ROOT"] . "/logs") === false) {
+		public static function log(string $message = "")
+		{
+			if ( is_dir($_SERVER["DOCUMENT_ROOT"] . "/logs") === false ) {
 				mkdir($_SERVER["DOCUMENT_ROOT"] . "/logs", 0644);
 			}
 
@@ -17,8 +18,9 @@
 			fclose($handle);
 		}
 
-		public static function warning(string $message = "") {
-			if (is_dir($_SERVER["DOCUMENT_ROOT"] . "/logs") === false) {
+		public static function warning(string $message = "")
+		{
+			if ( is_dir($_SERVER["DOCUMENT_ROOT"] . "/logs") === false ) {
 				mkdir($_SERVER["DOCUMENT_ROOT"] . "/logs", 0644);
 			}
 
@@ -30,8 +32,9 @@
 			fclose($handle);
 		}
 
-		public static function error(string $message = "") {
-			if (is_dir($_SERVER["DOCUMENT_ROOT"] . "/logs") === false) {
+		public static function error(string $message = "")
+		{
+			if ( is_dir($_SERVER["DOCUMENT_ROOT"] . "/logs") === false ) {
 				mkdir($_SERVER["DOCUMENT_ROOT"] . "/logs", 0644);
 			}
 
@@ -42,8 +45,9 @@
 			fclose($handle);
 		}
 
-		public static function log_network_request(string $message, array|object|null $response = NULL) {
-			if (is_dir($_SERVER["DOCUMENT_ROOT"] . "/logs") === false) {
+		public static function log_network_request(string $message, array|object|null $response = NULL)
+		{
+			if ( is_dir($_SERVER["DOCUMENT_ROOT"] . "/logs") === false ) {
 				mkdir($_SERVER["DOCUMENT_ROOT"] . "/logs", 0644);
 			}
 
@@ -53,7 +57,7 @@
 			fwrite($handle, "IP: {$_SERVER["REMOTE_ADDR"]}\n");
 			fwrite($handle, "Request method: {$_SERVER["REQUEST_METHOD"]}\n");
 			fwrite($handle, "Request params: \n" . json_encode($_REQUEST) . "\n");
-			if (!is_null($response)) {
+			if ( !is_null($response) ) {
 				fwrite($handle, "Response: \n" . json_encode($response) . "\n");
 			}
 			fwrite($handle, $message);
