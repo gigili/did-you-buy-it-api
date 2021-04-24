@@ -105,7 +105,7 @@
 				error_response(Translation::translate("required_field"), 400, "search");
 			}
 
-			$search = "%{$search}%";
+			$search = "%$search%";
 
 			$result = Database::execute_query("
 				SELECT id, name, username, email, image, status FROM users.user

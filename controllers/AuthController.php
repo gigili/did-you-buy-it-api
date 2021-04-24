@@ -78,7 +78,7 @@
 			);
 
 			if ( count($result) === 1 ) {
-				$activationLink = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER["HTTP_HOST"]}/activate/{$activationKey}";
+				$activationLink = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER["HTTP_HOST"]}/activate/$activationKey";
 				$emailBody = Translation::translate("confirm_email_body", arguments: [ "name" => $name ]);
 				send_email(
 					$email,
@@ -160,7 +160,7 @@
 			Database::execute_query($updateUserQuery, [ $passwordActivationCode, '0', $user->id ]);
 
 			$emailBody = Translation::translate('reset_password_body');
-			$url = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}/reset_password/{$passwordActivationCode}";
+			$url = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}/reset_password/$passwordActivationCode";
 			send_email(
 				$user->email,
 				Translation::translate('reset_your_password'),

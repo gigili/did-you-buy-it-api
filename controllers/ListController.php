@@ -84,7 +84,7 @@
 			$result = Database::execute_query("SELECT * FROM lists.fngetlist(?,?)", [ $listID, $userID ]);
 
 			echo json_encode([
-				"succes" => true,
+				"success" => true,
 				"data" => $result,
 			]);
 		}
