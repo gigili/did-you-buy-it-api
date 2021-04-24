@@ -8,12 +8,14 @@
 	use Gac\DidYouBuyIt\utility\classes\Logger;
 	use Gac\DidYouBuyIt\utility\classes\ParseInputStream;
 	use Gac\DidYouBuyIt\utility\classes\Translation;
+	use Gac\Routing\Exceptions\CallbackNotFound;
 	use Gac\Routing\Exceptions\RouteNotFoundException;
 	use Gac\Routing\Routes;
 
 	try {
 		$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 		$dotenv->load();
+		test();
 
 		$input = json_decode(file_get_contents("php://input")) ?? [];
 		$params = [];
@@ -37,8 +39,10 @@
 
 		$routes->handle();
 	} catch ( RouteNotFoundException $ex ) {
-		error_response("Route not found", 404);
+		error_response(Translation::translate("route_not_found"), 404);
+	} catch ( CallbackNotFound $ex ) {
+		error_response(Translation::translate('route_callback_not_found'), 404);
 	} catch ( Exception $ex ) {
 		Logger::error("Api Error: {$ex->getMessage()}");
-		error_response("Error processing your request", 500);
+		error_response(Translation::translate("error_processing_request"), 500);
 	}

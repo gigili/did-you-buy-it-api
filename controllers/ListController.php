@@ -89,13 +89,13 @@
 			]);
 		}
 
-		function add_list()
+		function add_list(Request $request)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate('invalid_token'), 401);
 			}
 
-			$name = $_REQUEST["name"] ?? NULL;
+			$name = $request->get("name");
 
 			if ( empty($name) ) {
 				error_response(Translation::translate("required_field"), 400, "name");
@@ -110,8 +110,7 @@
 			]);
 		}
 
-		function update_list(Request $request,
-							 string $listID)
+		function update_list(Request $request, string $listID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);

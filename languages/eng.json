@@ -40,5 +40,8 @@
   "account_not_found": "account wasn't found",
   "reset_your_password": "reset your password",
   "invalid_reset_code": "invalid password reset code",
-  "reset_password_body": "to reset your password, click on the link below"
+  "reset_password_body": "to reset your password, click on the link below",
+  "route_not_found": "route not found",
+  "route_callback_not_found": "routes callback method not found",
+  "error_processing_request": "error processing your request"
 }

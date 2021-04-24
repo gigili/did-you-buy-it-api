@@ -43,27 +43,19 @@
 			echo json_encode([ "success" => true, "data" => [ "access_token" => $tokens["accessToken"], "refresh_token" => $tokens["refreshToken"] ] ]);
 		}
 
-		#[NoReturn] function register()
+		#[NoReturn] function register(Request $request)
 		{
-			$name = $_REQUEST["name"] ?? NULL;
-			$email = $_REQUEST["email"] ?? NULL;
-			$username = $_REQUEST["username"] ?? NULL;
-			$password = $_REQUEST["password"] ?? NULL;
+			$name = $request->get("name");
+			$email = $request->get("email");
+			$username = $request->get("username");
+			$password = $request->get("password");
 
-			if ( is_null($name) || mb_strlen($name) < 3 ) {
-				error_response(Translation::translate("invalid_name"), 400, "name");
-			}
-			if ( is_null($email) || mb_strlen($email) < 3 ) {
-				error_response(Translation::translate("invalid_email"), 400, "email");
-			}
-			if ( is_null($username) || mb_strlen($username) < 3 ) {
-				error_response(Translation::translate("invalid_username"), 400, "username");
-			}
-			if ( is_null($password) ) {
-				error_response(Translation::translate("invalid_password"), 400, "password");
-			}
-
-			//TODO: Add email validation to make sure the email is in correct format
+			Validation::validate([
+				"name" => [ "required", [ 'ming_length' => 3 ] ],
+				"email" => [ "required", "valid_email" ],
+				"username" => [ "required", [ "ming_length" => 3 ] ],
+				"password" => [ "required", [ 'ming_length' => 10 ] ],
+			], $request);
 
 			$uniqueCheck = Database::execute_query("SELECT * FROM users.user WHERE username = ? OR email = ?", [ $username, $email ]);
 			if ( count($uniqueCheck) > 0 ) {
@@ -109,8 +101,7 @@
 			}
 		}
 
-		function activate_account(Request $request,
-								  string $activationKey)
+		function activate_account(Request $request, string $activationKey)
 		{
 			if ( !isset($activationKey) || empty($activationKey) ) {
 				error_response(Translation::translate("missing_activation_key"), 400);
