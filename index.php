@@ -15,7 +15,6 @@
 	try {
 		$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 		$dotenv->load();
-		test();
 
 		$input = json_decode(file_get_contents("php://input")) ?? [];
 		$params = [];

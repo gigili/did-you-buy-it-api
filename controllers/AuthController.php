@@ -17,10 +17,10 @@
 
 	class AuthController
 	{
-		function login()
+		function login(Request $request)
 		{
-			$username = $_REQUEST["username"] ?? NULL;
-			$password = $_REQUEST["password"] ?? NULL;
+			$username = $request->get("username");
+			$password = $request->get("password");
 
 			if ( is_null($username) || mb_strlen($username) < 3 ) {
 				error_response(Translation::translate("invalid_username"), errorField: "username");
