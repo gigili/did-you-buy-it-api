@@ -165,8 +165,52 @@
 
 			$passwordActivationCode = generate_random_string(12);
 
+			$updateUserQuery = "UPDATE users.user SET reset_password_code = ?, status = ? WHERE id = ?";
+			Database::execute_query($updateUserQuery, [ $passwordActivationCode, '0', $user->id ]);
+
+			$emailBody = Translation::translate('reset_password_body');
+			$url = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}/reset_password/{$passwordActivationCode}";
+			send_email(
+				$user->email,
+				Translation::translate('reset_your_password'),
+				$emailBody,
+				emailTemplate: [
+					'file' => 'reset_password',
+					'args' => [
+						'emailTitle' => Translation::translate('reset_your_password'),
+						'emailPreview' => strip_tags($emailBody),
+						'emailConfirmText' => Translation::translate('reset_your_password'),
+						'emailLink' => $url,
+					],
+				]
+			);
+
 			echo json_encode([
-				"passwordCode" => $passwordActivationCode,
+				"success" => true,
+			]);
+		}
+
+		function reset_password(Request $request, string $resetCode)
+		{
+			if ( empty($resetCode) ) {
+				error_response(Translation::translate("invalid_reset_code"), 400);
+			}
+
+			$user = Database::execute_query("SELECT * FROM users.user WHERE reset_password_code = ?", [ $resetCode ], true);
+
+			if ( empty($user) || !isset($user->id) ) {
+				error_response(Translation::translate("invalid_reset_code"), 400);
+			}
+
+			Validation::validate([
+				"password" => [ "required", [ "min_length" => 10 ] ],
+			], $request);
+
+			$updateUserQuery = "UPDATE users.user SET password = ?, reset_password_code = null, status = '1' WHERE id = ?";
+			Database::execute_query($updateUserQuery, [ $request->get("password"), $user->id ]);
+
+			echo json_encode([
+				"success" => true,
 			]);
 		}
 	}

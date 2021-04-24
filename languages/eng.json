@@ -37,5 +37,8 @@
   "list_item_not_found": "list item not found",
   "only_owner_can_delete_this_item": "only the owner can delete this item",
   "invalid_id": "invalid id",
-  "account_not_found": "account wasn't found"
+  "account_not_found": "account wasn't found",
+  "reset_your_password": "reset your password",
+  "invalid_reset_code": "invalid password reset code",
+  "reset_password_body": "to reset your password, click on the link below"
 }

@@ -17,9 +17,9 @@
 	 */
 	class Validation
 	{
-		public static function validate(array $validation_fileds, Request $request): bool
+		public static function validate(array $validation_fields, Request $request): bool
 		{
-			foreach ( $validation_fileds as $field => $rules ) {
+			foreach ( $validation_fields as $field => $rules ) {
 				$ruleCondition = NULL;
 
 				foreach ( $rules as $rule ) {

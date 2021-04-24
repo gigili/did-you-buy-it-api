@@ -195,10 +195,14 @@
 	}
 
 	if ( !function_exists("generate_random_string") ) {
-		function generate_random_string($length = 32): string
+		function generate_random_string(int $length = 32, bool $useSpecialChars = false): string
 		{
-			$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$.^';
+			$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 			$randomString = '';
+
+			if ( $useSpecialChars ) {
+				$characters .= "!@#$.^";
+			}
 
 			for ( $i = 0; $i < $length; $i++ ) {
 				$index = rand(0, strlen($characters) - 1);

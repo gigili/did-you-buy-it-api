@@ -26,7 +26,7 @@
 
 			$translations = json_decode(file_get_contents($translationFilePath), true);
 
-			if ( is_null($translations[$key]) ) {
+			if ( !isset($translations[$key]) || is_null($translations[$key]) ) {
 				error_response("***no_translation({$key},{$language})***");
 			}
 
