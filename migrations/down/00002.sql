@@ -1,2 +1,2 @@
-DROP TABLE lists.list;
-DROP SCHEMA lists;
+DROP TABLE lists.list CASCADE;
+DROP SCHEMA lists CASCADE;

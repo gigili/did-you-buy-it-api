@@ -10,6 +10,7 @@
 
 	use Gac\DidYouBuyIt\utility\classes\Database;
 	use Gac\DidYouBuyIt\utility\classes\Translation;
+	use Gac\DidYouBuyIt\utility\classes\Validation;
 	use Gac\Routing\Request;
 	use JetBrains\PhpStorm\NoReturn;
 	use Ramsey\Uuid\Uuid;
@@ -145,5 +146,27 @@
 			$tokens = generate_token($userID);
 
 			echo json_encode([ "success" => true, "data" => [ "access_token" => $tokens["accessToken"], "refresh_token" => $tokens["refreshToken"] ] ]);
+		}
+
+		function request_reset_password_link(Request $request)
+		{
+			$emailOrUsername = $request->get("emailOrUsername");
+
+			Validation::validate([
+				"emailOrUsername" => [ "required", [ "min_length" => 3 ], [ "max_length" => 250 ] ],
+			], $request);
+
+			$query = "SELECT * FROM users.user WHERE username = ? OR email = ?";
+			$user = Database::execute_query($query, [ $emailOrUsername, $emailOrUsername ], true);
+
+			if ( empty($user) || !isset($user->id) ) {
+				error_response(Translation::translate("account_not_found"), 404);
+			}
+
+			$passwordActivationCode = generate_random_string(12);
+
+			echo json_encode([
+				"passwordCode" => $passwordActivationCode,
+			]);
 		}
 	}

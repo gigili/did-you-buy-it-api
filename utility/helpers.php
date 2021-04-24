@@ -193,3 +193,26 @@
 			return $list;
 		}
 	}
+
+	if ( !function_exists("generate_random_string") ) {
+		function generate_random_string($length = 32): string
+		{
+			$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$.^';
+			$randomString = '';
+
+			for ( $i = 0; $i < $length; $i++ ) {
+				$index = rand(0, strlen($characters) - 1);
+				$randomString .= $characters[$index];
+			}
+
+			return $randomString;
+		}
+	}
+
+	if ( !function_exists("generate_random_number") ) {
+		function generate_random_number(int $min = 0, int $max = -1): int
+		{
+			if ( $max < 1 ) $max = getrandmax();
+			return rand($min, $max);
+		}
+	}

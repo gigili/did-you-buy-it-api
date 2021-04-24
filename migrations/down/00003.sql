@@ -1,1 +1,1 @@
-DROP TABLE lists.list_item;
+DROP TABLE lists.list_item CASCADE;

@@ -56,7 +56,29 @@ docker-compose up
 
 # Migrations
 
-    //TODO 
+    //TODO
+
+Install
+
+```shell
+php vendor/bin/migrate install pgsql://postgres:postgres@localhost/dybi -vvv
+```
+
+Reset
+
+```shell
+php vendor/bin/migrate install pgsql://postgres:postgres@localhost/dybi -vvv
+```
+
+Migrate up
+
+```shell
+php vendor/bin/migrate up pgsql://postgres:postgres@localhost/dybi -vvv
+```
+
+### Note
+
+On Windows machines you need the `php` prefix before calling the `vendor/bin/migrate`.
 
 # Tests
 

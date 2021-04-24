@@ -1,4 +1,5 @@
 -- Migrate to Version 1
+
 CREATE SCHEMA users;
 CREATE TYPE users.user_status AS ENUM ('0', '1');
 CREATE TABLE users.user

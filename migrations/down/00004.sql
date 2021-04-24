@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS lists.list_user;
+DROP TABLE IF EXISTS lists.list_user CASCADE;
