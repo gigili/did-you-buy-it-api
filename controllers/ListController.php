@@ -7,7 +7,7 @@
 
 	namespace Gac\DidYouBuyIt\controllers;
 
-
+    use Gac\DidYouBuyIt\models\ListModel;
 	use Gac\DidYouBuyIt\utility\classes\Database;
 	use Gac\DidYouBuyIt\utility\classes\Translation;
 	use Gac\Routing\Request;
@@ -15,48 +15,17 @@
 
 	class ListController
 	{
-		function get_users_lists()
+		function get_users_lists(Request $request)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
 			$userID = $_SESSION["userID"];
-			$page = isset($_REQUEST['page']) && $_REQUEST['page'] != '' ? $_REQUEST['page'] : 0;
-			$limit = isset($_REQUEST['limit']) && $_REQUEST['limit'] != '' ? $_REQUEST['limit'] : 10;
+			$page = $request->get("page");
+			$limit = $request->get("limit");
 
-			if ( $page < 0 ) {
-				$page = 0;
-			}
-
-			if ( $limit > 50 ) {
-				$limit = 100;
-			}
-
-			$query = "
-				SELECT DISTINCT l.*,
-					   COALESCE(lic.cntItems, 0) AS cntItems,
-					   (COALESCE(cntUsers, 0) + 1) AS cntUsers,
-					   COALESCE(cntBoughtItems, 0) AS cntBoughtItems
-				FROM lists.list AS l
-				LEFT JOIN (
-					SELECT listid,
-						   COUNT(id)                                                  AS cntItems,
-						   COUNT(CASE WHEN purchaseduserid IS NULL THEN 0 ELSE 1 END) AS cntBoughtItems
-					FROM lists.list_item
-					GROUP BY listid
-				) AS lic ON lic.listid = l.id
-				LEFT JOIN (
-					SELECT listid, COUNT(userid) AS cntUsers
-					FROM lists.list_user
-					GROUP BY listid
-				) AS lu ON lu.listid = l.id
-				LEFT JOIN lists.list_user AS llu ON l.id = llu.listid
-				WHERE l.userid = ? OR llu.userid = ?
-				ORDER BY l.created_at DESC
-				LIMIT ? OFFSET ?;
-			";
-			$result = Database::execute_query($query, [ $userID, $userID, $limit, ( $page * $limit ) ]);
+            $result = ListModel::get_user_lists($userID, $limit, $page);
 
 			echo json_encode([
 				"success" => true,
@@ -76,12 +45,12 @@
 
 			$userID = $_SESSION["userID"];
 
-			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [ $listID ], true);
-			if ( empty($list) ) {
+			$list = ListModel::get_list($listID);
+			if ( empty($list) || !isset($list->id)) {
 				error_response(Translation::translate("list_not_found"), 404);
 			}
 
-			$result = Database::execute_query("SELECT * FROM lists.fngetlist(?,?)", [ $listID, $userID ]);
+            $result = ListModel::get_list_fn($listID, $userID);
 
 			echo json_encode([
 				"success" => true,
@@ -95,14 +64,14 @@
 				error_response(Translation::translate('invalid_token'), 401);
 			}
 
+            Validation::validate([
+                "name" => ["required"]
+            ], $request);
+
 			$name = $request->get("name");
+            $userID = $_SESSION["userID"];
 
-			if ( empty($name) ) {
-				error_response(Translation::translate("required_field"), 400, "name");
-			}
-
-			$userID = $_SESSION["userID"];
-			Database::execute_query("INSERT INTO lists.list (id, userid, name) VALUES (?,?,?)", [ Uuid::uuid4(), $userID, $name ]);
+            ListModel::create_list($name, $userID);
 
 			header("HTTP/1.1 201");
 			echo json_encode([
@@ -116,19 +85,18 @@
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
-			$name = $_REQUEST["name"] ?? NULL;
+            Validation::validate([
+                "name" => ["required"]
+            ]);
 
-			if ( empty($name) ) {
-				error_response(Translation::translate("required_field"), 400, "name");
-			}
+			$name = $request->get("name");
 
 			if ( !isset($listID) || empty($listID) || !Uuid::isValid($listID) ) {
 				error_response(Translation::translate("required_field"), 400, "listID");
 			}
 
 			$userID = $_SESSION["userID"];
-
-			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [ $listID ], true);
+			$list = ListModel::get_list($listID);
 
 			if ( empty($list) ) {
 				error_response(Translation::translate("list_not_found"), 404);
@@ -138,7 +106,7 @@
 				error_response(Translation::translate("not_authorized"), 403);
 			}
 
-			Database::execute_query("UPDATE lists.list SET name = ? WHERE id = ? ", [ $name, $listID ]);
+            ListModel::update_list($name, $listID);
 
 			echo json_encode([ "success" => true ]);
 		}
@@ -155,7 +123,7 @@
 
 			$userID = $_SESSION["userID"];
 
-			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [ $listID ], true);
+			$list = ListModel::get_list($listID);
 
 			if ( empty($list) ) {
 				error_response(Translation::translate("list_not_found"), 404);
@@ -165,7 +133,7 @@
 				error_response(Translation::translate("not_authorized"), 403);
 			}
 
-			Database::execute_query("DELETE FROM lists.list WHERE id = ?", [ $listID ]);
+            ListModel::delete_list($listID);
 
 			echo json_encode([ "success" => true ]);
 		}

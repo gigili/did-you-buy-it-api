@@ -8,10 +8,13 @@
 	namespace Gac\DidYouBuyIt\controllers;
 
 
+    use Gac\DidYouBuyIt\models\UserModel;
 	use Gac\DidYouBuyIt\utility\classes\Database;
 	use Gac\DidYouBuyIt\utility\classes\FileUpload;
 	use Gac\DidYouBuyIt\utility\classes\FileUploadPaths;
 	use Gac\DidYouBuyIt\utility\classes\Translation;
+	use Gac\DidYouBuyIt\utility\classes\Validation;
+    use Gac\Routing\Request;
 
 	class UserController
 	{
@@ -22,7 +25,7 @@
 			}
 
 			$userID = $_SESSION["userID"];
-			$result = Database::execute_query("SELECT id, name, username, email, image, status FROM users.user WHERE id = ?", [ $userID ], true);
+            $result = UserModel::get_users_by(["id" => $userID], true);
 
 			if ( !isset($result->id) ) {
 				error_response(Translation::translate("user_not_found"), 404);
@@ -34,44 +37,36 @@
 			]);
 		}
 
-		function update_user_profile()
+		function update_user_profile(Request $request)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
 			$userID = $_SESSION["userID"];
-			$result = Database::execute_query("SELECT id, name, username, email, image, status FROM users.user WHERE id = ?", [ $userID ], true);
+            $result = UserModel::get_users_by(["id" => $userID], true);
 
 			if ( !isset($result->id) ) {
 				error_response(Translation::translate("user_not_found"), 404);
 			}
 
-			$name = isset($_REQUEST['name']) && $_REQUEST['name'] != '' ? $_REQUEST['name'] : NULL;
-			$email = isset($_REQUEST['email']) && $_REQUEST['email'] != '' ? $_REQUEST['email'] : NULL;
+            Validation::validate([
+                "name" => ["required"],
+                "email" => ["required", "valid_email"]
+            ], $request);
 
-			if ( is_null($name) ) {
-				error_response(Translation::translate("required_field"), 400, "name");
-			}
-
-			if ( is_null($email) ) {
-				error_response(Translation::translate("required_field"), 400, "email");
-			}
-
-			if ( filter_var($email, FILTER_VALIDATE_EMAIL) === false ) {
-				error_response(Translation::translate("invalid_email"), 400, "email");
-			}
+			$name = $request->get("name");
+			$email = $request->get("email");
 
 			$uploadResult = NULL;
 			if ( isset($_REQUEST["file"]) ) {
 				$uploadResult = FileUpload::upload(FileUploadPaths::USER_PHOTOS, $_REQUEST["file"]);
 			}
 
-			Database::execute_query(
-				"UPDATE users.user SET name = ?, email = ?, image = ? WHERE id = ?",
-				[ $name, $email, $uploadResult, $userID ]
-			);
-
+            UserModel::update_user(
+                ["name" => $name, "email" => $email, "image" => $uploadResult],
+                ["id" => $result->id]
+            );
 			echo json_encode([ "success" => true ]);
 		}
 
@@ -82,36 +77,31 @@
 			}
 
 			$userID = $_SESSION["userID"];
-			$result = Database::execute_query("SELECT id, name, username, email, image, status FROM users.user WHERE id = ?", [ $userID ], true);
+            $result = UserModel::get_users_by(["id" => $userID], true);
 
 			if ( !isset($result->id) ) {
 				error_response(Translation::translate("user_not_found"), 404);
 			}
 
-			Database::execute_query("DELETE FROM users.user WHERE id = ?", [ $userID ]);
+            UserModel::delete_user($userID);
 
 			echo json_encode([ "success" => true ]);
 		}
 
-		function filter_users()
+		function filter_users(Request $request)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
-			$search = $_REQUEST['search'] ?? NULL;
+            Validation::validate([
+                "search" => ["required"]
+            ], $request);
 
-			if ( empty($search) ) {
-				error_response(Translation::translate("required_field"), 400, "search");
-			}
+			$search = $request->get("search");
+			$search = "$search%";
 
-			$search = "%$search%";
-
-			$result = Database::execute_query("
-				SELECT id, name, username, email, image, status FROM users.user
-				WHERE username LIKE ? OR email LIKE ? OR name LIKE ?
-				LIMIT 50
-			", [ $search, $search, $search ]);
+            $result = UserModel::filter_users($search);
 
 			echo json_encode([
 				"success" => true,

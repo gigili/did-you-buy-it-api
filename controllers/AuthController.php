@@ -7,7 +7,7 @@
 
 	namespace Gac\DidYouBuyIt\controllers;
 
-
+    use Gac\DidYouBuyIt\models\UserModel;
 	use Gac\DidYouBuyIt\utility\classes\Database;
 	use Gac\DidYouBuyIt\utility\classes\Translation;
 	use Gac\DidYouBuyIt\utility\classes\Validation;
@@ -16,26 +16,20 @@
 	use Ramsey\Uuid\Uuid;
 
 	class AuthController
-	{
+    {
 		function login(Request $request)
 		{
+			Validation::validate([
+				"username" => [ "required", ["min_length" => 3] ],
+				"password" => [ "required" ]
+            ], $request);
+
 			$username = $request->get("username");
 			$password = $request->get("password");
 
-			if ( is_null($username) || mb_strlen($username) < 3 ) {
-				error_response(Translation::translate("invalid_username"), errorField: "username");
-			}
+            $result = UserModel::get_users_by(["username" => $username, "password" => $password]);
 
-			if ( is_null($password) ) {
-				error_response(Translation::translate("invalid_password"), errorField: "password");
-			}
-
-			$result = Database::execute_query(
-				"SELECT * FROM users.user WHERE username = ? AND password = ?",
-				[ $username, $password ]
-			);
-
-			if ( count($result) === 0 ) {
+            if ( count($result) === 0 ) {
 				error_response(Translation::translate("invalid_login_credentials"), 401);
 			}
 
@@ -43,7 +37,7 @@
 			echo json_encode([ "success" => true, "data" => [ "access_token" => $tokens["accessToken"], "refresh_token" => $tokens["refreshToken"] ] ]);
 		}
 
-		#[NoReturn] function register(Request $request)
+		function register(Request $request)
 		{
 			$name = $request->get("name");
 			$email = $request->get("email");
@@ -57,8 +51,8 @@
 				"password" => [ "required", [ 'ming_length' => 10 ] ],
 			], $request);
 
-			$uniqueCheck = Database::execute_query("SELECT * FROM users.user WHERE username = ? OR email = ?", [ $username, $email ]);
-			if ( count($uniqueCheck) > 0 ) {
+            $uniqueCheck = UserModel::get_user_by(["username" => $username, "email" => $email]);
+            if ( count($uniqueCheck) > 0 ) {
 				foreach ( $uniqueCheck as $check ) {
 					if ( $check->username === $username ) {
 						error_response(Translation::translate("username_taken"), 409, errorField: "username");
@@ -72,10 +66,7 @@
 			$userID = Uuid::uuid4();
 			$activationKey = mb_substr(hash("sha256", time()), 0, 14);
 
-			$result = Database::execute_query(
-				"INSERT INTO users.user (id, name, email, username, password, activation_key) VALUES (?, ?, ?, ?, ?, ?)",
-				[ $userID, $name, $email, $username, $password, $activationKey ]
-			);
+			$result = UserModel::create_account([ $userID, $name, $email, $username, $password, $activationKey ]);
 
 			if ( count($result) === 1 ) {
 				$activationLink = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER["HTTP_HOST"]}/activate/$activationKey";
@@ -107,7 +98,7 @@
 				error_response(Translation::translate("missing_activation_key"), 400);
 			}
 
-			$result = Database::execute_query("SELECT id, activation_key, status FROM users.user WHERE activation_key = ?", [ $activationKey ]);
+            $result = UserModel::get_user_by(["activation_key" => $activationKey]);
 
 			if ( count($result) === 0 || !isset($result[0]->id) ) {
 				error_response(Translation::translate("invalid_activation_key"), 400);
@@ -119,11 +110,7 @@
 				error_response(Translation::translate("account_already_active"), 400);
 			}
 
-			Database::execute_query(
-				"UPDATE users.user SET status = '1' WHERE id = ? AND activation_key = ?",
-				[ $userData->id, $activationKey ]
-			);
-
+            UserModel::update_user(["status" => "1"], ["id" => $userData->id]);
 			echo json_encode([ "success" => true, "message" => Translation::translate("account_activated_success") ]);
 		}
 
@@ -147,8 +134,7 @@
 				"emailOrUsername" => [ "required", [ "min_length" => 3 ], [ "max_length" => 250 ] ],
 			], $request);
 
-			$query = "SELECT * FROM users.user WHERE username = ? OR email = ?";
-			$user = Database::execute_query($query, [ $emailOrUsername, $emailOrUsername ], true);
+			$user = UserModel::get_user_by([ "username" => $emailOrUsername, "email" => $emailOrUsername ], true);
 
 			if ( empty($user) || !isset($user->id) ) {
 				error_response(Translation::translate("account_not_found"), 404);
@@ -156,8 +142,7 @@
 
 			$passwordActivationCode = generate_random_string(12);
 
-			$updateUserQuery = "UPDATE users.user SET reset_password_code = ?, status = ? WHERE id = ?";
-			Database::execute_query($updateUserQuery, [ $passwordActivationCode, '0', $user->id ]);
+            UserModel::update_user([ "reset_password_code" => $passwordActivationCode, "status" => '0'], ["id" => $user->id]);
 
 			$emailBody = Translation::translate('reset_password_body');
 			$url = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}/reset_password/$passwordActivationCode";
@@ -187,8 +172,7 @@
 				error_response(Translation::translate("invalid_reset_code"), 400);
 			}
 
-			$user = Database::execute_query("SELECT * FROM users.user WHERE reset_password_code = ?", [ $resetCode ], true);
-
+            $user = UserModel::get_user_by(["reset_password_code" => $resetCode], true);
 			if ( empty($user) || !isset($user->id) ) {
 				error_response(Translation::translate("invalid_reset_code"), 400);
 			}
@@ -197,8 +181,13 @@
 				"password" => [ "required", [ "min_length" => 10 ] ],
 			], $request);
 
-			$updateUserQuery = "UPDATE users.user SET password = ?, reset_password_code = null, status = '1' WHERE id = ?";
-			Database::execute_query($updateUserQuery, [ $request->get("password"), $user->id ]);
+            UserModel::update_user([
+                "password" => $request->get("password"),
+                "reset_password_code" => null,
+                "status" => "1"
+            ],[
+                "id" => $user->id
+            ]);
 
 			echo json_encode([
 				"success" => true,
