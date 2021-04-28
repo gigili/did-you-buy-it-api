@@ -91,6 +91,16 @@
 			if ( !filter_var($value, FILTER_VALIDATE_EMAIL) ) {
 				error_response(Translation::translate("invalid_email"), 400, $field);
 			}
+
+			/*
+		$regex = "/^(([a-zA-Z0-9_\-]+(\.[a-zA-Z0-9_\-]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/";
+			if (!preg_match($regex, $vrijednost)) {
+				$greske[] = [
+					"uslov" => "email",
+					"poruka" => "Nije validna email adresa."
+				];
+			}
+			*/
 		}
 
 		private static function numeric(string $field, Request $request)
