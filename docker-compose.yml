@@ -2,11 +2,12 @@ version: '3.1'
 
 services:
   app:
+    container_name: "dybi-web-server"
     build:
       context: .
-      dockerfile: Dockerfile
+
   db:
-    container_name: "dybi-pg"
+    container_name: "dybi-postgres"
     image: postgres:12.4-alpine
     volumes:
       - "./postgres-data:/var/lib/postgresql/data:rw"

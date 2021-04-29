@@ -148,10 +148,14 @@
 				error_response(Translation::translate("required_field"), 400, "listID");
 			}
 
+            Validation::validate([
+                "userID" => ["required", "valid_uuid"]
+            ], $request);
+
 			$userID = $_SESSION["userID"];
 			$guestID = $request->get("userID") ?? NULL;
 
-			$list = Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [ $listID ], true);
+			$list = ListModel::get_list($listID);
 
 			if ( empty($list) ) {
 				error_response(Translation::translate("list_not_found"), 404);
@@ -161,24 +165,16 @@
 				error_response(Translation::translate("not_authorized"), 403);
 			}
 
-			if ( empty($guestID) ) {
-				error_response(Translation::translate("required_field"), 400, "userID");
-			}
-
-			if ( !Uuid::isValid($guestID) ) {
-				error_response(Translation::translate("invalid_value"), 400, "userID");
-			}
-
 			if ( $guestID == $userID ) {
 				error_response(Translation::translate("cant_add_yourself_to_list"));
 			}
 
-			$userAssignedToList = Database::execute_query("SELECT * FROM lists.list_user WHERE listid = ? AND userid = ?", [ $listID, $guestID ], true);
+            $userAssignedToList = ListModel::user_in_list($listID, $guestID);
 			if ( !empty($userAssignedToList) ) {
 				error_response(Translation::translate("user_already_in_list"));
 			}
 
-			Database::execute_query("INSERT INTO lists.list_user (listid, userid) VALUES (?,?)", [ $listID, $guestID ]);
+            ListModel::add_user_to_list($listID, $guestID);
 
 			header("HTTP/1.1 201");
 			echo json_encode([ "success" => true ]);

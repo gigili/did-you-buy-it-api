@@ -81,4 +81,12 @@
 
 			Database::execute_query("DELETE FROM lists.list WHERE id = ?", [ $listID ]);
         }
+
+        public static function user_in_list(string $listID, string $userID): array{
+			return Database::execute_query("SELECT * FROM lists.list_user WHERE listid = ? AND userid = ?", [ $listID, $userID ], true);
+        }
+
+        public static function add_user_to_list(string $listID, string $userID){
+            Database::execute_query("INSERT INTO lists.list_user (listid, userid) VALUES (?, ?)", [$listID, $userID]);
+        }
     }
