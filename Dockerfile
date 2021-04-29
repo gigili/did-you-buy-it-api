@@ -7,4 +7,3 @@ RUN composer install --prefer-dist --no-progress
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 RUN a2enmod rewrite
 RUN composer update
-
