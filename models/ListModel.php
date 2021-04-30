@@ -12,18 +12,20 @@
     use Gac\DidYouBuyIt\utility\classes\Database;
 	use Ramsey\Uuid\Uuid;
 
-    class ListModel{
+	class ListModel
+	{
 
-        public static function get_user_lists(string $userID, int $limit, int $page){
+		public static function get_user_lists(string $userID, int $limit, int $page): object|array
+		{
 			if ( $page < 0 ) {
 				$page = 0;
 			}
 
 			if ( $limit > 50 ) {
 				$limit = 100;
-            }else if(empty($limit) || $limit < 0){
-                $limit = 10;
-            }
+			} else if ( empty($limit) || $limit < 0 ) {
+				$limit = 10;
+			}
 
 			$query = "
 				SELECT DISTINCT l.*,
@@ -48,24 +50,28 @@
 				ORDER BY l.created_at DESC
 				LIMIT ? OFFSET ?;
 			";
-            return Database::execute_query($query, [ $userID, $userID, $limit, ( $page * $limit ) ]);
-        }
+			return Database::execute_query($query, [ $userID, $userID, $limit, ( $page * $limit ) ]);
+		}
 
-        public static function get_list(string $listID){
+		public static function get_list(string $listID): object|array
+		{
 			return Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [ $listID ], true);
-        }
+		}
 
-        public static function get_list_fn(string $listID, string $userID){
+		public static function get_list_fn(string $listID, string $userID): object|array
+		{
 			return Database::execute_query("SELECT * FROM lists.fngetlist(?,?)", [ $listID, $userID ]);
-        }
+		}
 
-        public static function create_list(string $name, string $userID){
+		public static function create_list(string $name, string $userID)
+		{
 			Database::execute_query("INSERT INTO lists.list (id, userid, name) VALUES (?,?,?)", [ Uuid::uuid4(), $userID, $name ]);
-        }
+		}
 
-        public static function update_list(string $name, string $listID){
+		public static function update_list(string $name, string $listID)
+		{
 			Database::execute_query("UPDATE lists.list SET name = ? WHERE id = ? ", [ $name, $listID ]);
-        }
+		}
 
         public static function delete_list(string $listID){
             $listItems = Database::execute_query("SELECT id, image FROM lists.list_item WHERE listid = ?", [$listID]);
@@ -80,13 +86,34 @@
             }
 
 			Database::execute_query("DELETE FROM lists.list WHERE id = ?", [ $listID ]);
-        }
+		}
 
-        public static function user_in_list(string $listID, string $userID): array{
+		public static function user_in_list(string $listID, string $userID): object|array
+		{
 			return Database::execute_query("SELECT * FROM lists.list_user WHERE listid = ? AND userid = ?", [ $listID, $userID ], true);
-        }
+		}
 
-        public static function add_user_to_list(string $listID, string $userID){
-            Database::execute_query("INSERT INTO lists.list_user (listid, userid) VALUES (?, ?)", [$listID, $userID]);
-        }
-    }
+		public static function add_user_to_list(string $listID, string $userID)
+		{
+			Database::execute_query("INSERT INTO lists.list_user (listid, userid) VALUES (?, ?)", [ $listID, $userID ]);
+		}
+
+		public static function remove_user_from_list(string $listID, string $userID)
+		{
+			Database::execute_query("DELETE FROM lists.list_user WHERE listid = ? AND userid = ?", [ $listID, $userID ]);
+		}
+
+		public static function get_list_users(string $listID): array
+		{
+			return Database::execute_query("
+			SELECT u.id, u.name, u.email,u.username, u.image, u.status, 0 AS owner  FROM lists.list_user AS lu
+			LEFT JOIN lists.list AS l ON lu.listid = l.id
+			LEFT JOIN users.user AS u ON lu.userid = u.id
+			WHERE l.id = ? AND u.status = '1'
+			UNION ALL
+			SELECT u.id, u.name, u.email,u.username, u.image, u.status, 1 AS owner  FROM users.user AS u
+			LEFT JOIN lists.list AS l ON u.id = l.userid
+			WHERE l.id = ?AND u.status = '1'
+			", [ $listID, $listID ]);
+		}
+	}
