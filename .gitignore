@@ -11,3 +11,4 @@ public/images/
 .phpunit.result.cache
 uploads/
 public/uploads/
+.phpdoc/

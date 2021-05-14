@@ -12,6 +12,13 @@
 	use PHPMailer\PHPMailer\SMTP;
 
 	if ( !function_exists("dump") ) {
+        /**
+         * Method used for printing out the contents of an object or an array on screen
+         *
+         * @param array|object $data Array or an object to be printed out on screen
+         * @param bool $asJSON Boolean indicating if the output should be in json format
+         *
+         */
 		function dump(array|object $data, bool $asJSON = true)
 		{
 			if ( $asJSON === true ) {
@@ -25,6 +32,14 @@
 	}
 
 	if ( !function_exists("dd") ) {
+        /**
+         * Method used as a wrapper around the dump method us for printing out the contents
+         * of an object or an array on screen and stopping execution of the code after it
+         *
+         * @param array|object $data Array or an object to be printed out on screen
+         * @param bool $asJSON Boolean indicating if the output should be in json format
+         *
+         */
 		#[NoReturn] function dd(array|object $data, bool $asJSON = true)
 		{
 			dump($data, $asJSON);
@@ -33,6 +48,14 @@
 	}
 
 	if ( !function_exists("error_response") ) {
+        /**
+         * Method used to return a standardised error response from the API
+         *
+         * @param string $message Error message to be sent in the response
+         * @param int $errorCode Error code to be sent in the response
+         * @param string $errorField Error field to be sent in the response
+         *
+         */
 		#[NoReturn] function error_response(string $message, int $errorCode = -1, string $errorField = "")
 		{
 			if ( $errorCode === -1 ) {
@@ -53,7 +76,15 @@
 		}
 	}
 
-	if ( !function_exists("generate_token") ) {
+    if ( !function_exists("generate_token") ) {
+        /**
+         * Method used to generate JWT tokens
+         *
+         * @param string $userID ID of the user for whom the token is being generated
+         * @param bool $generateRefreshToken Indicated if the refresh token should be generated and returned as well
+         *
+         * @return array Returns an array containing the access token and refresh token if $generateRefreshToken is set to True values
+         */
 		#[ArrayShape( [ "accessToken" => "string", "refreshToken" => "null|string" ] )] function generate_token(string $userID, bool $generateRefreshToken = false): array
 		{
 			$currentTime = time();
@@ -82,6 +113,9 @@
 	}
 
 	if ( !function_exists("decode_token") ) {
+        /**
+         * Method used to decode a JWT token and extract and save to the session value of a user ID
+         */
 		function decode_token(): bool
 		{
 			if ( !preg_match('/Bearer Request =>|Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches) ) {
@@ -101,7 +135,21 @@
 		}
 	}
 
-	if ( !function_exists("send_email") ) {
+    if ( !function_exists("send_email") ) {
+        /**
+         * Method used for sending emails from the application
+         *
+         * @param string $to Email or comma separated email list of recipients
+         * @param string $subject Subject of the email
+         * @param string $body Body of the email being sent (supports HTML)
+         * @param string|null $altBody Text only version of the email body
+         * @param array $attachments Array list of files with full paths to them to be attached to the email
+         * @param string|null $from Name of the sender (usually name of the app)
+         * @param string|array|null $emailTemplate If sent as a string, it will look for an email template file in the assets/emails folder. As an array it expects a propery named file for the email template file and args (key => value list) for any email body values to be replaced
+         * @param bool $debug Indicates if the debug will be enabled when sending email to see all the information
+         *
+         * @return bool Returns true or false to indicated if the email was sent successfully or not
+         */
 		function send_email(
 			string $to,
 			string $subject,
@@ -146,7 +194,7 @@
 					}
 				}
 
-				if ( is_null($emailTemplate) === false ) {
+				if ( !is_null($emailTemplate) ) {
 					$templateFile = is_array($emailTemplate) ? $emailTemplate["file"] ?? 'default' : $emailTemplate;
 					$args = is_array($emailTemplate) ? $emailTemplate["args"] ?? [] : [];
 
@@ -179,6 +227,14 @@
 		}
 	}
 
+    /**
+     * Method used to check if the user has access to a certain list
+     *
+     * @param string $listID UUID of the list
+     * @param string $userID UUID of the user
+     *
+     * @return object Returns information about the list and the users associated with it
+     */
 	if ( !function_exists("has_access_to_list") ) {
 		function has_access_to_list($listID, $userID): object
 		{
@@ -194,6 +250,14 @@
 		}
 	}
 
+    /**
+     * Method used to generate a random string
+     *
+     * @param int $length Lenght of the string to be generated
+     * @param bool $useSpecialChars Wheter special characters should be included in the string
+     *
+     * @return string Returns a randomly generated string
+     */
 	if ( !function_exists("generate_random_string") ) {
 		function generate_random_string(int $length = 32, bool $useSpecialChars = false): string
 		{
@@ -213,6 +277,14 @@
 		}
 	}
 
+    /**
+     * Method used to return a randomly generated number in a specified range
+     *
+     * @param int $min Minimum allowed number to be generated
+     * @param int $max Maximum allowed number to be generated
+     *
+     * @return int Returns a randomly generated number
+     */
 	if ( !function_exists("generate_random_number") ) {
 		function generate_random_number(int $min = 0, int $max = -1): int
 		{
