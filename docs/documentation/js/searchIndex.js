@@ -463,17 +463,17 @@ Search.appendIndex(
         },                {
             "fqsen": "\\has_access_to_list\u0028\u0029",
             "name": "has_access_to_list",
-            "summary": "",
+            "summary": "Method\u0020used\u0020to\u0020check\u0020if\u0020the\u0020user\u0020has\u0020access\u0020to\u0020a\u0020certain\u0020list",
             "url": "namespaces/default.html#function_has_access_to_list"
         },                {
             "fqsen": "\\generate_random_string\u0028\u0029",
             "name": "generate_random_string",
-            "summary": "",
+            "summary": "Method\u0020used\u0020to\u0020generate\u0020a\u0020random\u0020string",
             "url": "namespaces/default.html#function_generate_random_string"
         },                {
             "fqsen": "\\generate_random_number\u0028\u0029",
             "name": "generate_random_number",
-            "summary": "",
+            "summary": "Method\u0020used\u0020to\u0020return\u0020a\u0020randomly\u0020generated\u0020number\u0020in\u0020a\u0020specified\u0020range",
             "url": "namespaces/default.html#function_generate_random_number"
         },                {
             "fqsen": "\\",

@@ -227,15 +227,15 @@
 		}
 	}
 
-    /**
-     * Method used to check if the user has access to a certain list
-     *
-     * @param string $listID UUID of the list
-     * @param string $userID UUID of the user
-     *
-     * @return object Returns information about the list and the users associated with it
-     */
 	if ( !function_exists("has_access_to_list") ) {
+        /**
+         * Method used to check if the user has access to a certain list
+         *
+         * @param string $listID UUID of the list
+         * @param string $userID UUID of the user
+         *
+         * @return object Returns information about the list and the users associated with it
+         */
 		function has_access_to_list($listID, $userID): object
 		{
 			$list = Database::execute_query('SELECT * FROM lists.fngetlist(?,?)', [ $listID, $userID ], true);
@@ -250,15 +250,15 @@
 		}
 	}
 
-    /**
-     * Method used to generate a random string
-     *
-     * @param int $length Lenght of the string to be generated
-     * @param bool $useSpecialChars Wheter special characters should be included in the string
-     *
-     * @return string Returns a randomly generated string
-     */
 	if ( !function_exists("generate_random_string") ) {
+        /**
+         * Method used to generate a random string
+         *
+         * @param int $length Lenght of the string to be generated
+         * @param bool $useSpecialChars Wheter special characters should be included in the string
+         *
+         * @return string Returns a randomly generated string
+         */
 		function generate_random_string(int $length = 32, bool $useSpecialChars = false): string
 		{
 			$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -277,15 +277,15 @@
 		}
 	}
 
-    /**
-     * Method used to return a randomly generated number in a specified range
-     *
-     * @param int $min Minimum allowed number to be generated
-     * @param int $max Maximum allowed number to be generated
-     *
-     * @return int Returns a randomly generated number
-     */
 	if ( !function_exists("generate_random_number") ) {
+        /**
+         * Method used to return a randomly generated number in a specified range
+         *
+         * @param int $min Minimum allowed number to be generated
+         * @param int $max Maximum allowed number to be generated
+         *
+         * @return int Returns a randomly generated number
+         */
 		function generate_random_number(int $min = 0, int $max = -1): int
 		{
 			if ( $max < 1 ) $max = getrandmax();
