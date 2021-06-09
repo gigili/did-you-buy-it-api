@@ -8,11 +8,9 @@
 	namespace Gac\DidYouBuyIt\controllers;
 
     use Gac\DidYouBuyIt\models\UserModel;
-	use Gac\DidYouBuyIt\utility\classes\Database;
 	use Gac\DidYouBuyIt\utility\classes\Translation;
 	use Gac\DidYouBuyIt\utility\classes\Validation;
 	use Gac\Routing\Request;
-	use JetBrains\PhpStorm\NoReturn;
 	use Ramsey\Uuid\Uuid;
 
 	class AuthController
@@ -51,7 +49,7 @@
 				"password" => [ "required", [ 'ming_length' => 10 ] ],
 			], $request);
 
-            $uniqueCheck = UserModel::get_user_by(["username" => $username, "email" => $email]);
+            $uniqueCheck = UserModel::get_users_by([ "username" => $username, "email" => $email ]);
             if ( count($uniqueCheck) > 0 ) {
 				foreach ( $uniqueCheck as $check ) {
 					if ( $check->username === $username ) {
