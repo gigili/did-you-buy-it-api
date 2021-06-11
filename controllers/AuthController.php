@@ -25,7 +25,7 @@
 			$username = $request->get("username");
 			$password = $request->get("password");
 
-            $result = UserModel::get_users_by(["username" => $username, "password" => $password]);
+            $result = UserModel::get_users_by([ "username" => $username, "password" => $password ], useOROperator: false);
 
             if ( count($result) === 0 ) {
 				error_response(Translation::translate("invalid_login_credentials"), 401);

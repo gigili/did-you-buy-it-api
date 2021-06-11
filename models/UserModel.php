@@ -13,15 +13,16 @@
 	class UserModel
 	{
 
-		public static function get_users_by(array $arguments, bool $singleResult = false): array|object
+		public static function get_users_by(array $arguments, bool $singleResult = false, $useOROperator = true): array|object
 		{
 			$query = "SELECT id, name, email, username, image, status, activation_key FROM users.user WHERE " . PHP_EOL;
 
+			$operator = $useOROperator ? "OR" : "AND";
 			foreach ( $arguments as $argument => $value ) {
-				$query .= "$argument = ? OR " . PHP_EOL;
+				$query .= "$argument = ? {$operator} " . PHP_EOL;
 			}
 
-			$query = rtrim($query, " OR " . PHP_EOL);
+			$query = rtrim($query, " $operator " . PHP_EOL);
 			return Database::execute_query($query, array_values($arguments), $singleResult);
 		}
 
