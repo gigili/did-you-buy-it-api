@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS lists.fngetlist(list_id uuid, user_id uuid);

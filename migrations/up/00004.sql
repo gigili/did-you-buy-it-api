@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS lists.list_user
+(
+    listID     UUID        NOT NULL,
+    userID     UUID        NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL,
+    CONSTRAINT PK_ListUser PRIMARY KEY (listID, userID),
+    CONSTRAINT FK_ListUsers_List FOREIGN KEY (listID) REFERENCES lists.list (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT FK_ListUsers_User FOREIGN KEY (userID) REFERENCES users."user" (id) ON UPDATE CASCADE ON DELETE CASCADE
+);

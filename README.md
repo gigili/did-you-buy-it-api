@@ -17,10 +17,10 @@
     * [x] Create list
     * [x] Update list
     * [x] Delete list
-    * [x] List users that have access to the list
+    * [X] List users that have access to the list
     * [x] Allow other users access to the list
     * [x] Remove users from the list
-    * [ ] Autocomplete endpoint for when adding users ?
+    * [x] Autocomplete endpoint for when adding users ?
 * [ ] List items
     * [x] Add list item
         * [x] Add images
@@ -29,45 +29,91 @@
             * [ ] Send notification to other users of the list
     * [x] Delete list item
     * [x] Add / remove images
-* [ ] User profile
+* [x] User profile
     * [x] Edit profile
     * [x] Delete profile
-        * [ ] Send an email notification that the account has been closed
-* [ ] Reset password
+        * [x] Send an email notification that the account has been closed
+    * [x] Reset password
 
 # Local setup
 
 To get started on developing this project firs you need to do
 
 ```sh
-  git clone https://github.com/gigili/did-you-buy-it-api
-  cd did-you-buy-it-api
+git clone https://github.com/gigili/did-you-buy-it-api
+cd did-you-buy-it-api
 ```
 
 Then rename `.env.example` into `.env` file and fill in all the values.
 
-To run the app:
+## To run the app:
 
-* Start up docker container for the Postgres database
+* Start up docker containers
 
 ```shell
-    docker-compose up
+docker-compose up
 ```
 
-* Run the Express app with:
+# Migrations
 
-```sh
-  npm install
-  npm run dev
+    //TODO
+
+Install
+
+```shell
+php vendor/bin/migrate install pgsql://postgres:postgres@localhost/dybi -vvv
 ```
 
-If you do not specify a `PORT` value in the `.env` file the app should be available at `http://localohst:3030`
+Reset
 
-# Notes
+```shell
+php vendor/bin/migrate install pgsql://postgres:postgres@localhost/dybi -vvv
+```
 
-For Docker:
+Migrate up
 
-```sh
-  # might need to run as sudo and run only once
-  docker volume create --name dybi-pg -d local    
+```shell
+php vendor/bin/migrate up pgsql://postgres:postgres@localhost/dybi -vvv
+```
+
+### Note
+
+On Windows machines you need the `php` prefix before calling the `vendor/bin/migrate`.
+
+# Tests
+
+    //TODO
+
+## Notes
+
+* Mailhog url: `localhost:${MAILHOG_PORT}`
+* PGAdmin url: `localhost:${PGADMIN_PORT}`
+* I've set up a virtual host on my machine to be able to easily run the app
+
+### Virtual Host Example:
+
+```apacheconf
+<VirtualHost *:80>
+    ServerAdmin admin@example.com
+    DocumentRoot "/Projects/did-you-buy-it-api"
+    ServerName dybi.local
+    ServerAlias www.dybi.local
+    ErrorLog "/Projects/did-you-buy-it-api/logs/error.log"
+    CustomLog "/Projects/did-you-buy-it-api/logs/access.log" common
+    <Directory "/Projects/did-you-buy-it-api">
+        Options Indexes FollowSymLinks
+            AllowOverride All
+            Require all granted          
+    </Directory>
+</VirtualHost>
+```
+
+Don't forget to add this to your hosts
+
+* `/etc/hosts` on Linux / OSx and
+* `C:\Windows\System32\drivers\etc\hosts` on Windows) file:
+
+```apacheconf
+127.0.0.1 dybi.local
+127.0.0.1 www.dybi.local
 ```
