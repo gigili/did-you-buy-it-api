@@ -4,3 +4,7 @@ node_modules/
 public/images/
 .env
 pg-data/
+logs/
+postgres-data/
+vendor/
+uploads/
