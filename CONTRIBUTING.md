@@ -26,7 +26,7 @@ best judgment, and feel free to propose changes to this document in a pull reque
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By
+This project and everyone who participates in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By
 participating, you are expected to uphold this code. Please report unacceptable behavior
 to [github@igorilic.net](mailto:github@igorilic.net).
 
@@ -42,7 +42,7 @@ In order to be able to build the app you will need to rename the secrets_sample.
 
 ### Reporting Bugs
 
-This section guides you through submitting a bug report. Following these guidelines helps maintainers and the community
+This section guides you through submitting a bug report. Following these guidelines helps maintainers, and the community
 understand your report :
 pencil:, reproduce the behavior :computer: :computer:, and find related reports :mag_right:.
 
@@ -86,7 +86,7 @@ Provide more context by answering these questions:
 ### Suggesting Enhancements
 
 This section guides you through submitting an enhancement suggestions, including completely new features and minor
-improvements to existing functionality. Following these guidelines helps maintainers and the community understand your
+improvements to existing functionality. Following these guidelines helps maintainers, and the community understand your
 suggestion :pencil: and find related suggestions :
 mag_right:.
 
@@ -149,7 +149,7 @@ to complete additional design work, tests, or other changes before your pull req
 
 * Use the present tense ("Add feature" not "Added feature")
 * Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
-* Limit the first line to 72 characters or less
+* Limit the first line to 72 characters or fewer
 * Reference issues and pull requests liberally after the first line
 * When only changing documentation, include `[ci skip]` in the commit title
 * Consider starting the commit message with an applicable emoji:
