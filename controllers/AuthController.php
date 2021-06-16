@@ -96,7 +96,7 @@
 				error_response(Translation::translate("missing_activation_key"), 400);
 			}
 
-            $result = UserModel::get_user_by(["activation_key" => $activationKey]);
+            $result = UserModel::get_users_by([ "activation_key" => $activationKey ]);
 
 			if ( count($result) === 0 || !isset($result[0]->id) ) {
 				error_response(Translation::translate("invalid_activation_key"), 400);
@@ -132,7 +132,7 @@
 				"emailOrUsername" => [ "required", [ "min_length" => 3 ], [ "max_length" => 250 ] ],
 			], $request);
 
-			$user = UserModel::get_user_by([ "username" => $emailOrUsername, "email" => $emailOrUsername ], true);
+			$user = UserModel::get_users_by([ "username" => $emailOrUsername, "email" => $emailOrUsername ], true);
 
 			if ( empty($user) || !isset($user->id) ) {
 				error_response(Translation::translate("account_not_found"), 404);
@@ -140,7 +140,7 @@
 
 			$passwordActivationCode = generate_random_string(12);
 
-            UserModel::update_user([ "reset_password_code" => $passwordActivationCode, "status" => '0'], ["id" => $user->id]);
+			UserModel::update_user([ "reset_password_code" => $passwordActivationCode, "status" => '0' ], [ "id" => $user->id ]);
 
 			$emailBody = Translation::translate('reset_password_body');
 			$url = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}/reset_password/$passwordActivationCode";
@@ -170,7 +170,7 @@
 				error_response(Translation::translate("invalid_reset_code"), 400);
 			}
 
-            $user = UserModel::get_user_by(["reset_password_code" => $resetCode], true);
+			$user = UserModel::get_users_by([ "reset_password_code" => $resetCode ], true);
 			if ( empty($user) || !isset($user->id) ) {
 				error_response(Translation::translate("invalid_reset_code"), 400);
 			}
