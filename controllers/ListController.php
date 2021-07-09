@@ -71,11 +71,16 @@
 			$name = $request->get("name");
 			$userID = $_SESSION["userID"];
 
-			ListModel::create_list($name, $userID);
+			$data = ListModel::create_list($name, $userID);
+			$list = (object)[];
+			if ( isset($data->id) && $data->id != NULL ) {
+				$list = ListModel::get_list($data->id);
+			}
 
 			header("HTTP/1.1 201");
 			echo json_encode([
 				"success" => true,
+				"data" => $list,
 			]);
 		}
 
@@ -113,7 +118,7 @@
 
 		function delete_list(Request $request, string $listID)
 		{
-			if ( isset($_SESSION) || !isset($_SESSION["userID"]) ) {
+			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 

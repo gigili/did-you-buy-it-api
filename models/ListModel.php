@@ -30,13 +30,13 @@
 			$query = "
 				SELECT DISTINCT l.*,
 					   COALESCE(lic.cntItems, 0) AS cntItems,
-					   (COALESCE(cntUsers, 0) + 1) AS cntUsers,
-					   COALESCE(cntBoughtItems, 0) AS cntBoughtItems
+					   (COALESCE(lu.cntUsers, 0) + 1) AS cntUsers,
+					   COALESCE(lic.cntBoughtItems, 0) AS cntBoughtItems
 				FROM lists.list AS l
 				LEFT JOIN (
 					SELECT listid,
 						   COUNT(id)                                                  AS cntItems,
-						   COUNT(CASE WHEN purchaseduserid IS NULL THEN 0 ELSE 1 END) AS cntBoughtItems
+						   COUNT(CASE WHEN purchaseduserid IS NULL THEN NULL ELSE 1 END) AS cntBoughtItems
 					FROM lists.list_item
 					GROUP BY listid
 				) AS lic ON lic.listid = l.id
@@ -63,9 +63,9 @@
 			return Database::execute_query("SELECT * FROM lists.fngetlist(?,?)", [ $listID, $userID ]);
 		}
 
-		public static function create_list(string $name, string $userID)
+		public static function create_list(string $name, string $userID): object|array
 		{
-			Database::execute_query("INSERT INTO lists.list (id, userid, name) VALUES (?,?,?)", [ Uuid::uuid4(), $userID, $name ]);
+			return Database::execute_query("INSERT INTO lists.list (id, userid, name) VALUES (?,?,?) RETURNING id", [ Uuid::uuid4(), $userID, $name ], true);
 		}
 
 		public static function update_list(string $name, string $listID)
@@ -73,7 +73,8 @@
 			Database::execute_query("UPDATE lists.list SET name = ? WHERE id = ? ", [ $name, $listID ]);
 		}
 
-        public static function delete_list(string $listID){
+		public static function delete_list(string $listID)
+		{
             $listItems = Database::execute_query("SELECT id, image FROM lists.list_item WHERE listid = ?", [$listID]);
 
             foreach($listItems as $item){

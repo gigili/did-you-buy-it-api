@@ -7,32 +7,32 @@
 
 	namespace Gac\DidYouBuyIt\controllers;
 
-    use Gac\DidYouBuyIt\models\UserModel;
+	use Gac\DidYouBuyIt\models\UserModel;
 	use Gac\DidYouBuyIt\utility\classes\Translation;
 	use Gac\DidYouBuyIt\utility\classes\Validation;
 	use Gac\Routing\Request;
 	use Ramsey\Uuid\Uuid;
 
 	class AuthController
-    {
+	{
 		function login(Request $request)
 		{
 			Validation::validate([
-				"username" => [ "required", ["min_length" => 3] ],
-				"password" => [ "required" ]
-            ], $request);
+				"username" => [ "required", [ "min_length" => 3 ] ],
+				"password" => [ "required" ],
+			], $request);
 
 			$username = $request->get("username");
 			$password = $request->get("password");
 
-            $result = UserModel::get_users_by([ "username" => $username, "password" => $password ], useOROperator: false);
+			$result = UserModel::get_users_by([ "username" => $username, "password" => $password ], singleResult: true, useOROperator: false);
 
-            if ( count($result) === 0 ) {
+			if ( !isset($result->id) ) {
 				error_response(Translation::translate("invalid_login_credentials"), 401);
 			}
 
-			$tokens = generate_token($result[0]->id, true);
-			echo json_encode([ "success" => true, "data" => [ "access_token" => $tokens["accessToken"], "refresh_token" => $tokens["refreshToken"] ] ]);
+			$tokens = generate_token($result->id, true);
+			echo json_encode([ "success" => true, "data" => [ "user" => $result, "token" => [ "access_token" => $tokens["accessToken"], "refresh_token" => $tokens["refreshToken"] ] ] ]);
 		}
 
 		function register(Request $request)
@@ -49,8 +49,8 @@
 				"password" => [ "required", [ 'ming_length' => 10 ] ],
 			], $request);
 
-            $uniqueCheck = UserModel::get_users_by([ "username" => $username, "email" => $email ]);
-            if ( count($uniqueCheck) > 0 ) {
+			$uniqueCheck = UserModel::get_users_by([ "username" => $username, "email" => $email ]);
+			if ( count($uniqueCheck) > 0 ) {
 				foreach ( $uniqueCheck as $check ) {
 					if ( $check->username === $username ) {
 						error_response(Translation::translate("username_taken"), 409, errorField: "username");
@@ -96,7 +96,7 @@
 				error_response(Translation::translate("missing_activation_key"), 400);
 			}
 
-            $result = UserModel::get_users_by([ "activation_key" => $activationKey ]);
+			$result = UserModel::get_users_by([ "activation_key" => $activationKey ]);
 
 			if ( count($result) === 0 || !isset($result[0]->id) ) {
 				error_response(Translation::translate("invalid_activation_key"), 400);
@@ -108,7 +108,7 @@
 				error_response(Translation::translate("account_already_active"), 400);
 			}
 
-            UserModel::update_user(["status" => "1"], ["id" => $userData->id]);
+			UserModel::update_user([ "status" => "1" ], [ "id" => $userData->id ]);
 			echo json_encode([ "success" => true, "message" => Translation::translate("account_activated_success") ]);
 		}
 
@@ -179,13 +179,13 @@
 				"password" => [ "required", [ "min_length" => 10 ] ],
 			], $request);
 
-            UserModel::update_user([
-                "password" => $request->get("password"),
-                "reset_password_code" => null,
-                "status" => "1"
-            ],[
-                "id" => $user->id
-            ]);
+			UserModel::update_user([
+				"password" => $request->get("password"),
+				"reset_password_code" => NULL,
+				"status" => "1",
+			], [
+				"id" => $user->id,
+			]);
 
 			echo json_encode([
 				"success" => true,

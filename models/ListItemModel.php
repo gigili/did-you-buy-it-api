@@ -30,17 +30,19 @@
 		public static function add_item_to_list(
 			string $listID,
 			string $userID,
-			string $purchasedUserID,
+			?string $purchasedUserID,
 			string $name,
 			?string $image,
-			bool $isRepeating,
-			string $purchasedAt
+			bool $isRepeating = false,
+			?string $purchasedAt = NULL
 		)
 		{
 			$query = 'INSERT INTO lists.list_item (id, listid, userid, purchaseduserid, name, image, is_repeating, purchased_at)
 					  VALUES(?, ?, ?, ?, ?, ?, ?, ?)';
 
-			Database::execute_query($query, [ Uuid::uuid4(), $listID, $userID, $purchasedUserID, $name, $image, $isRepeating, $purchasedAt ]);
+			$data = [ Uuid::uuid4(), $listID, $userID, $purchasedUserID, $name, $image, $isRepeating ? "true" : "false", $purchasedAt ];
+			//dump($data);
+			Database::execute_query($query, $data);
 		}
 
 		public static function get_list_item(string $itemID): object|array

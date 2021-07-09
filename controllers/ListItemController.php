@@ -17,6 +17,7 @@
 
 	class ListItemController
 	{
+
 		public function get_list_items(Request $request, string $listID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION['userID']) ) {
@@ -45,7 +46,7 @@
 			], $request);
 
 			$name = $request->get("name");
-			$is_repeating = $request->get("is_repeating");
+			$is_repeating = $request->get("is_repeating") ?? false;
 
 			$image = NULL;
 			if ( isset($_REQUEST['file']) ) {
@@ -134,6 +135,7 @@
 			if ( !isset($_SESSION) || !isset($_SESSION['userID']) ) {
 				error_response(Translation::translate('invalid_token'), 401);
 			}
+
 
 			$userID = $_SESSION['userID'];
 			has_access_to_list($listID, $userID);
