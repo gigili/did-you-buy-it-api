@@ -30,10 +30,10 @@
 		public static function add_item_to_list(
 			string $listID,
 			string $userID,
-			?string $purchasedUserID,
 			string $name,
-			?string $image,
 			bool $isRepeating = false,
+			?string $image = NULL,
+			?string $purchasedUserID = NULL,
 			?string $purchasedAt = NULL
 		)
 		{
