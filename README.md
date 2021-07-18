@@ -10,6 +10,106 @@
 
 "Did You Buy It?" is a shopping list app designed to help people keep track of stuff they need to buy.
 
+# Local setup
+
+To get started on developing this project firs you need to do
+
+```shell
+git clone https://github.com/gigili/did-you-buy-it-api
+cd did-you-buy-it-api
+```
+
+Then rename `.env.example` into `.env` file and fill in all the values.
+
+## To run the app:
+
+* Start up docker containers
+
+```shell
+docker-compose up
+```
+
+# Migrations
+
+To run the migration you need the `byjg/migration` and/or `byjg/migration-cli` package which gets installed when you
+run `composer install`.
+
+To set up your database to handle migrations check the [install](#Install-migrations)  section below, or if you need to
+reset the migrations table check the [Reset section](#Reset-migration)
+
+## Install migrations
+
+```shell
+php vendor/bin/migrate install
+```
+
+## Reset migrations
+
+```shell
+php vendor/bin/migrate reset
+```
+
+## Migrate up
+
+```shell
+php vendor/bin/migrate up
+```
+
+## Migrate down
+
+```shell
+php vendor/bin/migrate down
+```
+
+### Note
+
+On Windows machines you **need** the `php` prefix before calling the `vendor/bin/migrate`. You might also need to pass
+in the `postgres` connection string in your command which looks like:
+
+```
+pgsql://postgres:postgres@localhost/dybi -vvv
+```
+
+where `-vvv` indicates verbose output of the migrate command.
+
+# Tests
+
+    //TODO
+
+# Notes
+
+* I've set up a virtual host on my machine to be able to easily run the app
+
+## Virtual Host Example:
+
+```apacheconf
+<VirtualHost *:80>
+    ServerAdmin admin@example.com
+    DocumentRoot "/Projects/did-you-buy-it-api"
+    ServerName dybi.local
+    ServerAlias www.dybi.local
+    ErrorLog "/Projects/did-you-buy-it-api/logs/error.log"
+    CustomLog "/Projects/did-you-buy-it-api/logs/access.log" common
+    <Directory "/Projects/did-you-buy-it-api">
+        Options Indexes FollowSymLinks
+            AllowOverride All
+            Require all granted          
+    </Directory>
+</VirtualHost>
+```
+
+Don't forget to add
+
+```apacheconf
+127.0.0.1 dybi.local
+127.0.0.1 www.dybi.local
+```
+
+this to your hosts file
+
+* `/etc/hosts` on Linux / OSx and
+* `C:\Windows\System32\drivers\etc\hosts` on Windows
+
 # Features
 
 * [x] Login
@@ -38,90 +138,7 @@
         * [x] Send an email notification that the account has been closed
     * [x] Reset password
 
-# Local setup
-
-To get started on developing this project firs you need to do
-
-```sh
-git clone https://github.com/gigili/did-you-buy-it-api
-cd did-you-buy-it-api
-```
-
-Then rename `.env.example` into `.env` file and fill in all the values.
-
-## To run the app:
-
-* Start up docker containers
-
-```shell
-docker-compose up
-```
-
-# Migrations
-
-    //TODO
-
-Install
-
-```shell
-php vendor/bin/migrate install pgsql://postgres:postgres@localhost/dybi -vvv
-```
-
-Reset
-
-```shell
-php vendor/bin/migrate install pgsql://postgres:postgres@localhost/dybi -vvv
-```
-
-Migrate up
-
-```shell
-php vendor/bin/migrate up pgsql://postgres:postgres@localhost/dybi -vvv
-```
-
-### Note
-
-On Windows machines you need the `php` prefix before calling the `vendor/bin/migrate`.
-
-# Tests
-
-    //TODO
-
-## Notes
-
-* Mailhog url: `localhost:${MAILHOG_PORT}`
-* PGAdmin url: `localhost:${PGADMIN_PORT}`
-* I've set up a virtual host on my machine to be able to easily run the app
-
-### Virtual Host Example:
-
-```apacheconf
-<VirtualHost *:80>
-    ServerAdmin admin@example.com
-    DocumentRoot "/Projects/did-you-buy-it-api"
-    ServerName dybi.local
-    ServerAlias www.dybi.local
-    ErrorLog "/Projects/did-you-buy-it-api/logs/error.log"
-    CustomLog "/Projects/did-you-buy-it-api/logs/access.log" common
-    <Directory "/Projects/did-you-buy-it-api">
-        Options Indexes FollowSymLinks
-            AllowOverride All
-            Require all granted          
-    </Directory>
-</VirtualHost>
-```
-
-Don't forget to add this to your hosts
-
-* `/etc/hosts` on Linux / OSx and
-* `C:\Windows\System32\drivers\etc\hosts` on Windows) file:
-
-```apacheconf
-127.0.0.1 dybi.local
-127.0.0.1 www.dybi.local
-```
-
-## Contributors ✨
+# Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 

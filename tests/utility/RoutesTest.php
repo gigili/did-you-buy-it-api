@@ -36,7 +36,7 @@
 				$self->isRouted = true;
 			}, $method);
 
-			$router->route();
+			$router->add();
 			$this->assertTrue($this->isRouted, "The route is not working");
 		}
 
@@ -57,7 +57,7 @@
 			}, $method);
 
 			$_GET['myUri'] = "/";
-			$router->route();
+			$router->add();
 			$this->assertTrue($this->isRouted, "The route is not working");
 		}
 
@@ -74,6 +74,6 @@
 			$this->expectException(RouteNotFoundException::class);
 
 			$router = new Routes();
-			$router->route();
+			$router->add();
 		}
 	}
