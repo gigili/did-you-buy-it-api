@@ -1,15 +1,15 @@
 <?php
-    /*
-     * Author: Igor Ilić <github@igorilic.net>
-     * Date: 2021-04-08
-     * Project: did-you-buy-it-v2
-     */
+	/*
+	 * Author: Igor Ilić <github@igorilic.net>
+	 * Date: 2021-04-08
+	 * Project: did-you-buy-it-v2
+	 */
 
-    declare(strict_types=1);
+	declare( strict_types=1 );
 
-    namespace Gac\DidYouBuyIt\models;
+	namespace Gac\DidYouBuyIt\models;
 
-    use Gac\DidYouBuyIt\utility\classes\Database;
+	use Gac\DidYouBuyIt\utility\classes\Database;
 	use Ramsey\Uuid\Uuid;
 
 	class ListModel
@@ -31,8 +31,10 @@
 				SELECT DISTINCT l.*,
 					   COALESCE(lic.cntItems, 0) AS cntItems,
 					   (COALESCE(lu.cntUsers, 0) + 1) AS cntUsers,
-					   COALESCE(lic.cntBoughtItems, 0) AS cntBoughtItems
+					   COALESCE(lic.cntBoughtItems, 0) AS cntBoughtItems,
+				       lc.color
 				FROM lists.list AS l
+				LEFT JOIN lists.list_color AS lc ON lc.listid = l.id AND lc.userid = ?
 				LEFT JOIN (
 					SELECT listid,
 						   COUNT(id)                                                  AS cntItems,
@@ -50,7 +52,7 @@
 				ORDER BY l.created_at DESC
 				LIMIT ? OFFSET ?;
 			";
-			return Database::execute_query($query, [ $userID, $userID, $limit, ( $page * $limit ) ]);
+			return Database::execute_query($query, [ $userID, $userID, $userID, $limit, ( $page * $limit ) ]);
 		}
 
 		public static function get_list(string $listID): object|array
@@ -63,28 +65,38 @@
 			return Database::execute_query("SELECT * FROM lists.fngetlist(?,?)", [ $listID, $userID ]);
 		}
 
-		public static function create_list(string $name, string $userID): object|array
+		public static function create_list(string $name, string $userID, ?string $color = NULL): object|array
 		{
-			return Database::execute_query("INSERT INTO lists.list (id, userid, name) VALUES (?,?,?) RETURNING id", [ Uuid::uuid4(), $userID, $name ], true);
+			$newList = Database::execute_query("INSERT INTO lists.list (id, userid, name) VALUES (?,?,?) RETURNING id", [ Uuid::uuid4(), $userID, $name ], true);
+
+			if ( !is_null($color) && isset($newList->id) ) {
+				Database::execute_query("INSERT INTO lists.list_color (userid, listid, color) VALUES (?,?,?) ON CONFLICT (userid,listid) DO UPDATE SET color = excluded.color", [ $userID, $newList->id, $color ]);
+			}
+
+			return $newList;
 		}
 
-		public static function update_list(string $name, string $listID)
+		public static function update_list(string $name, string $listID, ?string $color = NULL)
 		{
 			Database::execute_query("UPDATE lists.list SET name = ? WHERE id = ? ", [ $name, $listID ]);
+			if ( !is_null($color) ) {
+				$userID = $_SESSION['userID'];
+				Database::execute_query('INSERT INTO lists.list_color (userid, listid, color) VALUES (?,?,?) ON CONFLICT (userid,listid) DO UPDATE SET color = excluded.color', [ $userID, $listID, $color ]);
+			}
 		}
 
 		public static function delete_list(string $listID)
 		{
-            $listItems = Database::execute_query("SELECT id, image FROM lists.list_item WHERE listid = ?", [$listID]);
+			$listItems = Database::execute_query("SELECT id, image FROM lists.list_item WHERE listid = ?", [ $listID ]);
 
-            foreach($listItems as $item){
-                if(!empty($item->image)){
-                    $path = $_SERVER['DOCUMENT_ROOT'] . $item->image;
-                    if(file_exists($path)){
-                        unlink($path);
-                    }
-                }
-            }
+			foreach ( $listItems as $item ) {
+				if ( !empty($item->image) ) {
+					$path = $_SERVER['DOCUMENT_ROOT'] . $item->image;
+					if ( file_exists($path) ) {
+						unlink($path);
+					}
+				}
+			}
 
 			Database::execute_query("DELETE FROM lists.list WHERE id = ?", [ $listID ]);
 		}

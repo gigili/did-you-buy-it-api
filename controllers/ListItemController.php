@@ -18,7 +18,7 @@
 	class ListItemController
 	{
 
-		public function get_list_items(Request $request, string $listID)
+		public function get_list_items(string $listID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION['userID']) ) {
 				error_response(Translation::translate('invalid_token'), 401);
@@ -100,7 +100,7 @@
 			echo json_encode([ 'success' => true ]);
 		}
 
-		public function delete_list_item(Request $request, string $listID, string $itemID)
+		public function delete_list_item(string $listID, string $itemID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION['userID']) ) {
 				error_response(Translation::translate('invalid_token'), 401);
@@ -130,7 +130,7 @@
 			echo json_encode([ "success" => true ]);
 		}
 
-		public function update_list_item_bought_state(Request $request, string $listID, string $itemID)
+		public function update_list_item_bought_state(string $listID, string $itemID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION['userID']) ) {
 				error_response(Translation::translate('invalid_token'), 401);
@@ -154,7 +154,7 @@
 			echo json_encode([ "success" => true ]);
 		}
 
-		public function delete_list_item_image(Request $request, string $listID, string $itemID)
+		public function delete_list_item_image(string $listID, string $itemID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION['userID']) ) {
 				error_response(Translation::translate('invalid_token'), 401);

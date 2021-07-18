@@ -33,7 +33,7 @@
 			]);
 		}
 
-		function get_list(Request $request, string $listID)
+		function get_list(string $listID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
@@ -69,9 +69,10 @@
 			], $request);
 
 			$name = $request->get("name");
+			$color = $request->get("color");
 			$userID = $_SESSION["userID"];
 
-			$data = ListModel::create_list($name, $userID);
+			$data = ListModel::create_list($name, $userID, $color);
 			$list = (object)[];
 			if ( isset($data->id) && $data->id != NULL ) {
 				$list = ListModel::get_list($data->id);
@@ -95,6 +96,7 @@
 			], $request);
 
 			$name = $request->get("name");
+			$color = $request->get('color');
 
 			if ( !isset($listID) || empty($listID) || !Uuid::isValid($listID) ) {
 				error_response(Translation::translate("required_field"), 400, "listID");
@@ -111,12 +113,12 @@
 				error_response(Translation::translate("not_authorized"), 403);
 			}
 
-			ListModel::update_list($name, $listID);
+			ListModel::update_list($name, $listID, $color);
 
 			echo json_encode([ "success" => true ]);
 		}
 
-		function delete_list(Request $request, string $listID)
+		function delete_list(string $listID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
@@ -185,7 +187,7 @@
 			echo json_encode([ "success" => true ]);
 		}
 
-		function delete_user_from_list(Request $request, string $listID, string $userID)
+		function delete_user_from_list(string $listID, string $userID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);
@@ -230,7 +232,7 @@
 			echo json_encode([ "success" => true ]);
 		}
 
-		function get_list_users(Request $request, string $listID)
+		function get_list_users(string $listID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION["userID"]) ) {
 				error_response(Translation::translate("invalid_token"), 401);

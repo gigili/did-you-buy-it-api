@@ -8,13 +8,12 @@
 	namespace Gac\DidYouBuyIt\controllers;
 
 
-    use Gac\DidYouBuyIt\models\UserModel;
-	use Gac\DidYouBuyIt\utility\classes\Database;
+	use Gac\DidYouBuyIt\models\UserModel;
 	use Gac\DidYouBuyIt\utility\classes\FileUpload;
 	use Gac\DidYouBuyIt\utility\classes\FileUploadPaths;
 	use Gac\DidYouBuyIt\utility\classes\Translation;
 	use Gac\DidYouBuyIt\utility\classes\Validation;
-    use Gac\Routing\Request;
+	use Gac\Routing\Request;
 
 	class UserController
 	{
@@ -25,7 +24,7 @@
 			}
 
 			$userID = $_SESSION["userID"];
-            $result = UserModel::get_users_by(["id" => $userID], true);
+			$result = UserModel::get_users_by([ "id" => $userID ], true);
 
 			if ( !isset($result->id) ) {
 				error_response(Translation::translate("user_not_found"), 404);
@@ -44,16 +43,16 @@
 			}
 
 			$userID = $_SESSION["userID"];
-            $result = UserModel::get_users_by(["id" => $userID], true);
+			$result = UserModel::get_users_by([ "id" => $userID ], true);
 
 			if ( !isset($result->id) ) {
 				error_response(Translation::translate("user_not_found"), 404);
 			}
 
-            Validation::validate([
-                "name" => ["required"],
-                "email" => ["required", "valid_email"]
-            ], $request);
+			Validation::validate([
+				"name" => [ "required" ],
+				"email" => [ "required", "valid_email" ],
+			], $request);
 
 			$name = $request->get("name");
 			$email = $request->get("email");
@@ -63,10 +62,10 @@
 				$uploadResult = FileUpload::upload(FileUploadPaths::USER_PHOTOS, $_REQUEST["file"]);
 			}
 
-            UserModel::update_user(
-                ["name" => $name, "email" => $email, "image" => $uploadResult],
-                ["id" => $result->id]
-            );
+			UserModel::update_user(
+				[ "name" => $name, "email" => $email, "image" => $uploadResult ],
+				[ "id" => $result->id ]
+			);
 			echo json_encode([ "success" => true ]);
 		}
 
@@ -77,13 +76,13 @@
 			}
 
 			$userID = $_SESSION["userID"];
-            $result = UserModel::get_users_by(["id" => $userID], true);
+			$result = UserModel::get_users_by([ "id" => $userID ], true);
 
 			if ( !isset($result->id) ) {
 				error_response(Translation::translate("user_not_found"), 404);
 			}
 
-            UserModel::delete_user($userID);
+			UserModel::delete_user($userID);
 
 			echo json_encode([ "success" => true ]);
 		}
@@ -94,14 +93,14 @@
 				error_response(Translation::translate("invalid_token"), 401);
 			}
 
-            Validation::validate([
-                "search" => ["required"]
-            ], $request);
+			Validation::validate([
+				"search" => [ "required" ],
+			], $request);
 
 			$search = $request->get("search");
 			$search = "$search%";
 
-            $result = UserModel::filter_users($search);
+			$result = UserModel::filter_users($search);
 
 			echo json_encode([
 				"success" => true,

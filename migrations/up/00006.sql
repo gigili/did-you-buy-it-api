@@ -9,7 +9,8 @@ CREATE OR REPLACE FUNCTION lists.fngetlist(list_id uuid, user_id uuid) --
                 cntUsers       bigint,      --
                 cntBoughtItems bigint,      --
                 users          varchar,     --
-                items          varchar      --
+                items          varchar,     --
+                color          char         --
             ) --
 AS
 $func$ --
@@ -40,8 +41,10 @@ BEGIN
                         (COALESCE(lu.cntUsers, 0) + 1)                       AS cntUsers,       --
                         COALESCE(lic.cntBoughtItems, 0)                      AS cntBoughtItems, --
                         (SELECT json_agg(tmu) FROM tmpUsers AS tmu)::varchar AS "lst_users",    --
-                        (SELECT json_agg(tmi) FROM tmpItems AS tmi)::varchar AS "lst_items"     --
+                        (SELECT json_agg(tmi) FROM tmpItems AS tmi)::varchar AS "lst_items",    --
+                        lc.color                                                                --
         FROM lists.list AS l --
+                 LEFT JOIN lists.list_color AS lc ON lc.listid = l.id AND lc.userid = user_id --
                  LEFT JOIN ( --
             SELECT lli.listid,                                                                  --
                    COUNT(lli.id)                                              AS cntItems,      --

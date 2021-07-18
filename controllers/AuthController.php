@@ -90,7 +90,7 @@
 			}
 		}
 
-		function activate_account(Request $request, string $activationKey)
+		function activate_account(string $activationKey)
 		{
 			if ( !isset($activationKey) || empty($activationKey) ) {
 				error_response(Translation::translate("missing_activation_key"), 400);
