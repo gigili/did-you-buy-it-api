@@ -53,7 +53,7 @@
 				$image = FileUpload::upload(FileUploadPaths::LIST_PHOTOS, $_REQUEST['file']);
 			}
 
-			ListItemModel::add_item_to_list($listID, $userID, $name, $image, $is_repeating);
+			ListItemModel::add_item_to_list($listID, $userID, $name, $is_repeating, $image);
 			echo json_encode([ "success" => true ]);
 		}
 
