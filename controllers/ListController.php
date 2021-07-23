@@ -115,7 +115,8 @@
 
 			ListModel::update_list($name, $listID, $color);
 
-			echo json_encode([ "success" => true ]);
+			$list = ListModel::get_list($listID);
+			echo json_encode([ "success" => true, "data" => $list ]);
 		}
 
 		function delete_list(string $listID)

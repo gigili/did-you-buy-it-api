@@ -57,7 +57,9 @@
 
 		public static function get_list(string $listID): object|array
 		{
-			return Database::execute_query("SELECT * FROM lists.list WHERE id = ?", [ $listID ], true);
+			return Database::execute_query("SELECT l.*, lc.color FROM lists.list AS l 
+					LEFT JOIN lists.list_color AS lc ON l.id = lc.listid AND lc.userid = ?
+					WHERE l.id = ?", [ $_SESSION["userID"], $listID ], true);
 		}
 
 		public static function get_list_fn(string $listID, string $userID): object|array
