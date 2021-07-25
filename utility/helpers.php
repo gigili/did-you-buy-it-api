@@ -118,6 +118,10 @@
          */
 		function decode_token(): bool
 		{
+			if ( !isset($_SERVER['HTTP_AUTHORIZATION']) ) {
+				error_response(Translation::translate('missing_token'), 401);
+			}
+
 			if ( !preg_match('/Bearer Request =>|Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches) ) {
 				error_response(Translation::translate("missing_token"), 401);
 			}
@@ -228,15 +232,15 @@
 	}
 
 	if ( !function_exists("has_access_to_list") ) {
-        /**
-         * Method used to check if the user has access to a certain list
-         *
-         * @param string $listID UUID of the list
-         * @param string $userID UUID of the user
-         *
-         * @return object Returns information about the list and the users associated with it
-         */
-		function has_access_to_list($listID, $userID): object
+		/**
+		 * Method used to check if the user has access to a certain list
+		 *
+		 * @param string $listID UUID of the list
+		 * @param string $userID UUID of the user
+		 *
+		 * @return object Returns information about the list and the users associated with it
+		 */
+		function has_access_to_list(string $listID, string $userID): object
 		{
 			$list = Database::execute_query('SELECT * FROM lists.fngetlist(?,?)', [ $listID, $userID ], true);
 
