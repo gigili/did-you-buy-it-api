@@ -98,7 +98,7 @@
 			], $request);
 
 			$search = $request->get("search");
-			$search = "$search%";
+			$search = "%$search%";
 
 			$result = UserModel::filter_users($search);
 

@@ -8,6 +8,7 @@
 	namespace Gac\DidYouBuyIt\controllers;
 
 	use Gac\DidYouBuyIt\models\ListModel;
+	use Gac\DidYouBuyIt\models\UserModel;
 	use Gac\DidYouBuyIt\utility\classes\Translation;
 	use Gac\DidYouBuyIt\utility\classes\Validation;
 	use Gac\Routing\Request;
@@ -174,18 +175,25 @@
 			}
 
 			if ( $guestID == $userID ) {
-				error_response(Translation::translate("cant_add_yourself_to_list"));
+				error_response(Translation::translate("cant_add_yourself_to_list"), 405);
+			}
+
+			$user = UserModel::get_users_by([ 'id' => $userID ], true);
+
+			if ( !$user || !isset($user->id) ) {
+				//TODO: Fix the error code used for this exception
+				error_response(Translation::translate('user_doesnt_exist'), 410);
 			}
 
 			$userAssignedToList = ListModel::user_in_list($listID, $guestID);
 			if ( !empty($userAssignedToList) ) {
-				error_response(Translation::translate("user_already_in_list"));
+				error_response(Translation::translate("user_already_in_list"), 409);
 			}
 
 			ListModel::add_user_to_list($listID, $guestID);
 
 			header("HTTP/1.1 201");
-			echo json_encode([ "success" => true ]);
+			echo json_encode([ "success" => true, "data" => $user ]);
 		}
 
 		function delete_user_from_list(string $listID, string $userID)
@@ -220,12 +228,12 @@
 			}
 
 			if ( $guestID == $userID ) {
-				error_response(Translation::translate("cant_add_yourself_to_list"));
+				error_response(Translation::translate("cant_add_yourself_to_list"), 405);
 			}
 
 			$userAssignedToList = ListModel::user_in_list($listID, $userID);
 			if ( empty($userAssignedToList) ) {
-				error_response(Translation::translate("user_not_in_list"), 404);
+				error_response(Translation::translate("user_not_in_list"), 409);
 			}
 
 			ListModel::remove_user_from_list($listID, $guestID);
