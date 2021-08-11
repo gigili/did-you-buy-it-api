@@ -111,7 +111,11 @@
 			}
 
 			if ( $list->userid !== $userID ) {
-				error_response(Translation::translate("not_authorized"), 403);
+				//error_response(Translation::translate("not_authorized"), 403);
+				ListModel::update_list_color($listID, $color);
+				$list = ListModel::get_list($listID);
+				echo json_encode([ 'success' => true, 'data' => $list ]);
+				return;
 			}
 
 			ListModel::update_list($name, $listID, $color);
@@ -178,7 +182,7 @@
 				error_response(Translation::translate("cant_add_yourself_to_list"), 405);
 			}
 
-			$user = UserModel::get_users_by([ 'id' => $userID ], true);
+			$user = UserModel::get_users_by([ 'id' => $guestID ], true);
 
 			if ( !$user || !isset($user->id) ) {
 				//TODO: Fix the error code used for this exception
@@ -215,7 +219,7 @@
 				error_response(Translation::translate("list_not_found"), 404);
 			}
 
-			if ( $list->userid !== $userID ) {
+			if ( $list->userid !== $userID && ( $guestID !== $userID ) ) {
 				error_response(Translation::translate("not_authorized"), 403);
 			}
 
@@ -227,11 +231,11 @@
 				error_response(Translation::translate("invalid_value"), 400, "userID");
 			}
 
-			if ( $guestID == $userID ) {
+			/*if ( $guestID == $userID ) {
 				error_response(Translation::translate("cant_add_yourself_to_list"), 405);
-			}
+			}*/
 
-			$userAssignedToList = ListModel::user_in_list($listID, $userID);
+			$userAssignedToList = ListModel::user_in_list($listID, $guestID);
 			if ( empty($userAssignedToList) ) {
 				error_response(Translation::translate("user_not_in_list"), 409);
 			}
