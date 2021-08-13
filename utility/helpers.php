@@ -72,6 +72,7 @@
 					"field" => $errorField,
 				],
 			]);
+			Logger::error("Error response with message: $message field: $errorField");
 			die(1);
 		}
 	}
