@@ -53,8 +53,9 @@
 				$image = FileUpload::upload(FileUploadPaths::LIST_PHOTOS, $_REQUEST['file']);
 			}
 
-			ListItemModel::add_item_to_list($listID, $userID, $name, $is_repeating, $image);
-			echo json_encode([ "success" => true ]);
+			$result = ListItemModel::add_item_to_list($listID, $userID, $name, $is_repeating, $image);
+			$item = ListItemModel::get_list_item($result->id);
+			echo json_encode([ "success" => true, "data" => $item ]);
 		}
 
 		public function update_list_item(Request $request, string $listID, string $itemID)
@@ -97,7 +98,8 @@
 			}
 
 			ListItemModel::update_list_item($name, $image, $isRepeating, $itemID);
-			echo json_encode([ 'success' => true ]);
+			$item = ListItemModel::get_list_item($itemID);
+			echo json_encode([ 'success' => true, "data" => $item ]);
 		}
 
 		public function delete_list_item(string $listID, string $itemID)

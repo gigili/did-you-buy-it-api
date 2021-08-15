@@ -140,15 +140,16 @@
 
 			$passwordActivationCode = generate_random_string(12);
 
-			UserModel::update_user([ "reset_password_code" => $passwordActivationCode, "status" => '0' ], [ "id" => $user->id ]);
+			UserModel::update_user([ "reset_password_code" => $passwordActivationCode, "status" => '0' ],
+				[ "id" => $user->id ]);
 
 			$emailBody = Translation::translate('reset_password_body');
 			$url = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}/reset_password/$passwordActivationCode";
-			send_email(
+			$result = send_email(
 				$user->email,
 				Translation::translate('reset_your_password'),
 				$emailBody,
-				emailTemplate: [
+				emailTemplate : [
 					'file' => 'reset_password',
 					'args' => [
 						'emailTitle' => Translation::translate('reset_your_password'),
@@ -160,19 +161,19 @@
 			);
 
 			echo json_encode([
-				"success" => true,
+				"success" => $result,
 			]);
 		}
 
 		function reset_password(Request $request, string $resetCode)
 		{
 			if ( empty($resetCode) ) {
-				error_response(Translation::translate("invalid_reset_code"), 400);
+				error_response(Translation::translate("invalid_reset_code"), 400, "password_reset_code");
 			}
 
 			$user = UserModel::get_users_by([ "reset_password_code" => $resetCode ], true);
 			if ( empty($user) || !isset($user->id) ) {
-				error_response(Translation::translate("invalid_reset_code"), 400);
+				error_response(Translation::translate("invalid_reset_code"), 400, "password_reset_code");
 			}
 
 			Validation::validate([

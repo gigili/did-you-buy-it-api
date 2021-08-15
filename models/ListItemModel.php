@@ -15,8 +15,7 @@
 	class ListItemModel
 	{
 
-		public static function get_list_items(string $listID): array
-		{
+		public static function get_list_items(string $listID) : array {
 			return Database::execute_query("
 			SELECT 
 				   li.*, u.name AS creator_name, pu.name AS purchase_name, l.name AS list_name
@@ -35,23 +34,19 @@
 			?string $image = NULL,
 			?string $purchasedUserID = NULL,
 			?string $purchasedAt = NULL
-		)
-		{
+		) {
 			$query = 'INSERT INTO lists.list_item (id, listid, userid, purchaseduserid, name, image, is_repeating, purchased_at)
-					  VALUES(?, ?, ?, ?, ?, ?, ?, ?)';
+					  VALUES(?, ?, ?, ?, ?, ?, ?, ?) RETURNING id;';
 
 			$data = [ Uuid::uuid4(), $listID, $userID, $purchasedUserID, $name, $image, $isRepeating ? "true" : "false", $purchasedAt ];
-			//dump($data);
-			Database::execute_query($query, $data);
+			return Database::execute_query($query, $data, true);
 		}
 
-		public static function get_list_item(string $itemID): object|array
-		{
+		public static function get_list_item(string $itemID) : object|array {
 			return Database::execute_query('SELECT * FROM lists.list_item WHERE id = ?', [ $itemID ], true);
 		}
 
-		public static function update_list_item(string $name, ?string $image, mixed $isRepeating, string $itemID)
-		{
+		public static function update_list_item(string $name, ?string $image, mixed $isRepeating, string $itemID) {
 			Database::execute_query('UPDATE lists.list_item SET 
                            name = ?, 
                            image = COALESCE(?, image), 
@@ -59,18 +54,16 @@
                       WHERE id = ?', [ $name, $image, $isRepeating, $itemID ]);
 		}
 
-		public static function delete_list_item(string $itemID)
-		{
+		public static function delete_list_item(string $itemID) {
 			Database::execute_query('DELETE FROM lists.list_item WHERE id = ?', [ $itemID ]);
 		}
 
-		public static function update_bought_state(int|string $purchasedAt, mixed $purchasedUserID, string $itemID)
-		{
-			Database::execute_query('UPDATE lists.list_item SET purchased_at = ?, purchaseduserid = ? WHERE id = ?', [ $purchasedAt, $purchasedUserID, $itemID ]);
+		public static function update_bought_state(int|string $purchasedAt, mixed $purchasedUserID, string $itemID) {
+			Database::execute_query('UPDATE lists.list_item SET purchased_at = ?, purchaseduserid = ? WHERE id = ?',
+				[ $purchasedAt, $purchasedUserID, $itemID ]);
 		}
 
-		public static function remove_item_image(string $itemID)
-		{
+		public static function remove_item_image(string $itemID) {
 			Database::execute_query("UPDATE lists.list_item SET image = null WHERE id = ?", [ $itemID ]);
 		}
 
