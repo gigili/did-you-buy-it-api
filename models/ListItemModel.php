@@ -34,7 +34,7 @@
 			?string $image = NULL,
 			?string $purchasedUserID = NULL,
 			?string $purchasedAt = NULL
-		) {
+		) : object|array {
 			$query = 'INSERT INTO lists.list_item (id, listid, userid, purchaseduserid, name, image, is_repeating, purchased_at)
 					  VALUES(?, ?, ?, ?, ?, ?, ?, ?) RETURNING id;';
 
