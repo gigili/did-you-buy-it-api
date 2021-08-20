@@ -43,7 +43,13 @@
 		}
 
 		public static function get_list_item(string $itemID) : object|array {
-			return Database::execute_query('SELECT * FROM lists.list_item WHERE id = ?', [ $itemID ], true);
+			return Database::execute_query('SELECT 
+				   li.*, u.name AS creator_name, pu.name AS purchase_name, l.name AS list_name
+			FROM lists.list_item AS li
+			LEFT JOIN users.user AS u ON li.userid = u.id
+			LEFT JOIN users.user AS pu ON li.purchaseduserid = pu.id
+			LEFT JOIN lists.list AS l ON li.listid = l.id
+			WHERE li.id = ?', [ $itemID ], true);
 		}
 
 		public static function update_list_item(string $name, ?string $image, mixed $isRepeating, string $itemID) {
@@ -58,7 +64,11 @@
 			Database::execute_query('DELETE FROM lists.list_item WHERE id = ?', [ $itemID ]);
 		}
 
-		public static function update_bought_state(int|string $purchasedAt, mixed $purchasedUserID, string $itemID) {
+		public static function update_bought_state(
+			int|string|null $purchasedAt,
+			string|null $purchasedUserID,
+			string $itemID
+		) {
 			Database::execute_query('UPDATE lists.list_item SET purchased_at = ?, purchaseduserid = ? WHERE id = ?',
 				[ $purchasedAt, $purchasedUserID, $itemID ]);
 		}

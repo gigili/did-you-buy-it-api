@@ -147,13 +147,13 @@
 				error_response(Translation::translate('list_item_not_found'), 404);
 			}
 
-			$purchasedAt = is_null($item->purchased_at) ? time() : NULL;
+			$purchasedAt = is_null($item->purchased_at) ? date("c") : NULL;
 			$purchasedUserID = is_null($item->purchaseduserid) ? $userID : NULL;
 
 			//TODO: Check how the purchasedAt is being handled if sent in date format
 			ListItemModel::update_bought_state($purchasedAt, $purchasedUserID, $itemID);
-
-			echo json_encode([ "success" => true ]);
+			$item = ListItemModel::get_list_item($itemID);
+			echo json_encode([ "success" => true, "data" => $item ]);
 		}
 
 		public function delete_list_item_image(string $listID, string $itemID)
