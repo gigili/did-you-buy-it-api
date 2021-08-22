@@ -17,6 +17,7 @@ To get started on developing this project firs you need to do
 ```shell
 git clone https://github.com/gigili/did-you-buy-it-api
 cd did-you-buy-it-api
+composer install
 ```
 
 Then rename `.env.example` into `.env` file and fill in all the values.
