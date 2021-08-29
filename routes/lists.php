@@ -13,8 +13,7 @@
 			   ->route("/{listID}", [ ListController::class, "delete_list" ], [ "DELETE" ])
 			   ->route("/{listID}/user", [ ListController::class, "get_list_users" ], [ "GET" ])
 			   ->route("/{listID}/user", [ ListController::class, "add_user_to_list" ], [ "POST" ])
-			   ->route("/{listID}/user/{userID}", [ ListController::class, "delete_user_from_list" ], [ "DELETE" ])
-			   ->add();
+			   ->add("/{listID}/user/{userID}", [ ListController::class, "delete_user_from_list" ], [ "DELETE" ]);
 	} catch ( Exception $ex ) {
 		Logger::error("Api Error: {$ex->getMessage()}");
 		error_response("Error processing your request", 500);
