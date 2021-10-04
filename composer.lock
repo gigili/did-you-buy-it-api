@@ -496,16 +496,16 @@
         },
         {
             "name": "gac/routing",
-            "version": "v2.0.5.2",
+            "version": "v2.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gigili/PHP-routing.git",
-                "reference": "6f037d09d6b6b16c4c8fc7911ea352fb5a43cd3e"
+                "reference": "5f3e1a0eae7d60967a3796024c4e58c0afa8d393"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gigili/PHP-routing/zipball/6f037d09d6b6b16c4c8fc7911ea352fb5a43cd3e",
-                "reference": "6f037d09d6b6b16c4c8fc7911ea352fb5a43cd3e",
+                "url": "https://api.github.com/repos/gigili/PHP-routing/zipball/5f3e1a0eae7d60967a3796024c4e58c0afa8d393",
+                "reference": "5f3e1a0eae7d60967a3796024c4e58c0afa8d393",
                 "shasum": ""
             },
             "require": {
@@ -546,7 +546,7 @@
             "support": {
                 "email": "github@igorilic.net",
                 "issues": "https://github.com/gigili/PHP-routing",
-                "source": "https://github.com/gigili/PHP-routing/tree/v2.0.5.2"
+                "source": "https://github.com/gigili/PHP-routing/tree/v2.0.7"
             },
             "funding": [
                 {
@@ -558,7 +558,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2021-09-17T20:49:17+00:00"
+            "time": "2021-10-02T19:07:15+00:00"
         },
         {
             "name": "graham-campbell/result-type",
