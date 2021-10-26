@@ -19,7 +19,7 @@
     "php": ">=8.0",
     "ext-json": "*",
     "byjg/migration": "4.2.*",
-    "byjg/migration-cli": "4.1.*",
+    "byjg/migration-cli": "4.2.*",
     "ramsey/uuid": "^4.1",
     "ext-pdo": "*",
     "firebase/php-jwt": "^5.2",
