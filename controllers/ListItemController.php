@@ -17,6 +17,34 @@
 
 	class ListItemController
 	{
+		/**
+			* Swagger doc block
+			*
+			* @OA\Get(
+			* path="ListItem/get_list_items",
+			* summary="Find list items by list id",
+			* @OA\Parameter(
+			*		name="listID",
+			* 	in= "query",
+			* 	description="Identifier of the list to fetch items from",
+			* 	required=true,
+			* 	type="string",
+			* 	style="form"
+			*	),
+			* @OA\Response(
+			*		response=200,
+      *   description="successful operation",
+			*		@OA\Schema(
+ 			*   	type="array",
+ 			*  		@OA\Items(ref="#/components/schemas/Item")
+			* 	),
+			* ),
+			*	@OA\Response(
+			* 	response="401",
+			*   description="Invalid list id",
+		  * ),
+			*)
+			*/
 
 		public function get_list_items(string $listID)
 		{
