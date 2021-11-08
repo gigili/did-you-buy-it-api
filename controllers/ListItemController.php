@@ -21,11 +21,11 @@
 			* Swagger doc block
 			*
 			* @OA\Get(
-			* path="ListItem/get_list_items",
+			* path="list/item/{listID}",
 			* summary="Find list items by list id",
 			* @OA\Parameter(
 			*		name="listID",
-			* 	in= "query",
+			* 	in= "path",
 			* 	description="Identifier of the list to fetch items from",
 			* 	required=true,
 			* 	type="string",
@@ -41,7 +41,7 @@
 			* ),
 			*	@OA\Response(
 			* 	response="401",
-			*   description="Invalid list id",
+			*   description="Invalid token",
 		  * ),
 			*)
 			*/
