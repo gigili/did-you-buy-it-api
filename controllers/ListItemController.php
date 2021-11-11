@@ -35,9 +35,11 @@
 			*		response=200,
       *   description="successful operation",
 			*		@OA\Schema(
- 			*   	type="array",
- 			*  		@OA\Items(ref="#/components/schemas/Item")
-			* 	),
+ 			*   	schema = "ListItem",
+ 			*  		properties= {
+			*		  	@OA\Property(property="id", type="string"),
+			* 	}
+		  * ),
 			* ),
 			*	@OA\Response(
 			* 	response="401",
