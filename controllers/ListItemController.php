@@ -61,6 +61,45 @@
 			echo json_encode([ "success" => true, "data" => $result ]);
 		}
 
+		/**
+			* Swagger doc block
+			*
+			* @OA/Post(
+			* path="list/item/{listID}",
+			* summary = "Add a new list item",
+			* @OA\RequestBody(
+     	* 	required=true,
+			* 	@OA\Property(
+			*  		description = "List item to be added",
+			*  		name = "name",
+			*  		type = "string",
+			*  		in = "body",
+			*  		required = true,
+			*  		minLength = 3,
+			*  		maxLength = 250
+			* 	),
+			* 	@OA\Property(
+			*  		description = "Is the item repeating",
+			*  		name = "is_repeating",
+			*  		type = "integer",
+			*  		in = "body",
+			*  		required = true
+			* 	),
+			* 	@OA\Property(
+			*  		description = "Image file to upload for the list item",
+			*  		name = "name",
+			*  		type = "string",
+			*			format = "file",
+			*  		in = "body",
+			*  		required=false
+			* 	),
+			* ),
+			*	@OA\Response(
+			* 	response="401",
+			*   description="Invalid token",
+		  * ),
+			*)
+		  */
 		public function add_new_list_item(Request $request, string $listID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION['userID']) ) {
