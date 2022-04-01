@@ -12,7 +12,6 @@
 
 			$handle = fopen($_SERVER["DOCUMENT_ROOT"] . "/logs/{$logFileName}", "a+");
 			fwrite($handle, $message . "\n");
-			fwrite($handle, $message . "\n");
 			fclose($handle);
 		}
 
