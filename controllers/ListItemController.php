@@ -17,6 +17,36 @@
 
 	class ListItemController
 	{
+		/**
+			* Swagger doc block
+			*
+			* @OA\Get(
+			* path="list/item/{listID}",
+			* summary="Find list items by list id",
+			* @OA\Parameter(
+			*		name="listID",
+			* 	in= "path",
+			* 	description="Identifier of the list to fetch items from",
+			* 	required=true,
+			* 	type="string",
+			* 	style="form"
+			*	),
+			* @OA\Response(
+			*		response=200,
+      *   description="successful operation",
+			*		@OA\Schema(
+ 			*   	schema = "ListItem",
+ 			*  		properties= {
+			*		  	@OA\Property(property="id", type="string"),
+			* 	}
+		  * ),
+			* ),
+			*	@OA\Response(
+			* 	response="401",
+			*   description="Invalid token",
+		  * ),
+			*)
+			*/
 
 		public function get_list_items(string $listID)
 		{
@@ -31,6 +61,45 @@
 			echo json_encode([ "success" => true, "data" => $result ]);
 		}
 
+		/**
+			* Swagger doc block
+			*
+			* @OA/Post(
+			* path="list/item/{listID}",
+			* summary = "Add a new list item",
+			* @OA\RequestBody(
+     	* 	required=true,
+			* 	@OA\Property(
+			*  		description = "List item to be added",
+			*  		name = "name",
+			*  		type = "string",
+			*  		in = "body",
+			*  		required = true,
+			*  		minLength = 3,
+			*  		maxLength = 250
+			* 	),
+			* 	@OA\Property(
+			*  		description = "Is the item repeating",
+			*  		name = "is_repeating",
+			*  		type = "integer",
+			*  		in = "body",
+			*  		required = true
+			* 	),
+			* 	@OA\Property(
+			*  		description = "Image file to upload for the list item",
+			*  		name = "name",
+			*  		type = "string",
+			*			format = "file",
+			*  		in = "body",
+			*  		required=false
+			* 	),
+			* ),
+			*	@OA\Response(
+			* 	response="401",
+			*   description="Invalid token",
+		  * ),
+			*)
+		  */
 		public function add_new_list_item(Request $request, string $listID)
 		{
 			if ( !isset($_SESSION) || !isset($_SESSION['userID']) ) {
